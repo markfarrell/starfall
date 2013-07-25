@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: c739773cc7834094b808493e7d9e61f9
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - skin: {fileID: 11400000, guid: 7255f0ee8f6b51f42a7a8e8ac10f1474, type: 2}
+  - helmetMaterial: {fileID: 2100000, guid: ac385a5c855d6fc4691805eb556ab849, type: 2}
+  - visorMaterial: {instanceID: 0}
+  - visorTrimMaterial: {instanceID: 0}
+  - bodyMaterial: {instanceID: 0}
+  - torsoMaterial: {instanceID: 0}
+  - rightLegMaterial: {instanceID: 0}
+  - rightFootMaterial: {instanceID: 0}
+  - rightArmMaterial: {instanceID: 0}
+  - rightHandMaterial: {instanceID: 0}
+  - leftLegMaterial: {instanceID: 0}
+  - leftFootMaterial: {instanceID: 0}
+  - leftArmMaterial: {instanceID: 0}
+  - leftHandMaterial: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}

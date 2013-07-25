@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./jquery.mobile.custom/jquery.mobile.custom.theme.css" />
+    <link rel="stylesheet" href="./jquery.mobile.custom/jquery.mobile.custom.structure.css" />
+    <!-- Set page width to iphone width -->
+
+    <style type='text/css'>
+       @media only screen and (min-width: 640px){
+        .ui-page {
+                width: 640px !important;
+          height: 960px !important;
+                margin: 0 auto !important;
+                position: relative !important;
+            }
+        }
+
+        .ui-collapsible-content {
+         padding-top: 5px !important;
+           padding-bottom: 5px !important;
+           padding-left: 5px !important;
+           padding-right: 5px !important;
+        }
+
+        .ui-listview-inset {
+            margin: 0 0 !important;
+            padding-top: 2px !important;
+        }
+
+        </style>
+
+    <script src="./jquery/jquery-1.9.1.js"></script>
+    <script src="./jquery.mobile.custom/jquery.mobile.custom.min.js"></script>
+    <script src="./underscore/underscore-min.js"></script>
+    <script src="./mixins.js"></script>
+    <script src="./items.js"></script>
+    <script src="./app/components.appearance.js"></script>
+    <script src="./app/app.js"></script>
+
+</head>
+<body>
+
+<script type="text/html" id="template-filter-item">
+    <li>
+        <table style='width:100%'>
+            <tr>
+                <td align='left' width='50%'>
+                    <%= name %>
+                </td>
+                <td align='right' width='50%'>
+                    <select name='<%= id %>' id='<%= id %>' data-role='slider' data-track-theme='a' data-theme='a' data-mini='true' >
+                        <option value='off'>Off</option>
+                        <option value='on'>On</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </li>
+</script>
+
+<script type="text/html" id="template-object-part">
+   <li>
+     <table width='100%'>
+            <tr>
+                <td width='50%'>
+                    <%= partName %>
+                </td>
+                <td align='right'>
+                    <p style='float:right; margin-left: 10px'>
+                        <select id='<%= partIDs.toggle %>' data-role='slider' data-track-theme='a' data-theme='a' data-mini='true' >
+                          <option value='off'>Off</option>
+                          <option value='on'>On</option>
+                        </select>
+                    </p>
+                    <%
+                      _.each(hexColors, function(color) {
+                     %>
+
+                       <a data-position-to='window' data-rel='popup' href='#<%= color.ids.popup %>' id='<%= color.ids.anchor %>' style='float:right; margin-right: 3px; margin-top: 2px; width: 25px; height: 25px; border: 1px solid black; background-color:<%= color.hex %>'>
+                         <div style='width:250px' data-role='popup' id='<%= color.ids.popup %>'>
+                             <table width='100%'>
+                               <tr>
+                                 <td align='center'>
+                                      <h3>Red</h3>
+                                 </td>
+                                 <td>
+                                      <input type='range' name='<%= color.ids.sliders.red %>' id='<%= color.ids.sliders.red %>' value='<%= color.red %>' min='0' max='255' />
+                                  </td>
+                               </tr>
+                               <tr>
+                                 <td align='center'>
+                                      <h3>Green</h3>
+                                 </td>
+                                 <td>
+                                      <input type='range' name='<%= color.ids.sliders.green %>' id='<%= color.ids.sliders.green %>' value='<%= color.green %>' min='0' max='255' />
+                                 </td>
+                               </tr>
+                               <tr>
+                                 <td align='center'>
+                                      <h3>Blue</h3>
+                                 </td>
+                                 <td>
+                                      <input type='range' name='<%= color.ids.sliders.blue %>' id='<%= color.ids.sliders.blue %>' value='<%= color.green %>' min='0' max='255' />
+                                 </td>
+                               </tr>
+                             </table>
+                             <table width='100%'>
+                                 <tr>
+                                     <td>
+                                         <div data-role='controlgroup' data-type='horizontal'>
+                                            <a href='#' id='<%= color.ids.buttons.apply %>' data-role='button' data-mini='true'>Apply</a>
+                                            <a href='#' id='<%= color.ids.buttons.revert %>' data-role='button' data-mini='true'>Revert</a>
+                                          </div>
+                                     </td>
+                                 </tr>
+                              </table>
+                         </div>
+                      </a>
+
+                    <%
+                      });
+                    %>
+
+                </td>
+            </tr>
+        </table>
+    </li>
+</script>
+
+
+<script type="text/html" id="template-object-item-select">
+    <div id='<%= form.ids.menu %>'>
+        <%
+            if(_.size(form.getItemTypes()) > 0) {
+        %>
+            <table width='100%'>
+                <tr>
+                    <td width='20%' align='left'>
+                        Type:
+                    </td>
+                    <td width='70%' align='left'>
+                        <select id='<%= form.ids.select %>' data-inset='true'>
+                            <% _.each(form.getItemTypes(), function(elem) { %>
+                                <option value='<%= elem.name %>'>
+                                    <%
+                                        if(elem.name.length > 0) {
+                                            print(elem.name.charAt(0).toUpperCase()+elem.name.substr(1));
+                                        }
+                                    %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </td>
+                    <td width='10%' align='right'>
+                        <a href='#' data-role='button' data-icon='delete' data-iconpos='notext' data-inline='false'>Delete</a>
+                    </td>
+                </tr>
+            </table>
+        <%
+            }
+        %>
+
+        <%
+            if(_.size(form.controls.getSelection()) > 0) {
+        %>
+            <ul id='<%= form.ids.selectedItemTypeList %>' data-role='listview' data-inset='true' data-divider-theme='d'>
+        <%
+            print(form.model.render());
+        %>
+            </ul>
+        <%
+            }
+        %>
+        <div data-role='controlgroup' data-type='horizontal' align='center'>
+            <a href='#' id='<%= form.ids.okButton %>' data-role='button'>Ok</a>
+            <a href='#' id='<%= form.ids.newButton %>' data-role='button'>New</a>
+            <a href='#' id='<%= form.ids.cancelButton %>' data-role='button'>Cancel</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="template-object-item-new">
+     <div id='<%= ids.menu %>'>
+        <ul data-role='listview' data-inset='true' data-divider-theme='d'>
+            <li data-role='list-divider'>
+                Item Type
+            </li>
+            <li>
+                <table width='100%'>
+                    <tr>
+                        <td align='left'>
+                            Name:
+                        </td>
+                        <td align='left'>
+                            <input type='text' id='<%= ids.nameInput %>' value='' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align='left'>
+                            Property:
+                        </td>
+                        <td align='left'>
+                            <input type='text' id='<%= ids.propertyInput %>' value='' />
+                        </td>
+                    </tr>
+                </table>
+                <div width='100%' align='right' data-role='controlgroup' data-type='horizontal'>
+                    <select id='<%= ids.dataTypes %>'>
+                        <% _.each(dataTypes, function(elem) { %>
+                            <option value='<%= elem %>'>
+                                <%= elem %>
+                            </option>
+                        <% }); %>
+                    </select>
+                    <a href='#' id='<%= ids.addPropertyButton %>' data-role='button'>Add</a>
+                </div>
+            </li>
+        </ul>
+
+        <ul id='<%= ids.propertyList %>' data-role='listview' data-inset='true' data-divider-theme='d'>
+
+        </ul>
+
+        <div data-role='controlgroup' align='center' data-type='horizontal'>
+            <a href='#' id='<%= ids.okButton %>' data-role='button' class='half'>Ok</a>
+            <a href='#' id='<%= ids.cancelButton %>' data-role='button' class='half'>Cancel</a>
+        </div>
+
+    </div>
+</script>
+
+
+
+<script>
+
+    $(function() { //==$(document).ready(...);
+
+
+    var app = new App(); //start the app
+
+    $("#page-portal").on("pageshow", function() {
+        if(!app.login.isComplete()) {
+            $.mobile.changePage($("#page-login"), {reloadPage: true});
+        }
+    });
+
+});
+
+</script>
+
+<div data-role='page' id='page-login' data-theme='a'>
+
+    <div data-role='header' data-theme='a'>
+    <h1><img src='./img/logo_small.png' alt='Starfall' /></h1>
+    </div><!-- /header -->
+
+    <div data-role='content'>
+		<div data-role='fieldcontain'>
+			<label for='input-username'>Username:</label>
+			<input type='text' name='input-username' id='input-username' value="admin" />
+			<label for='input-password'>Password:</label>
+			<input type='password' name='input-password' id='input-password' value="admin" />
+
+		</div>
+		<div><a href="#" id='btn-login' data-role='button' >Login</a></div>
+    </div><!-- /content -->
+
+</div><!-- /page -->
+
+<div data-role='page' id='page-portal' data-theme='a'>
+    <div data-role='header'>
+       <h1><img src='./img/logo_small.png' alt='Starfall' /></h1>
+        <a href='#page-portal-panel' data-role='button' data-icon='bars' data-iconpos='notext' class='ui-btn-right'>Actions</a>
+    </div><!-- /header -->
+
+    <div data-role='panel' id='page-portal-panel' data-display='overlay' data-position='left' data-theme='a' style='background: rgba(0,0,0,.5)'>
+        <ul data-role='listview' id='page-portal-panel-listview' data-inline='true' data-divider-theme='d'>
+            <li data-role='list-divider'>Modifiers</li>
+            <li>
+                <div data-type='horizontal'>
+                   <a href='#' id='page-portal-actions-appearance' data-role='button' data-mini='true'>Appearance</a>
+                </div>
+            </li>
+            <li data-role='list-divider'>Filters</li>
+            <li>
+                <div data-type='horizontal'>
+                    <table>
+                        <tr>
+                            <td width='50%'>
+                                <input type='text' name='page-portal-input-filter' id='page-portal-panel-input-filter' value='Head' />
+                            </td>
+                            <td width='50%'>
+                                <a href='#' id='page-portal-panel-actions-filter' data-role='button' data-mini='true'>Filter</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+        </ul>
+    </div><!-- /panel -->
+
+    <div data-role='content' id='page-portal-content'>
+            <!-- Javascript will append content -->
+    </div>
+    
+</div>
+    
+
+
+</body>
+</html>

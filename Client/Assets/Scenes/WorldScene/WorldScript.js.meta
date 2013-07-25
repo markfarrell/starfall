@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 86c8882f2d4078c4ca1a016dfcff1106
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - topJetMaterial: {fileID: 2100000, guid: 206307f781703844ba1d982c3a4c30d8, type: 2}
+  - bottomJetMaterial: {fileID: 2100000, guid: d6407122cf5be684ca9e7ba0f06be6d5, type: 2}
+  - entityPrefab: {fileID: 400000, guid: 2be27fda4274b4741945baeb34de2200, type: 2}
+  - emptyPrefab: {fileID: 400000, guid: cfaab7319addb164b932985efc37cc1a, type: 2}
+  - headlightPrefab: {fileID: 400000, guid: 5c3e94725a2a4ec4a9feac1a305201ad, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}

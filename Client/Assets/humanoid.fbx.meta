@@ -1,0 +1,245 @@
+fileFormatVersion: 2
+guid: 5f162db34c0049b47add56a81f2b4e67
+ModelImporter:
+  fileIDToRecycleName:
+    4300000: Bottom_Jet
+    4300002: Top_Jet
+    4300004: Thruster
+    4300006: Helmet
+    4300008: Left_Foot
+    4300010: Left_Leg
+    4300012: Left_Hand
+    4300014: Left_Arm
+    4300016: Right_Leg
+    4300018: Right_Arm
+    4300020: Torso
+    4300022: Right_Foot
+    4300024: Right_Hand
+    4300026: Body
+    7400000: Default Take //// humanoid
+  serializedVersion: 10
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    generateAnimations: 3
+    bakeSimulation: 0
+    splitAnimations: 1
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMesh: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  textMetaNamesToFileIDs:
+    //RootNode:
+      data:
+        first: 1
+        second: bc860100
+      data:
+        first: 4
+        second: 9c1a0600
+      data:
+        first: 111
+        second: 605fa900
+    Body:
+      data:
+        first: 1
+        second: ae860100
+      data:
+        first: 4
+        second: 8e1a0600
+      data:
+        first: 23
+        second: 6e182300
+      data:
+        first: 33
+        second: ae5a3200
+    Bottom_Jet:
+      data:
+        first: 1
+        second: ba860100
+      data:
+        first: 4
+        second: 9a1a0600
+      data:
+        first: 23
+        second: 7a182300
+      data:
+        first: 33
+        second: ba5a3200
+    Helmet:
+      data:
+        first: 1
+        second: aa860100
+      data:
+        first: 4
+        second: 8a1a0600
+      data:
+        first: 23
+        second: 6a182300
+      data:
+        first: 33
+        second: aa5a3200
+    Left_Arm:
+      data:
+        first: 1
+        second: b4860100
+      data:
+        first: 4
+        second: 941a0600
+      data:
+        first: 23
+        second: 74182300
+      data:
+        first: 33
+        second: b45a3200
+    Left_Foot:
+      data:
+        first: 1
+        second: a8860100
+      data:
+        first: 4
+        second: 881a0600
+      data:
+        first: 23
+        second: 68182300
+      data:
+        first: 33
+        second: a85a3200
+    Left_Hand:
+      data:
+        first: 1
+        second: ac860100
+      data:
+        first: 4
+        second: 8c1a0600
+      data:
+        first: 23
+        second: 6c182300
+      data:
+        first: 33
+        second: ac5a3200
+    Left_Leg:
+      data:
+        first: 1
+        second: a4860100
+      data:
+        first: 4
+        second: 841a0600
+      data:
+        first: 23
+        second: 64182300
+      data:
+        first: 33
+        second: a45a3200
+    Right_Arm:
+      data:
+        first: 1
+        second: a0860100
+      data:
+        first: 4
+        second: 801a0600
+      data:
+        first: 23
+        second: 60182300
+      data:
+        first: 33
+        second: a05a3200
+    Right_Foot:
+      data:
+        first: 1
+        second: b2860100
+      data:
+        first: 4
+        second: 921a0600
+      data:
+        first: 23
+        second: 72182300
+      data:
+        first: 33
+        second: b25a3200
+    Right_Hand:
+      data:
+        first: 1
+        second: b0860100
+      data:
+        first: 4
+        second: 901a0600
+      data:
+        first: 23
+        second: 70182300
+      data:
+        first: 33
+        second: b05a3200
+    Right_Leg:
+      data:
+        first: 1
+        second: a2860100
+      data:
+        first: 4
+        second: 821a0600
+      data:
+        first: 23
+        second: 62182300
+      data:
+        first: 33
+        second: a25a3200
+    Thruster:
+      data:
+        first: 1
+        second: a6860100
+      data:
+        first: 4
+        second: 861a0600
+      data:
+        first: 23
+        second: 66182300
+      data:
+        first: 33
+        second: a65a3200
+    Top_Jet:
+      data:
+        first: 1
+        second: b8860100
+      data:
+        first: 4
+        second: 981a0600
+      data:
+        first: 23
+        second: 78182300
+      data:
+        first: 33
+        second: b85a3200
+    Torso:
+      data:
+        first: 1
+        second: b6860100
+      data:
+        first: 4
+        second: 961a0600
+      data:
+        first: 23
+        second: 76182300
+      data:
+        first: 33
+        second: b65a3200

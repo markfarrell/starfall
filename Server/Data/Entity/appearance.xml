@@ -1,0 +1,118 @@
+<?xml version="1.1" encoding="utf-8" ?>
+<entity>
+    <appearance>
+        <styles>
+            <style name="default">
+                <color type="color" name="navy" number="0" red="0" green="55" blue="87"/>
+                <color name="red"  number="1" red="175" green="16" blue="0"/>
+                <color name="black" number="2" red="0" green="0" blue="0"/>
+                <color name="peach" number="3" red="212" green="177" blue="134"/>
+                <color name="dark navy" number="4" red="14" green="38" blue="53"/>
+                <color name="grey" number="5" red="100" green="106" blue="107"/>
+                <color name="gold" number="6" red="166" green="150" blue="48"/>
+                <color name="dark grey" number="7" red="10" green="10" blue="9"/>
+            </style>
+        </styles>
+        <slots>
+            <slot name="Head">
+                <mesh name="Helmet">
+                    <part name="Helmet">
+                        <material name="MaterialHelmet" color="0"/>
+                    </part> 
+                    <part name="Visor">
+                        <material name="MaterialVisor"  color="1"/>
+                    </part>
+                    <part name="Trim">
+                        <material name="MaterialVisorEdge" color="2"/>
+                    </part>
+                </mesh>
+            </slot>
+            <slot name="Top">
+                <mesh name="Body">
+                    <part name="Body">
+                        <material name="MaterialBody" color="0"/>
+                    </part>
+                </mesh>
+                <mesh name="Right_Arm">
+                    <part name="Right Arm">
+                        <material name="RightArmMainMaterial" color="0"/>
+                    </part>
+                    <part name="Right Wrist">
+                        <material name="RightArmWristMaterial" color="2"/>
+                    </part> 
+                </mesh>
+                <mesh name="Left_Arm">
+                    <part name="Left Arm">
+                        <material name="LeftArmMainMaterial" color="0"/>
+                    </part>
+                    <part name="Left Wrist">
+                        <material name="LeftArmWristMaterial" color="2"/>
+                    </part> 
+                </mesh>
+            </slot>
+            <slot name="Bottom">
+                <mesh name="Torso">
+                    <part name="Torso">
+                        <material name="MaterialTorso" color="0"/>
+                    </part> 
+                </mesh>
+                <mesh name="Right_Leg">
+                    <part name="Right Leg">
+                        <material name="RightLegMaterial" color="0"/>
+                    </part>
+                </mesh>
+                <mesh name="Left_Leg">
+                    <part name="Left Leg">
+                        <material name="LeftLegMaterial" color="0"/>
+                    </part>
+                </mesh>
+            </slot>
+            <slot name="Hands">
+                <mesh name="Right_Hand">
+                    <part name="Right Hand">
+                        <material name="RightHandMaterial" color="3"/>
+                    </part>
+                </mesh>
+                <mesh name="Left_Hand">
+                    <part name="Left Hand">
+                        <material name="LeftHandMaterial" color="3"/>
+                    </part>
+                </mesh>
+            </slot>
+            <slot name="Feet">
+                <mesh name="Right_Foot">
+                    <part name="Right Foot">
+                        <material name="RightFootMaterial" color="2" />
+                    </part>
+                </mesh>
+                <mesh name="Left_Foot">
+                    <part name="Left Foot">
+                        <material name="LeftFootMaterial" color="2"/>
+                    </part>
+                </mesh>
+            </slot>
+            <slot name="Engine">
+                <mesh name="Thruster">
+                    <part name="Thruster">
+                        <material name="MaterialThrusterInner" color="4"/>
+                        <material name="MaterialThrusterOuter" color="2"/>
+                    </part>
+                </mesh>
+                <mesh name="Top_Jet">
+                    <part name="Top Jet">
+                        <material name="MaterialTopJetTrim" color="5"/>
+                        <material name="MaterialTopJetIn" color="6"/>
+                        <material name="MaterialTopJetOut" color="7"/>
+                    </part>
+                </mesh>
+                <mesh name="Bottom_Jet">
+                    <part name="Bottom Jet">
+                        <material name="MaterialBottomJetTrim" color="5"/>
+                        <material name="MaterialBottomJetIn" color="6"/>
+                        <material name="MaterialBottomJetOut" color="7"/>
+                    </part>
+                </mesh>  
+            </slot>
+        </slots>
+    </appearance>
+</entity>
