@@ -1,0 +1,13 @@
+/Client/Data
+/Server/Data/server.db
+/Server/ipch
+/Server/Debug
+/Server/src/Debug
+/Server/ServerProject
+*.sln
+*.suo
+*.userprefs
+*.sdf
+*.csproj
+*.pidb
+*.unityproj
