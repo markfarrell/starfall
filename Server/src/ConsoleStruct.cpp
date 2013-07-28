@@ -3,8 +3,11 @@
 #include <iostream>
 #include <sstream>
 
+using namespace Starfall;
+
 using std::cout;
 using std::endl;
+
 
 JSONConsoleStruct::JSONConsoleStruct() {
 	this->head = Poco::JSON::Object::Ptr(new Poco::JSON::Object);

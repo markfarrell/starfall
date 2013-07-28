@@ -9,30 +9,34 @@
 
 using std::string;
 
-class Player : protected User, protected LoginStruct {
+namespace Starfall {
 
-	friend class LoginServer;
-	friend class LoginConnectionHandler;
-	friend class Receive;
-	friend class Send;
+	class Player : protected User, protected LoginStruct {
 
-	public:
-		typedef Poco::SharedPtr<Player> Ptr;
-		~Player(); 
-	protected:
+		friend class LoginServer;
+		friend class LoginConnectionHandler;
+		friend class Receive;
+		friend class Send;
 
-		Entity::Ptr pEntity;
-		double farClipDistance; //the last clip distance received in a packet
+		public:
+			typedef Poco::SharedPtr<Player> Ptr;
+			~Player(); 
+		protected:
 
-		static Ptr create(string address); 
+			Entity::Ptr pEntity;
+			double farClipDistance; //the last clip distance received in a packet
 
-		void lock();
-		void unlock();
-		void destroyEntity(Poco::UInt32 sessionid);
-		void createEntity(Poco::UInt32 sessionid);
-		void transformEntity(Poco::UInt32 sessionid);
+			static Ptr create(string address); 
 
-	private:
-		Player(string address);
+			void lock();
+			void unlock();
+			void destroyEntity(Poco::UInt32 sessionid);
+			void createEntity(Poco::UInt32 sessionid);
+			void transformEntity(Poco::UInt32 sessionid);
 
-};
+		private:
+			Player(string address);
+
+	};
+
+}

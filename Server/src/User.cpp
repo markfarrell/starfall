@@ -1,7 +1,7 @@
 #include "User.h"
 #include "Entity.h"
 
-
+using namespace Starfall;
 
 User::User(string a) {
 	this->address = a;

@@ -1,3 +1,5 @@
+/Client/Temp
+/Client/Builds
 /Client/Data
 /Client/Library
 /Server/Data/server.db
@@ -6,6 +8,7 @@
 /Server/src/Debug
 /Server/ServerProject
 /Server/src/ServerProject.rc
+*.opensdf
 *.sln
 *.suo
 *.userprefs

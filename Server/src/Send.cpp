@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace Starfall;
+
 using std::vector;
 using std::cout;
 using std::endl;

@@ -5,7 +5,6 @@
 #include "Poco/DateTimeFormat.h"
 #include "Poco/DateTimeFormatter.h"
 
-
 #include "Database.h"
 #include "Strings.h"
 #include "Defines.h"
@@ -13,12 +12,11 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+
+using namespace Starfall;
+
 using std::cout;
 using std::endl;
-
-
-
-
 
 
 std::vector<Poco::Data::Session> Database::Connection::SessionContainer;

@@ -21,6 +21,8 @@
 #include "Packet.h"
 #include "Entity.h"
 
+using namespace Starfall;
+
 using std::copy;
 using std::vector;
 using std::cout;

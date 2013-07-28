@@ -1,5 +1,6 @@
 #include "LoginStruct.h"
 
+using namespace Starfall;
 
 LoginStruct::LoginStruct() {
 	this->state = 0;

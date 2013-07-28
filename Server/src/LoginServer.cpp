@@ -25,6 +25,8 @@
 #include <fstream>
 #include <sstream>
 
+using namespace Starfall;
+
 using std::ifstream;
 using std::getline;
 using std::stringstream;
@@ -48,6 +50,7 @@ LoginConnectionHandler::LoginConnectionHandler(Poco::Net::StreamSocket& socket, 
   _errorObserver(*this, &LoginConnectionHandler::onSocketError),
   _timeoutObserver(*this, &LoginConnectionHandler::onSocketTimeout)
 { 
+	
 	_reactor.addEventHandler(_socket, _readObserver);
 	_reactor.addEventHandler(_socket, _writeObserver);
 	_reactor.addEventHandler(_socket, _shutdownObserver);
@@ -55,7 +58,6 @@ LoginConnectionHandler::LoginConnectionHandler(Poco::Net::StreamSocket& socket, 
 	_reactor.addEventHandler(_socket, _timeoutObserver);
 
 	_pPlayer = Player::create(_socket.address().toString());
-
 
 }
 
@@ -191,7 +193,7 @@ Poco::UInt16 LoginServer::port() const {
 Buffer LoginHTTPRequest::LoadFile(string fileName){
 	Buffer buffer;
 	//string pageString;
-	ifstream pageFile(Defines::Path::Web()+fileName, std::ios::binary); //Code from: cplusplus.com
+	ifstream pageFile(Defines::Path::Plugins()+fileName, std::ios::binary); //Code from: cplusplus.com
 	if(pageFile.is_open()){
 		pageFile.seekg(0, std::ios::end);
 		std::streamoff len = pageFile.tellg();
@@ -430,7 +432,7 @@ LoginHTTPRequestHandler::LoginHTTPRequestHandler() {
 
 LoginHTTPRequestHandler::~LoginHTTPRequestHandler() {
 	this->httpIsolate->Exit();
-	this->httpIsolate->Dispose();
+	this->httpIsolate->Dispose();          
 }
 
 /**

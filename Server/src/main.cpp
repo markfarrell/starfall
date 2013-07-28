@@ -4,6 +4,7 @@
 #include "LoginServer.h"
 #include "Database.h"
 
+using namespace Starfall;
 
 int main ( void )
 {

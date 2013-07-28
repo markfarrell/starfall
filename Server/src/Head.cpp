@@ -1,5 +1,6 @@
 #include "Head.h"
 
+using namespace Starfall;
 
 Head::Head() {
 	this->begin    = 0;

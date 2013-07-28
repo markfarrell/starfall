@@ -1,6 +1,8 @@
 #include "Transform.h"
 #include <math.h>
 
+using namespace Starfall;
+
 Position::Position() {
 	this->x = 0.0;
 	this->y = 0.0;

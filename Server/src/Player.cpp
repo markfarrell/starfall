@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace Starfall;
+
 using std::cout;
 using std::endl;
 

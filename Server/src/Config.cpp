@@ -4,6 +4,8 @@
 #include "Defines.h"
 #include "Buffer.h"
 
+using namespace Starfall;
+
 map<string,string> IO::Resources;
 
 
@@ -72,7 +74,7 @@ string IO::LoadSource(string fileName) {
 }
 
 v8::Handle<v8::String> IO::LoadScript(string scriptName) {
-	string source = IO::LoadSource(Defines::Path::Script()+scriptName);
+	string source = IO::LoadSource(Defines::Path::Plugins()+scriptName);
 	return v8::String::New(source.c_str(), source.length());
 }
 
@@ -116,6 +118,7 @@ bool IO::TryScript(string scriptName, v8::Handle<v8::Value> &result) {
 }
 
 v8::Persistent<v8::Context>  IO::Context() {
+	v8::HandleScope handleScope(v8::Isolate::GetCurrent());
 	v8::Handle<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New();
 	globalTemplate->Set(v8::String::New("Include"), v8::FunctionTemplate::New(JS::Include));
 	globalTemplate->Set(v8::String::New("Print"), v8::FunctionTemplate::New(JS::Print));
@@ -129,7 +132,7 @@ v8::Handle<v8::Value> IO::Run(string scriptName) {
 	bool fail = false;
 	v8::Handle<v8::Value> result;
 	if(IO::TryScript(scriptName, result)) {
-		if(IO::TryScript("main.js", result)) {
+		if(IO::TryScript("Script/main.js", result)) {
 			fail = false;
 		} 
 	}
@@ -176,7 +179,7 @@ map<string,string> Config::URIs() {
 		v8::HandleScope handleScope(v8::Isolate::GetCurrent());
 		v8::Persistent<v8::Context> persistentContext = IO::Context();
 		v8::Context::Scope	persistentContextScope(persistentContext); //enter global scope first
-		v8::Handle<v8::Value> result = IO::Run("HTTP/resources.js");
+		v8::Handle<v8::Value> result = IO::Run("Script/HTTP/resources.js");
 		if(!result.IsEmpty()) {
 			if(result->IsObject()) {
 				v8::Handle<v8::Array> keys = result->ToObject()->GetPropertyNames();

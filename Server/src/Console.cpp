@@ -1,8 +1,8 @@
 #include "Console.h"
 
-namespace http {
-	const ConsoleInterface out;
-}
+using namespace Starfall;
+
+ConsoleInterface http::out;
 
 Poco::JSON::Object::Ptr Console::GetHexMap(string name, string type, Poco::UInt32 beginIdx, Poco::UInt32 endIdx) {
 	Poco::JSON::Object* pObj = new Poco::JSON::Object;
