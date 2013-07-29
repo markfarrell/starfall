@@ -22,6 +22,7 @@ The Starfall project is my own initiative to create a space MMORPG that other pe
 
 + Google V8 Engine 3.17.16
 + Poco 1.4.6 (+ JSON utilities from a newer build)
+
 [Download](https://docs.google.com/file/d/0B-w-PVgHra9gVnFrYlFyMFp6OVU/edit?usp=sharing)
 
 ### Visual Studio
