@@ -1,6 +1,6 @@
 # Welcome to Starfall
 
-![Cover](cover.png)
+![Cover](./cover.png)
 
 
 
