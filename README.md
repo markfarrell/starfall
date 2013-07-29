@@ -2,17 +2,17 @@
 
 ![Cover](http://i1365.photobucket.com/albums/r745/markfarr2011/cover_zps3496e5a1.png)
 
-The Starfall Project is my own initiative to create a space MMORPG that other people can contribute to.
+The Starfall project is my own initiative to create a space MMORPG that other people can contribute to.
 
 
 # Languages
 
-## Server
+### Server
 
 + C++
 + JavaScript
 
-## Client
+### Client
 
 + UnityScript
 
