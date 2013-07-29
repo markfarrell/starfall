@@ -20,35 +20,29 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
 
+#include "Starfall/Console.h"
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
+using namespace Starfall;
 
+ConsoleInterface http::out;
 
+Poco::JSON::Object::Ptr Console::GetHexMap(string name, string type, Poco::UInt32 beginIdx, Poco::UInt32 endIdx) {
+	Poco::JSON::Object* pObj = new Poco::JSON::Object;
+	pObj->set("name", name);
+	pObj->set("type", type);
+	pObj->set("beginIdx", beginIdx);
+	pObj->set("endIdx", endIdx);
+	return Poco::JSON::Object::Ptr(pObj); //shared pointer; will automatically delete		
+}
 
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+string Console::Time() {
+	return Poco::DateTimeFormatter::format(Poco::DateTime(), Poco::DateTimeFormat::SORTABLE_FORMAT);
+}
+
+void Console::Print(Poco::Dynamic::Var& var) {
+	if(!Database::Insert::TryConsole(var)) {
+		throw new ConsoleException("Console Exception: Database Failed.");
+	}
+}
+

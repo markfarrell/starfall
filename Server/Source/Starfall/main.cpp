@@ -20,35 +20,23 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
+#include "Starfall/Send.h"
+#include "Starfall/Receive.h"
+#include "Starfall/LoginServer.h"
+#include "Starfall/Database.h"
+
+using namespace Starfall;
+
+int main ( void )
+{
+	Send::Init();
+	Receive::Init();
+	LoginHTTPRequest::Init();
+
+	LoginServer loginServer;
 
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
+	while(true) { }
 
-
-
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+	return 0;
+}

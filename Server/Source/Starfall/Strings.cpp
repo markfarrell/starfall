@@ -20,35 +20,21 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
 
+#include "Starfall/Strings.h"
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
+using namespace Starfall;
 
+bool Strings::EndsWith(const string& a, const string& b) {
+	if (b.size() > a.size()) return false;
+		return std::equal(a.begin() + a.size() - b.size(), a.end(), b.begin());
+}
 
-
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+void Strings::ReplaceAll(string& str, string from, string to) {
+	//Replace all; taken from [stackoverflow.com/questions/3418231/c-replace-part-of-a-string-with-another-string]
+	size_t start_pos = 0;
+	while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
+}

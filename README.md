@@ -1,1 +1,21 @@
-# Welcome to [Starfall](http://s1365.photobucket.com/user/markfarr2011/slideshow/ "Slideshow")
+# Welcome to Starfall
+
+![Cover](cover.png)
+
+
+
+# Visual Studio #
+## Dependencies ##
+
+>ws2_32.lib
+>winmm.lib
+>v8_base.lib
+>v8_nosnapshot.lib
+>PocoFoundationd.lib
+>PocoNetd.lib
+>PocoUtild.lib
+>PocoXMLd.lib
+>CppUnitd.lib
+>WinTestRunnerd.lib
+>PocoDatad.lib
+

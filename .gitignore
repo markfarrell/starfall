@@ -5,9 +5,9 @@
 /Server/Data/server.db
 /Server/ipch
 /Server/Debug
-/Server/src/Debug
-/Server/ServerProject
-/Server/src/ServerProject.rc
+/Server/Source/Debug
+/Server/Source/resource.h
+/Server/Source/Source.rc
 *.opensdf
 *.sln
 *.suo

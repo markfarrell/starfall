@@ -20,35 +20,23 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
+#pragma once
+#include "Poco/Net/Net.h"
 
+namespace Starfall {
+	/**
+	 * Date: April 24th, 2013
+	 * Description: Outlines all of the ports the application will be using and where..
+	 * TODO: Create tables in the DB for users between all servers.
+	 */
+	class Ports {
+		friend class LoginServer;
+		private:
+			static Poco::UInt16 ToLoginServerFromClient() { return 12777; }
+			static Poco::UInt16 ToLoginServerFromWeb() { return 12778; }
+			static Poco::UInt16 ToGameServerFromWeb() { return 12779; }
+			static Poco::UInt16 ToLoginServerFromGameServer() { return 12780; }
+			static Poco::UInt16 ToGameServerFromLoginServer() { return 12781; }
+	};
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
-
-
-
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+}

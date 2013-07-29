@@ -20,35 +20,25 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
 
+#include "Starfall/Transform.h"
+#include <math.h>
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
+using namespace Starfall;
 
+Position::Position() {
+	this->x = 0.0;
+	this->y = 0.0;
+	this->z = 0.0;
+}
 
+double Position::Distance(Position a, Position b) {
+	return sqrt(pow(b.x-a.x,2.0)+pow(b.y-a.y,2.0)+pow(b.z-a.z, 2.0));
+}
 
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+Rotation::Rotation() {
+	this->x = 0.0;
+	this->y = 0.0;
+	this->z = 0.0;
+	this->w = 0.0;
+}

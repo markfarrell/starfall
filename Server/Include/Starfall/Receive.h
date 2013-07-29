@@ -20,35 +20,31 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-var Items = Items || {};
-(function() {
-    function Apparel(obj) {
-        _.extend(this,obj);
-    }
-    this.Apparel = Apparel;
-}).call(Items);
 
+#pragma once
 
-var Inventory = Inventory || function() {
-    this.items = [];
-    this.types = [{ type: "apparel", class: Items.Apparel }];
-    
-    _.each(this.default(), (function(item) {
-        if(_.has(item,"type")) {
-           var classFunction = _.chain(this.types).findWhere({type: item.type}).value().class;
-           if(!_.isUndefined(classFunction)) {
-                this.items.push(new classFunction(item));
-            }
-        }
-    }).bind(this));
-};
+#include "Poco/Net/Net.h"
 
+#include <map>
 
+#include "Starfall/Head.h"
+#include "Starfall/Buffer.h"
+#include "Starfall/Player.h"
 
-Inventory.prototype.default = function() {
-        var defaultInventory = JSON.parse(System.Data("Entity/inventory.json"));
-        if(_.isArray(defaultInventory)) {
-            return defaultInventory;
-        }
-        return [];   
-};
+namespace Starfall {
+
+	typedef bool (*ReceiveFunction) (Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head);
+	class Receive {
+		friend class LoginServer;
+		friend class LoginConnectionHandler;
+		protected:
+			static std::map<Poco::UInt32, ReceiveFunction> Map;
+		public:
+			static void Init(); //Called in main
+			static bool LoginData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head);
+			static bool ConsoleData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head);
+			static bool TransformData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head);
+			static bool ObjectsData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head);
+	};
+
+}
