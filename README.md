@@ -24,17 +24,17 @@ Find the dependencies archived in the downloads section.
 
 ### Visual Studio ###
 
-+ws2_32.lib
-+winmm.lib
-+v8_base.lib
-+v8_nosnapshot.lib
-+PocoFoundationd.lib
-+PocoNetd.lib
-+PocoUtild.lib
-+PocoXMLd.lib
-+CppUnitd.lib
-+WinTestRunnerd.lib
-+PocoDatad.lib
++ ws2_32.lib
++ winmm.lib
++ v8_base.lib
++ v8_nosnapshot.lib
++ PocoFoundationd.lib
++ PocoNetd.lib
++ PocoUtild.lib
++ PocoXMLd.lib
++ CppUnitd.lib
++ WinTestRunnerd.lib
++ PocoDatad.lib
 
 ## Client ##
 
@@ -53,5 +53,5 @@ Unity Version 3.5.7f6 [Find](http://unity3d.com/unity/download/archive)
 
 + Blender 
 + GIMP
-+ Tea, Exercise and Vitamins
++ Tea, Exercise, Vitamins and Good Music
 
