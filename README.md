@@ -7,8 +7,13 @@ The Starfall Project is my own initiative to create a space MMORPG that other pe
 
 # Languages #
 
-Server: C++, JavaScript
-Client: UnityScript
+### Server ### 
+
++ C++
++ JavaScript
+
+### Client ### 
++ UnityScript
 
 # Dependencies #
 
@@ -36,11 +41,11 @@ Find the dependencies archived in the downloads section.
 + WinTestRunnerd.lib
 + PocoDatad.lib
 
-## Client ##
+## Client ## 
 
 Unity Version 3.5.7f6 [Find](http://unity3d.com/unity/download/archive)
 
-## Web ## 
+## Web ##
 
 + Underscore.js 1.4.4
 + sax.js
