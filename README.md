@@ -21,11 +21,8 @@ The Starfall project is my own initiative to create a space MMORPG that other pe
 ## Server
 
 + Google V8 Engine 3.17.16
-+ Poco 1.4.6 *
-
-*I added JSON libraries to Poco 1.4.6 from a newer build. 
-
-Find the dependencies archived in the downloads section.
++ Poco 1.4.6 (+ JSON utilities from a newer build)
+[Download](https://docs.google.com/file/d/0B-w-PVgHra9gVnFrYlFyMFp6OVU/edit?usp=sharing)
 
 ### Visual Studio
 
@@ -58,5 +55,5 @@ Unity Version 3.5.7f6 [Find](http://unity3d.com/unity/download/archive)
 
 + Blender 
 + GIMP
-+ Tea, Exercise, Vitamins and Good Music
++ Tea, Exercise, Vitamins and Music
 
