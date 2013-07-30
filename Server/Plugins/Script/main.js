@@ -71,6 +71,7 @@ try {
     System.Include("Common/lib/underscore/underscore-min.js");
     System.Include("Common/lib/xml/sax.js");
     System.Include("Common/lib/xml/xmldoc.js");
+    System.Include("Common/mixins.js");
     Main();
 } catch(err) {
     System.Print(err);

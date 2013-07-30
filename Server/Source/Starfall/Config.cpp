@@ -178,7 +178,7 @@ string Config::Appearance() {
 	v8::HandleScope handleScope(v8::Isolate::GetCurrent());
 	v8::Persistent<v8::Context> persistentContext = IO::Context();
 	v8::Context::Scope	persistentContextScope(persistentContext); //enter global scope first
-	v8::Handle<v8::Value> result = IO::Run("Entity/appearance.js");
+	v8::Handle<v8::Value> result = IO::Run("Script/Entity/appearance.js");
 	if(!result.IsEmpty()) {
 			
 	} 

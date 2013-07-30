@@ -28,6 +28,7 @@
  */ 
 
 function Main() { 
+    System.Include("Script/Entity/appearance.js");
     System.Include("Script/Entity/inventory.js");
     
     var entity = entity || {}; //reference the entity if it was already passed by the server or create it.

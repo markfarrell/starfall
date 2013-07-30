@@ -22,7 +22,7 @@
 
 _.mixin({
     eachObject : function(obj, func) {
-
+        
         if(typeof(obj) !== "object") {
             return;
         }
@@ -52,6 +52,13 @@ _.mixin({
             }
         } 
         return args;
+    },
+    objectToArray : function(args) {
+        var arr = [];
+        _.eachObject(args, function(value, key) {
+            arr.push({ key : value });   
+        });
+        return arr;
     },
     deepClone : function(obj) {
         return JSON.parse(JSON.stringify(obj));     

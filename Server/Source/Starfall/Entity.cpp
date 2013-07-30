@@ -102,14 +102,18 @@ Poco::UInt32 IDGenerator::next() {
 }
 
 Entity::Entity() {
-
 	this->isolate = Isolates::Acquire();
-
 	this->persistentContext = IO::Context();
 	this->displayName = "";
-	//this->appearance = Config::Appearance();
 	this->mode = 0;
 	this->sessionid = IDGenerator::next();
+	this->Load();
+}
+
+void Entity::Load() {
+	v8::HandleScope handleScope(this->isolate); 
+	v8::Context::Scope contextScope(this->persistentContext); 
+	v8::Handle<v8::Value> result = IO::Run("Script/Entity/context.js");
 }
 
 Entity::~Entity() {

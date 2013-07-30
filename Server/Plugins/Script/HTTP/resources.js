@@ -35,7 +35,7 @@ function Main() {
                          "Web/jquery/jquery-1.9.1.js",
                          "Common/lib/underscore/underscore-min.js",
 			             "Web/items.js",
-                         "Web/mixins.js",
+                         "Common/mixins.js",
                          "Web/app/app.js",
                          "Web/app/components.appearance.js"])
             .map(function(elem) { return ["/"+elem, elem]; })

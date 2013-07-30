@@ -149,8 +149,10 @@ namespace Starfall {
 			v8::Isolate* isolate; //a pointer to the instance of the v8 engine this entity is using.
 			v8::Persistent<v8::Context> persistentContext; //A persistent javascript context holding dynamic data such as the entity's inventory
 			vector<TransformStruct> path;
+
 			Entity();
 			
+			void Load(); //Load the entity's scripts.
 
 			static Poco::Mutex CollectionMutex; //mutex for the map storing entities
 

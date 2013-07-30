@@ -50,6 +50,7 @@ namespace Starfall {
 		friend class JS;
 		friend class Config;
 		friend class Entity;
+
 		private:
 			static map<string,string> Resources;
 		protected:

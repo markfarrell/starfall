@@ -30,12 +30,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
-The file "examples/strict.dtd" is licensed by the W3C and used according
-to the terms of the W3C SOFTWARE NOTICE AND LICENSE.  See LICENSE-W3C.html
-for details.
-
-
 // wrapper for non-node envs
 ;(function (sax) {
 
