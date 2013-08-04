@@ -1,3 +1,9 @@
+/ipch
+/Native Client/Debug
+/Native Client/Source/Debug
+/Native Client/Source/ipch
+/Native Client/Source/Client.rc
+/Native Client/Source/resource.h
 /Client/Temp
 /Client/Builds
 /Client/Data

@@ -1,0 +1,111 @@
+<!-- Copyright (c) 2013 Mark Farrell -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Starfall</title>
+<style type="text/css">
+    
+::selection {
+    background-color: transparent;      
+}
+body {
+    font-family: sans-serif;
+    background-color: transparent;
+    color: #FFFFFF;
+    margin: 0;
+}
+h1 {
+    color: #FF0000;        
+}
+p {
+    color: #FFFF00;   
+}
+.box {
+    background-image: url("img/box.png");
+    background-repeat: no-repeat;
+    width: 512px;
+    height: 256px;
+}
+.connect {
+    display: table;
+    background-image: url("img/connect.png");
+    background-repeat: no-repeat;     
+    width: 128px;
+    height: 128px;
+}
+.connect a {
+    display: table-cell;
+    vertical-align: middle;
+    text-decoration: none;
+    color: #000000;
+    font-size: 25px;
+    width:100%;
+}
+
+.connect a:hover {
+    color: #888888;
+}
+    
+.connect a:active {
+    color: #32653D;
+}
+    
+.form {
+    padding-left: 5%;
+}
+.label {
+     color: #062007;
+     font-size: 20px;
+     font-weight: bold;
+}
+.password {
+    -webkit-text-security: disc;        
+}
+.field {
+    -webkit-user-select: text;
+    color: #3A8D36;
+    border: 3px solid #062007;
+    font-size: 20px;   
+    border-radius: 5px;
+    background-color: #112211;
+    padding-left: 5px;
+    width: 95%;
+    outline: none;
+}
+.field:active{
+    color: #2D8F30;
+    border: 3px solid #062007;
+}
+.field:hover{
+    color: #6CAF6F;
+}
+.field:focus{
+    
+}
+</style>
+</head>
+<body>
+    <div>
+        <img src='img/logo.png' alt='logo' />
+    </div>
+    <div>
+        <table class="box">
+            <tr>
+                <td width='70%'>
+                    <table class='form'>
+                        <tr>
+                            <td width='20%'><span class='label'>Username:</span></td><td width='80%'><div contenteditable='true' class='field'>admin</div></td> 
+                        </tr>
+                        <tr>
+                           <td width='20%'><span class='label'>Password:</span></td><td width='80%'><div contenteditable='true' class='field password'>admin</div></td> 
+                        </tr>
+                    </table>
+                </td>
+                <td width='30%'>
+                    <div class='connect'><a align='center' href='#'>Connect</a></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
