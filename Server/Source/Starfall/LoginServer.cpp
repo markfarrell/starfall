@@ -1,26 +1,4 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
-
 
 #include "Starfall/LoginServer.h"
 #include "Starfall/Ports.h"

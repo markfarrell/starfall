@@ -18,7 +18,8 @@ namespace Starfall {
 
 	class Skybox {
 		public:
-			Skybox(); //TODO: PASS a camera class to the constructor to get information for the far clip plane
+			Skybox(bool load=true); //TODO: PASS a camera class to the constructor to get information for the far clip plane
+			void load();
 			void render();
 		protected:
 			GLuint textureID;

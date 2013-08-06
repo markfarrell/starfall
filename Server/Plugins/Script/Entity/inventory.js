@@ -16,7 +16,6 @@ var Inventory = Inventory || function() {
     this.types = [{ type: "apparel", class: Items.Apparel }]; 
     this.load();
     this.findEquipment();
-    System.Print(JSON.stringify(this.equipped()));
 };
 
 
