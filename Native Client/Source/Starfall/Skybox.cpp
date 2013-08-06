@@ -4,12 +4,12 @@
 using namespace Starfall;
 
 void Cube::load(GLfloat scale) {
-						//LEFT
-	    this->push(-scale, -scale, -scale,  -1.0f, -1.0f, -1.0f);
-        this->push(-scale,  scale, -scale,  -1.0f, 1.0f, -1.0f);
-        this->push(-scale, -scale,  scale,  -1.0f, -1.0f, 1.0f);
-        this->push(-scale, -scale,  scale,  -1.0f, -1.0f, 1.0f);
-        this->push(-scale,  scale, -scale,  -1.0f, 1.0f, -1.0f);
+//LEFT
+		this->push(-scale, -scale, -scale,  -1.0f, -1.0f, -1.0f);
+		this->push(-scale,  scale, -scale,  -1.0f, 1.0f, -1.0f);
+		this->push(-scale, -scale,  scale,  -1.0f, -1.0f, 1.0f);
+		this->push(-scale, -scale,  scale,  -1.0f, -1.0f, 1.0f);
+		this->push(-scale,  scale, -scale,  -1.0f, 1.0f, -1.0f);
         this->push(-scale,  scale,  scale,  -1.0f, 1.0f, 1.0f);
 						//RIGHT
         this->push(scale, -scale, -scale,  1.0, -1.0, -1.0);
@@ -57,7 +57,13 @@ void Cube::push(float x, float y, float z, float s, float t, float r) {
 	this->buffer.push_back(r);
 }
 
-Skybox::Skybox() {
+Skybox::Skybox(bool load) {
+	if(load) {
+		this->load();
+	}
+}
+
+void Skybox::load() {
 		this->textureID = NULL;
 
 		if(!this->front.loadFromFile("../Assets/Starfield/png/front.png")

@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
 <title>Starfall</title>
+<script src="jquery/jquery-1.9.1.js"></script>
 <style type="text/css">
     
 ::selection {
@@ -71,20 +72,38 @@ p {
     padding-left: 5px;
     width: 95%;
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.field br {
+    display: none;        
 }
 .field:active{
     color: #2D8F30;
     border: 3px solid #062007;
 }
+.field:active::selection {
+    background-color: #001100;        
+}   
 .field:hover{
     color: #6CAF6F;
-}
-.field:focus{
-    
 }
 </style>
 </head>
 <body>
+    <script>
+        /** Description: Limits the number of characters that may be entered into the fields of the form. **/
+        $(function() {
+           var config = { field: { max : 18 }, keys: { backspace: 8, erase: 46 } };
+           $(".field").on("keydown", function(e) {
+              if($(this).html().length >= config.field.max) {
+                  if(e.which != config.keys.backspace && e.which != config.keys.erase) { //backspace or delete
+                      e.preventDefault();
+                  }
+              }
+           });
+        });
+    </script>
     <div>
         <img src='img/logo.png' alt='logo' />
     </div>
@@ -102,7 +121,7 @@ p {
                     </table>
                 </td>
                 <td width='30%'>
-                    <div class='connect'><a align='center' href='#'>Connect</a></div>
+                    <div class='connect'><a align='center' href='#' onclick='login.controls.onConnect()'>Connect</a></div>
                 </td>
             </tr>
         </table>
