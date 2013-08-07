@@ -1,5 +1,11 @@
 //Copyright (c) 2013 Mark Farrell
+#include "Starfall\Platform.h"
 #include "Starfall\Skybox.h"
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 using namespace Starfall;
 
@@ -72,9 +78,8 @@ void Skybox::load() {
 			|| !this->right.loadFromFile("../Assets/Starfield/png/right.png")
 			|| !this->up.loadFromFile("../Assets/Starfield/png/up.png")
 			|| !this->down.loadFromFile("../Assets/Starfield/png/down.png")) {
-				printf("Load image error.");
-				system("pause");
-				exit(1);
+				cout << ("[Skybox::load] Load image error.") << endl;
+				Platform::Halt();
 		}
 
 		glEnable(GL_TEXTURE_CUBE_MAP);
@@ -104,7 +109,7 @@ void Skybox::load() {
 		this->cube.load(500.0f);
 }
 
-void Skybox::render() {
+void Skybox::render(sf::RenderWindow& window) {
 
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	//Disable all client states that could interfere with drawing the skybox.

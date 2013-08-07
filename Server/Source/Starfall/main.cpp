@@ -1,24 +1,4 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
 
 #include "Starfall/Send.h"
 #include "Starfall/Receive.h"

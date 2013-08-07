@@ -20,7 +20,7 @@ namespace Starfall {
 		public:
 			Skybox(bool load=true); //TODO: PASS a camera class to the constructor to get information for the far clip plane
 			void load();
-			void render();
+			void render(sf::RenderWindow& window);
 		protected:
 			GLuint textureID;
 			Cube cube;

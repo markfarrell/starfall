@@ -1,26 +1,9 @@
-﻿////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <cmath>
-#include <Windows.h>
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-#include <GL/glew.h>
-#include <SFML/OpenGL.hpp>
+﻿//Copyright (c) 2013 Mark Farrell
 
-#include <Awesomium/WebCore.h>
-#include <Awesomium/BitmapSurface.h>
-#include <Awesomium/STLHelpers.h>
-#include <Awesomium/DataSource.h>
-#include <Awesomium/DataPak.h>
-#include <Awesomium/WebViewListener.h>
-#include <algorithm>
-#include <fstream>
-
-#include "Starfall\Skybox.h"
-
+#include "Starfall\Platform.h"
 #include "Starfall\Application.h"
+
+#include <iostream>
 
 
 
@@ -30,10 +13,10 @@
 /// \return Application exit code
 ///
 ////////////////////////////////////////////////////////////
-INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
+PLATFORM_ENTRY_POINT
 {
-	Starfall::Application application;
-			
+	Starfall::Platform::Init();
+	Starfall::Application application;		
 	application.run();
     return EXIT_SUCCESS;
 }
