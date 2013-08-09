@@ -52,25 +52,6 @@ Poco::UInt32 Isolates::Release(v8::Isolate* releaseIsolate) {
 	return 0;
 }
 
-DestroyEntityStruct::DestroyEntityStruct() {
-	this->sessionid = 0;
-}
-
-CreateEntityStruct::CreateEntityStruct() {
-	this->sessionid = 0;
-	this->mode = 0;
-	this->displayName = "";
-	this->appearance = "";
-}
-
-TransformStruct::TransformStruct() {
-	this->action = 0;
-}
-
-TransformEntityStruct::TransformEntityStruct() {
-	this->sessionid = 0;
-}
-
 Poco::UInt32 IDGenerator::next() {	
 	Poco::UInt32 nextID = 0;
 	IDGenerator::mutex.lock();

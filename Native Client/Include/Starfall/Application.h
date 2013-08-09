@@ -80,8 +80,6 @@ namespace Starfall {
 		public:
 			ConfigurationFile config;
 
-			sf::TcpSocket socket;
-
 			sf::Clock clock;
 			Skybox skybox;
 

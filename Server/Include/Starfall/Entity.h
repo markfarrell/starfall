@@ -1,20 +1,22 @@
 //Copyright (c) 2013 Mark Farrell
 
 #pragma once
-#include "Poco/Net/Net.h"
-#include "Poco/SharedPtr.h"
-#include "Poco/Mutex.h"
-#include "Poco/HashMap.h"
+#include <Poco/Net/Net.h>
+#include <Poco/SharedPtr.h>
+#include <Poco/Mutex.h>
+#include <Poco/HashMap.h>
 
-#include "v8.h"
-
-#include "Starfall/Config.h"
-#include "Starfall/Transform.h"
+#include <v8.h>
 
 #include <exception>
 #include <vector>
 #include <string>
 #include <map>
+
+#include "Starfall/Config.h"
+#include "Starfall/Transform.h"
+#include "Starfall/TransformEntityStruct.h"
+#include "Starfall/CreateEntityStruct.h"
 
 using std::map;
 using std::vector;
@@ -41,7 +43,6 @@ namespace Starfall {
 	};
 
 
-
 	class Isolates {
 		friend class Entity;
 		protected:
@@ -60,33 +61,6 @@ namespace Starfall {
 
 	};
 
-	class DestroyEntityStruct {
-		public:
-			Poco::UInt32 sessionid;
-			DestroyEntityStruct();
-	};
-
-	class CreateEntityStruct : public Transform {
-		public:
-			Poco::UInt32 sessionid;
-			Poco::UInt32 mode;
-			string displayName;
-			string appearance;
-			CreateEntityStruct();
-	};
-
-	class TransformStruct : public Transform {
-		public:
-			Poco::UInt32 action;
-			TransformStruct();
-	};
-
-	class TransformEntityStruct {
-		public:
-			vector<TransformStruct> path;
-			Poco::UInt32 sessionid;
-			TransformEntityStruct();
-	};
 
 	class Entity : private Transform {
 		friend class CreateEntityStruct;

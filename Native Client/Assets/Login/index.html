@@ -113,15 +113,15 @@ p {
                 <td width='70%'>
                     <table class='form'>
                         <tr>
-                            <td width='20%'><span class='label'>Username:</span></td><td width='80%'><div contenteditable='true' class='field'>admin</div></td> 
+                            <td width='20%'><span class='label'>Username:</span></td><td width='80%'><div id='username' contenteditable='true' class='field'>admin</div></td> 
                         </tr>
                         <tr>
-                           <td width='20%'><span class='label'>Password:</span></td><td width='80%'><div contenteditable='true' class='field password'>admin</div></td> 
+                           <td width='20%'><span class='label'>Password:</span></td><td width='80%'><div id='password' contenteditable='true' class='field password'>admin</div></td> 
                         </tr>
                     </table>
                 </td>
                 <td width='30%'>
-                    <div class='connect'><a align='center' href='#' onclick='login.controls.onConnect()'>Connect</a></div>
+                    <div class='connect'><a align='center' href='#' onclick='login.controls.onConnect($("#username").text(), $("#password").text())'>Connect</a></div>
                 </td>
             </tr>
         </table>

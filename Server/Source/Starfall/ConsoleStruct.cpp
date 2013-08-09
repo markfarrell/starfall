@@ -1,25 +1,4 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
 
 #include "Starfall/ConsoleStruct.h"
 #include "Starfall/Console.h"

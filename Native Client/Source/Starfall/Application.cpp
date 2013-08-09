@@ -1,8 +1,12 @@
 //Copyright (c) 2013 Mark Farrell
+#include "Starfall\Head.h"
+#include "Starfall\LoginStruct.h"
+#include "Starfall\Buffer.h"
 #include "Starfall\Application.h"
 
 #include <Windows.h>
 #include <iostream>
+
 
 using std::cout;
 using std::endl;
@@ -143,21 +147,57 @@ LoginUI::~LoginUI() {
 void LoginUI::OnMethodCall(Awesomium::WebView* caller, unsigned int remote_object_id, const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
 	if(remote_object_id == this->loginControlsObject.remote_id() &&
 		method_name == Awesomium::WSLit("onConnect")) {
-		//TODO: Create a connection singleton object
-		//if(socket.connect(sf::IpAddress(config.getString("server.address")), config.getInt("server.port"), sf::seconds(3)) != sf::Socket::Error) {
-		//	unsigned char data [46] = {
-		//		0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1E, 0xFF, 0xFF, 0xFF, 0xFF,
-		//   	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05,
-		//		0x61, 0x64, 0x6D, 0x69, 0X6E, 0x00, 0x00, 0x00, 0x05, 0x61, 0x64, 0x6D, 0X69, 0X6E
-		//	};
-		//	socket.send(&data[0], 46);
-		//}
-		//socket.disconnect();
+		if(args.size() == 2) { 
+			sf::TcpSocket socket;
+			//TODO: Create a connection singleton object
+			if(socket.connect(sf::IpAddress(config.getString("server.address")), config.getInt("server.port"), sf::seconds(3)) != sf::Socket::Error) {
+				Buffer buffer;
+				Buffer headBuffer;
+				Buffer bodyBuffer;
+				LoginStruct loginStruct;
+				Head head;
+
+				unsigned int usernameLength = args[0].ToString().ToUTF8(NULL,0);
+				unsigned int passwordLength = args[1].ToString().ToUTF8(NULL,0);
+				loginStruct.username.resize(usernameLength);
+				loginStruct.password.resize(passwordLength);
+				//loginStruct.username = "admin";
+				//loginStruct.password = "admin";
+
+				args[0].ToString().ToUTF8(&loginStruct.username[0], usernameLength);
+				args[1].ToString().ToUTF8(&loginStruct.password[0], passwordLength);
+
+				bodyBuffer << loginStruct;
+
+
+				head.begin = 0xFFFFFFFF;
+				head.opcode = 0x00000001;
+				head.bodysize = bodyBuffer.size();
+				head.end = 0xFFFFFFFF;
+
+				headBuffer << head;
+
+				buffer.insert(buffer.end(), headBuffer.begin(), headBuffer.end());
+				buffer.insert(buffer.end(), bodyBuffer.begin(), bodyBuffer.end());
+
+
+				socket.send(&buffer[0], buffer.size()); //TODO: test this 
+
+				//unsigned char data [46] = {
+				//	0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1E, 0xFF, 0xFF, 0xFF, 0xFF,
+		  		//	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05,
+				//	0x61, 0x64, 0x6D, 0x69, 0X6E, 0x00, 0x00, 0x00, 0x05, 0x61, 0x64, 0x6D, 0X69, 0X6E
+				//}; 
+				//socket.send(&data[0], 46); 
+			}
+			socket.disconnect();
+		} else {
+			cout << "[LoginUI::OnMethodCall method_name=\"onConnect\"]: Invalid number of arguments ("<<args.size()<<")" << endl;
+		}
 	}
 }
 
 Awesomium::JSValue LoginUI::OnMethodCallWithReturnValue(Awesomium::WebView* caller, unsigned int remote_object_id, const Awesomium::WebString& method_name, const Awesomium::JSArray& args) {
-	 MessageBox(NULL, "MessageBox Text", "MessageBox caption", MB_OK);
 	return Awesomium::JSValue::Undefined();
 }
 

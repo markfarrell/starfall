@@ -1,4 +1,6 @@
 /ipch
+/Common/Debug
+/Common/Lib
 /Native Client/Debug
 /Native Client/Source/Debug
 /Native Client/Source/ipch

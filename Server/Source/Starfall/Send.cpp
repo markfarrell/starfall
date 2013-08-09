@@ -1,25 +1,4 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
 
 #include "Starfall/Send.h"
 #include "Starfall/Head.h"
@@ -45,10 +24,7 @@ bool Send::Enqueue(Player::Ptr& pPlayer, SendFunction caller, Buffer& body) {
 		head.opcode = Send::Map.at(caller);
 		head.end = 0xFFFFFFFF;
 		Buffer buffer;
-		buffer.writeUInt32(head.begin);
-		buffer.writeUInt32(head.bodysize);
-		buffer.writeUInt32(head.opcode);
-		buffer.writeUInt32(head.end);
+		buffer << head;
 		buffer.insert(buffer.end(), body.begin(), body.end());
 		pPlayer->sendQueue.push(buffer);
 		return true;
@@ -69,11 +45,13 @@ void Send::Init() {
 
 bool Send::LoginReply(Player::Ptr& pPlayer) {
 	Buffer buffer;
-	buffer.writeUInt32(pPlayer->state);
-	buffer.writeUInt32(pPlayer->userid);
-	buffer.writeUInt32(pPlayer->usertype);
-	buffer.writeString(pPlayer->username);
-	buffer.writeString(pPlayer->password);
+	LoginStruct loginStruct;
+	loginStruct.state = pPlayer->state;
+	loginStruct.userid = pPlayer->userid;
+	loginStruct.usertype = pPlayer->usertype;
+	loginStruct.username = pPlayer->username;
+	loginStruct.password = pPlayer->password;
+	buffer << loginStruct;
 	return Send::Enqueue(pPlayer, &Send::LoginReply, buffer);
 }
 

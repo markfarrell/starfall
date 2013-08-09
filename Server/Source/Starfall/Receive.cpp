@@ -1,14 +1,14 @@
 //Copyright (c) 2013 Mark Farrell
 
-#include "Poco/Foundation.h"
+#include <Poco/Foundation.h>
 
-#include "Poco/Data/Common.h"
-#include "Poco/Data/SQLite/Connector.h"
-#include "Poco/Exception.h"
+#include <Poco/Data/Common.h>
+#include <Poco/Data/SQLite/Connector.h>
+#include <Poco/Exception.h>
 
-#include "Poco/JSON/Object.h"
-#include "Poco/Dynamic/Var.h"
-#include "Poco/Dynamic/Struct.h"
+#include <Poco/JSON/Object.h>
+#include <Poco/Dynamic/Var.h>
+#include <Poco/Dynamic/Struct.h>
 
 #include <iostream>
 #include <set>
@@ -21,6 +21,9 @@
 #include "Starfall/Console.h"
 #include "Starfall/Packet.h"
 #include "Starfall/Entity.h"
+#include "Starfall/CreateEntityStruct.h"
+#include "Starfall/TransformEntityStruct.h"
+#include "Starfall/DestroyEntityStruct.h"
 
 using namespace Starfall;
 

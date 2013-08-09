@@ -1,27 +1,6 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
 
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
-
-#include "Starfall/Buffer.h"
+#include "Starfall/BufferBase.h"
 #include <iostream>
 #include <iostream>
 #include <iomanip>

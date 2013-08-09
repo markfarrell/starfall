@@ -1,29 +1,8 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
 
 #pragma once
 
-#include "Poco/SharedPtr.h"
+#include <Poco/SharedPtr.h>
 
 #include "Starfall/User.h"
 #include "Starfall/LoginStruct.h"

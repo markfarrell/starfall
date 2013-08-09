@@ -1,28 +1,7 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
-
 #pragma once
-#include "Poco/Net/Net.h"
+
+#include <Poco/Foundation.h>
 
 namespace Starfall {
 

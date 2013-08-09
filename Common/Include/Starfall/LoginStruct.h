@@ -1,36 +1,38 @@
-//
-//
 //Copyright (c) 2013 Mark Farrell
-//
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
-
 #pragma once
 
 
-#include "Poco/Data/Common.h"
-#include "Poco/Net/Net.h"
+#include <Poco/Data/Common.h>
+#include <Poco/Foundation.h>
 #include <string>
 
 using std::string;
 
 namespace Starfall { 
+
+	/** 
+		Description:
+			This enum can be used to help the developer choose a login state for the user. 
+			Though, the field's for a user's state should always be set as an unsigned int.
+			Data structures are transported across the network and enum types cannot be initialized from integer values.
+	**/
+	enum LOGIN_STATES { 
+		LOGIN_STATE_NOT_LOGGED_IN = 0,
+		LOGIN_STATE_LOGGING_IN = 1,
+		LOGIN_STATE_LOGGED_IN = 2
+	};
+
+	/** 
+		Description:
+			This enum can be used to help the developer choose a usertype for the user. 
+			Though, the field's for a user's state should always be set as an unsigned int.
+			Data structures are transported across the network and enum types cannot be initialized from integer values.
+	**/
+	enum LOGIN_USERTYPES {
+		LOGIN_USERTYPE_REGULAR=0,
+		LOGIN_USERTYPE_ADMIN=1
+	};
+
 	class LoginStruct {
 
 		public:

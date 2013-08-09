@@ -169,7 +169,8 @@ LoginServer::LoginServer():
 	_thread.start(_reactor); //Warning: Reactor Locks the socket in the constructor list! Do not call it outside its running thread!
 	_pHTTPServer = new Poco::Net::HTTPServer(new LoginHTTPRequestHandlerFactory, Poco::Net::ServerSocket(Ports::ToLoginServerFromWeb()), new Poco::Net::HTTPServerParams);
 	_pHTTPServer->start();
-	cout << "Login: " << _socket.address().toString() << " / Web: " << _pHTTPServer->port() <<  endl;
+	cout << "Copyright (c) 2013 Mark Farrell" << endl << endl;
+	cout << "Login: " << _socket.address().port() << " | Web: " << _pHTTPServer->port() <<  endl;
 }
 
 
