@@ -1,4 +1,5 @@
 //Copyright (c) 2013 Mark Farrell
+#include "Starfall\ConfigurationFile.h"
 #include "Starfall\Platform.h"
 #include "Starfall\Skybox.h"
 
@@ -72,12 +73,12 @@ Skybox::Skybox(bool load) {
 void Skybox::load() {
 		this->textureID = NULL;
 
-		if(!this->front.loadFromFile("../Assets/Starfield/png/front.png")
-			|| !this->back.loadFromFile("../Assets/Starfield/png/back.png")
-			|| !this->left.loadFromFile("../Assets/Starfield/png/left.png")
-			|| !this->right.loadFromFile("../Assets/Starfield/png/right.png")
-			|| !this->up.loadFromFile("../Assets/Starfield/png/up.png")
-			|| !this->down.loadFromFile("../Assets/Starfield/png/down.png")) {
+		if(!this->front.loadFromFile(Assets::Path("Starfield/png/front.png"))
+			|| !this->back.loadFromFile(Assets::Path("Starfield/png/back.png"))
+			|| !this->left.loadFromFile(Assets::Path("../Assets/Starfield/png/left.png"))
+			|| !this->right.loadFromFile(Assets::Path("../Assets/Starfield/png/right.png"))
+			|| !this->up.loadFromFile(Assets::Path("../Assets/Starfield/png/up.png"))
+			|| !this->down.loadFromFile(Assets::Path("../Assets/Starfield/png/down.png"))) {
 				cout << ("[Skybox::load] Load image error.") << endl;
 				Platform::Halt();
 		}
