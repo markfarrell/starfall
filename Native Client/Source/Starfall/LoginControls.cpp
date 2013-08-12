@@ -27,10 +27,10 @@ LoginControls::LoginControls(LoginUI* parent) :
 	config(ConfigurationFile::Client()) 
 {
 	this->parent = parent;
-	parent->view->CreateGlobalJavascriptObject(Awesomium::WSLit("login"));
+	this->parent->view->CreateGlobalJavascriptObject(Awesomium::WSLit("login"));
 	this->loginControlsObject = parent->view->CreateGlobalJavascriptObject(Awesomium::WSLit("login.controls")).ToObject();
 	this->loginControlsObject.SetCustomMethod(Awesomium::WSLit("onConnect"), false);
-	parent->view->set_js_method_handler(this);
+	this->parent->view->set_js_method_handler(this);
 }
 
 
@@ -136,6 +136,8 @@ void LoginControls::OnMethodCall(Awesomium::WebView* caller, unsigned int remote
 
 				socket.send(&buffer[0], buffer.size()); //TODO: test this 
 
+			} else {
+				this->parent->setStatus("Failed to connect.");
 			}
 			socket.disconnect();
 		} else {

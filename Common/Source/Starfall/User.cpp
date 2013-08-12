@@ -1,7 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
 
 #include "Starfall/User.h"
-#include "Starfall/Entity.h"
 
 using namespace Starfall;
 

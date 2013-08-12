@@ -26,6 +26,10 @@ p {
     background-repeat: no-repeat;
     width: 512px;
     height: 256px;
+}   
+
+.box td {
+    vertical-align: middle;        
 }
 .connect {
     display: table;
@@ -53,6 +57,12 @@ p {
     
 .form {
     padding-left: 5%;
+    position:relative;
+}
+.error {
+    position:absolute;
+    bottom: -1em;
+    margin-bottom: -0.2em;  
 }
 .label {
      color: #062007;
@@ -92,8 +102,14 @@ p {
 </head>
 <body>
     <script>
+        var statusMessage = new Object(); 
+        statusMessage.update = function(msg) {
+            $("#status").html(msg);  
+        };
+        
         /** Description: Limits the number of characters that may be entered into the fields of the form. **/
         $(function() {
+           
            var config = { field: { max : 18 }, keys: { backspace: 8, erase: 46 } };
            $(".field").on("keydown", function(e) {
               if($(this).html().length >= config.field.max) {
@@ -108,23 +124,39 @@ p {
         <img src='img/logo.png' alt='logo' />
     </div>
     <div>
-        <table class="box">
+        <table class='box'>
             <tr>
                 <td width='70%'>
-                    <table class='form'>
-                        <tr>
-                            <td width='20%'><span class='label'>Username:</span></td><td width='80%'><div id='username' contenteditable='true' class='field'>admin</div></td> 
-                        </tr>
-                        <tr>
-                           <td width='20%'><span class='label'>Password:</span></td><td width='80%'><div id='password' contenteditable='true' class='field password'>admin</div></td> 
-                        </tr>
-                    </table>
+                    <div class='form'>
+                        <table>
+                            <tr>
+                                <td width='20%'>
+                                    <span class='label'>Username:</span>
+                                </td>
+                                <td width='80%'>
+                                    <div id='username' contenteditable='true' class='field'>admin</div>
+                                </td> 
+                            </tr>
+                            <tr>
+                               <td width='20%' style='position:relative'>
+                                   <span class='label'>Password:</span>
+                                </td>
+                                <td width='80%'>
+                                    <div id='password' contenteditable='true' class='field password'>admin</div>
+                                    <div class='error label' id='status'></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>   
                 </td>
                 <td width='30%'>
                     <div class='connect'><a align='center' href='#' onclick='login.controls.onConnect($("#username").text(), $("#password").text())'>Connect</a></div>
-                </td>
+                </td> 
             </tr>
+
         </table>
+       
     </div>
+    
 </body>
 </html>

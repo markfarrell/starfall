@@ -2,16 +2,14 @@
 
 #pragma once
 
-#include <Poco/Net/Net.h>
-
-#include <string>
-#include <queue>
-#include <vector>
-
-
-#include "Starfall/Entity.h"
+#include "Starfall/DestroyEntityStruct.h"
+#include "Starfall/CreateEntityStruct.h"
+#include "Starfall/TransformEntityStruct.h"
 #include "Starfall/Buffer.h"
 
+#include <queue>
+#include <vector>
+#include <string>
 
 using std::string;
 

@@ -76,3 +76,10 @@ void LoginUI::render(sf::RenderWindow& window) {
 	window.draw(surfaceSprite);
 	window.popGLStates();
 }
+
+void LoginUI::setStatus(string status) {
+	Awesomium::JSArray args;
+	Awesomium::JSValue statusObject = this->view->ExecuteJavascriptWithResult(Awesomium::WSLit("statusMessage"), Awesomium::WSLit(""));
+	args.Push(Awesomium::JSValue(Awesomium::WSLit(status.c_str())));
+	statusObject.ToObject().Invoke(Awesomium::WSLit("update"), args);
+}

@@ -12,6 +12,10 @@
 #include <Awesomium/DataPak.h>
 #include <Awesomium/WebViewListener.h>
 
+#include <string>
+
+using std::string;
+
 
 namespace Starfall {
 	class LoginUI  { 
@@ -45,6 +49,8 @@ namespace Starfall {
 			bool contains(sf::Vector2f& mouseVector);
 			void center(sf::Vector2u windowSize);
 			void render(sf::RenderWindow& window);
+
+			void setStatus(string status); //updates the login status message displayed on the interface
 
 			LoginUI();
 			~LoginUI(); //deletes controls; destroys view
