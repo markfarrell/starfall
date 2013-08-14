@@ -1,9 +1,4 @@
-/ipch
-/Common/Debug
 /Common/Lib
-/Native Client/Debug
-/Native Client/Source/Debug
-/Native Client/Source/ipch
 /Native Client/Source/Client.rc
 /Native Client/Source/resource.h
 /Client/Temp
@@ -11,11 +6,8 @@
 /Client/Data
 /Client/Library
 /Server/Data/server.db
-/Server/ipch
-/Server/Debug
-/Server/Source/Debug
-/Server/Source/resource.h
 /Server/Source/Source.rc
+/Server/Source/resource.h
 *.pak
 *.opensdf
 *.sln
@@ -30,3 +22,8 @@
 *.csproj
 *.pidb
 *.unityproj
+*.pyc
+__pycache__/
+ipch/
+Debug/
+Release/
