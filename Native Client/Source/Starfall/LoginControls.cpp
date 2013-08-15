@@ -3,9 +3,8 @@
 
 #include "Starfall\LoginUI.h"
 
-#include "Starfall\Head.h"
 #include "Starfall\LoginStruct.h"
-#include "Starfall\Buffer.h"
+#include "Starfall\Client.h"
 
 #include <Awesomium/WebCore.h>
 #include <Awesomium/BitmapSurface.h>
@@ -13,10 +12,6 @@
 #include <Awesomium/DataSource.h>
 #include <Awesomium/DataPak.h>
 #include <Awesomium/WebViewListener.h>
-
-#include <SFML/System/Utf.hpp>
-#include <SFML/Network/TcpSocket.hpp>
-#include <SFML/Network/IpAddress.hpp>
 
 #include <cmath>
 #include <algorithm>
@@ -104,14 +99,9 @@ void LoginControls::OnMethodCall(Awesomium::WebView* caller, unsigned int remote
 	if(remote_object_id == this->loginControlsObject.remote_id() &&
 		method_name == Awesomium::WSLit("onConnect")) {
 		if(args.size() == 2) { 
-			sf::TcpSocket socket;
-			//TODO: Create a connection singleton object
-			if(socket.connect(sf::IpAddress(config.getString("server.address")), config.getInt("server.port"), sf::seconds(3)) != sf::Socket::Error) {
-				Buffer buffer;
-				Buffer headBuffer;
-				Buffer bodyBuffer;
+			if(Client::Get()->connect()) {
+
 				LoginStruct loginStruct;
-				Head head;
 
 				unsigned int usernameLength = args[0].ToString().ToUTF8(NULL,0);
 				unsigned int passwordLength = args[1].ToString().ToUTF8(NULL,0);
@@ -121,25 +111,11 @@ void LoginControls::OnMethodCall(Awesomium::WebView* caller, unsigned int remote
 				args[0].ToString().ToUTF8(&loginStruct.username[0], usernameLength);
 				args[1].ToString().ToUTF8(&loginStruct.password[0], passwordLength);
 
-				bodyBuffer << loginStruct;
-
-
-				head.begin = 0xFFFFFFFF;
-				head.opcode = 0x00000001;
-				head.bodysize = bodyBuffer.size();
-				head.end = 0xFFFFFFFF;
-
-				headBuffer << head;
-
-				buffer.insert(buffer.end(), headBuffer.begin(), headBuffer.end());
-				buffer.insert(buffer.end(), bodyBuffer.begin(), bodyBuffer.end());
-
-				socket.send(&buffer[0], buffer.size()); //TODO: test this 
+				Client::Get()->tryLogin(loginStruct);
 
 			} else {
 				this->parent->setStatus("Failed to connect.");
 			}
-			socket.disconnect();
 		} else {
 			cout << "[LoginUI::OnMethodCall method_name=\"onConnect\"]: Invalid number of arguments ("<<args.size()<<")" << endl;
 		}

@@ -1,16 +1,15 @@
 //Copyright (c) 2013 Mark Farrell
-
-
-
 #pragma once
+
+
+
+#include <Poco/Data/Common.h>
+#include <Poco/JSON/Object.h>
+#include <Poco/Dynamic/Var.h>
+#include <Poco/Dynamic/Struct.h>
 
 #include <string>
 using namespace std;
-
-#include "Poco/Data/Common.h"
-#include "Poco/JSON/Object.h"
-#include "Poco/Dynamic/Var.h"
-#include "Poco/Dynamic/Struct.h"
 
 namespace Starfall {
 

@@ -1,8 +1,9 @@
 ﻿//Copyright (c) 2013 Mark Farrell
 
 #include "Starfall\Platform.h"
+#include "Starfall\Client.h"
 #include "Starfall\Application.h"
-
+#include "Starfall\Model.h"
 #include <iostream>
 
 
@@ -16,7 +17,8 @@
 PLATFORM_ENTRY_POINT
 {
 	Starfall::Platform::Init();
-	Starfall::Application application;		
+	Starfall::Model("Models/Cube.json");
+	Starfall::Application application;	
 	application.run();
     return EXIT_SUCCESS;
 }

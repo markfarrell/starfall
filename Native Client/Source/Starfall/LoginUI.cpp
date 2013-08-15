@@ -55,10 +55,17 @@ bool LoginUI::contains(sf::Vector2f& mouseVector) {
 
 void LoginUI::updateSurface() {
 	if(uiClock.getElapsedTime().asMilliseconds() >= uiResetTime) { 
+
+		//Update UI status
+		this->updateStatus();
+
+		//Redraw surface
 		Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();
 		surface->CopyTo((unsigned char*)surfaceImage.getPixelsPtr(), surface->width()*4, 4, true, false);
 		surfaceTexture.update(surfaceImage);
 		this->core->Update();
+
+
 		uiClock.restart();
 	}
 }
@@ -77,9 +84,24 @@ void LoginUI::render(sf::RenderWindow& window) {
 	window.popGLStates();
 }
 
+void LoginUI::updateStatus() {
+		this->statusMutex.lock();
+		if(!this->statusStack.empty()) { 
+			string status = statusStack.top();
+
+			Awesomium::JSArray args;
+			Awesomium::JSValue statusObject = this->view->ExecuteJavascriptWithResult(Awesomium::WSLit("statusMessage"), Awesomium::WSLit(""));
+			args.Push(Awesomium::JSValue(Awesomium::WSLit(status.c_str())));
+			statusObject.ToObject().Invoke(Awesomium::WSLit("update"), args);
+		}
+		this->statusMutex.unlock();
+}
+
 void LoginUI::setStatus(string status) {
-	Awesomium::JSArray args;
-	Awesomium::JSValue statusObject = this->view->ExecuteJavascriptWithResult(Awesomium::WSLit("statusMessage"), Awesomium::WSLit(""));
-	args.Push(Awesomium::JSValue(Awesomium::WSLit(status.c_str())));
-	statusObject.ToObject().Invoke(Awesomium::WSLit("update"), args);
+	this->statusMutex.lock();
+	while(!this->statusStack.empty()) {
+		this->statusStack.pop(); //clear all elements from the stack; only store the most recent status
+	}
+	this->statusStack.push(status);
+	this->statusMutex.unlock();
 }

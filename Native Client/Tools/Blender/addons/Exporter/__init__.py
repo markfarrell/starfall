@@ -20,22 +20,14 @@ class ExportStarfallFormat(bpy.types.Operator, ExportHelper):
      
     filename_ext    = ".json";
     
-    #Formats the blender tessface as a dictionary, using vertex indices a, b, and c
-    def formatFace(self, face, a, b, c): 
+    #Formats the blender tessface as a dictionary, using vertex at indices a, b, and c
+    #Note: Face.vertices are indices, Mesh.vertices are vertex values
+    def formatFace(self, mesh, face, a, b, c): 
         return {
                 "face" : { 
-                    "vertex" : [
-                        round(face.vertices[a],5),
-                        round(face.vertices[b],5),
-                        round(face.vertices[c],5)
-                    ],
-                    "material_index" : 
-                        str(face.material_index),
-                    "normal" : [
-                        round(face.normal[0],5),
-                        round(face.normal[1],5),
-                        round(face.normal[2],5)
-                    ]
+                    "vertices" : [(lambda x: [str(round(y,5)) for y in mesh.vertices[face.vertices[x]].co])(x) for x in [a,b,c]],
+                    "material_index" : str(face.material_index),
+                    "normal" : [str(round(x,5)) for x in face.normal]
                 } 
         };
      
@@ -60,27 +52,19 @@ class ExportStarfallFormat(bpy.types.Operator, ExportHelper):
                 for material in mesh.materials: 
                     materialList.append({ 
                        "material" : {
-                           "alpha" : 
-                               str(material.alpha),
-                           "diffuse_color": [
-                               round(material.diffuse_color[0],5),
-                               round(material.diffuse_color[1],5),
-                               round(material.diffuse_color[2],5)
-                           ],
-                           "specular_color" : [
-                               round(material.specular_color[0],5),
-                               round(material.specular_color[1],5),
-                               round(material.specular_color[2],5) 
-                           ]
+                           "name" : str(material.name),
+                           "alpha" : str(material.alpha),
+                           "diffuse_color": [str(round(x, 5)) for x in material.diffuse_color],
+                           "specular_color" : [str(round(x, 5)) for x in material.specular_color]
                         }
                     }); 
 
                 for face in mesh.tessfaces:
                     if len(face.vertices) == 3:
-                        faceList.append(self.formatFace(face, 0, 1, 2));
+                        faceList.append(self.formatFace(mesh, face, 0, 1, 2));
                     else: #4 vertices
-                        faceList.append(self.formatFace(face, 0, 1, 2));
-                        faceList.append(self.formatFace(face, 0, 2, 3));
+                        faceList.append(self.formatFace(mesh, face, 0, 1, 2));
+                        faceList.append(self.formatFace(mesh, face, 0, 2, 3));
                             
                 objectList.append({ 
                    "mesh" : {
@@ -93,7 +77,7 @@ class ExportStarfallFormat(bpy.types.Operator, ExportHelper):
             else:
                 print("No export object for %s" % ob.type);
              
-        document = { "asset" : objectList };
+        document = { "meshes" : objectList };
                     
         file=open(self.filepath, "w");
         file.write(json.dumps(document));

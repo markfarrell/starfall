@@ -48,7 +48,7 @@ bool Receive::LoginData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head
 	http::out << head << loginPacket;
 
 	if(pPlayer->userid != loginPacket->userid) {
-		std::cerr << "Error: The integer read from Receives::Login does not match the default userid! Address: " << pPlayer->address << endl;
+		std::cerr << "Error: The integer read from Receives::Login, " << loginPacket->userid << " does not match the expected userid in this player state, " << pPlayer->userid << "! Address: " << pPlayer->address << endl;
 		return false;
 	}
 	pPlayer->state = loginPacket->state;

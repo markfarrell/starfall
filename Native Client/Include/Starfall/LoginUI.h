@@ -12,6 +12,9 @@
 #include <Awesomium/DataPak.h>
 #include <Awesomium/WebViewListener.h>
 
+#include <Poco\Mutex.h>
+
+#include <stack>
 #include <string>
 
 using std::string;
@@ -43,6 +46,9 @@ namespace Starfall {
 
 			LoginControls* controls;
 
+			Poco::Mutex statusMutex;
+			std::stack<string> statusStack; //status messages stack from the connection thread; read the most recent one and clear
+
 			void initSurface();
 			void updateSurface();
 
@@ -50,7 +56,9 @@ namespace Starfall {
 			void center(sf::Vector2u windowSize);
 			void render(sf::RenderWindow& window);
 
-			void setStatus(string status); //updates the login status message displayed on the interface
+
+			void updateStatus(); //executes JavaScript in the web control; accesses the top of the status stack; should be called in the same thread as view.
+			void setStatus(string status); //sets the login status message displayed on the interface
 
 			LoginUI();
 			~LoginUI(); //deletes controls; destroys view
