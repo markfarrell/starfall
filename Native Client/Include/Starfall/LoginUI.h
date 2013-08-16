@@ -21,6 +21,27 @@ using std::string;
 
 
 namespace Starfall {
+
+	class Transition {
+		private:
+		
+			bool active;
+
+			sf::Clock resetClock;
+			sf::Int32 resetTime;
+
+			sf::Clock motionClock;
+			sf::Int32 motionTime;
+			
+		public:
+			Transition();
+			void activate();
+			bool isActive();
+			bool isDone();
+			bool move(); //returns whether should an object be animated one step based on the time of motion clock
+			float percentageSpeed(); //speed at which an object should; amount to move each step to synchronize with the transition's reset clock
+	};
+
 	class LoginUI  { 
 		friend class LoginScene;
 		friend class LoginControls;
@@ -32,6 +53,8 @@ namespace Starfall {
 			Awesomium::WebCore* core; //TODO: UIs should share a core; move core outside of LoginUI
 			Awesomium::WebView* view;
 			Awesomium::DataSource* dataSource;
+
+			Transition transition;
 
 			/*****************/
 			/*TODO: All UIs will have these data attributes. */
@@ -56,6 +79,7 @@ namespace Starfall {
 			void center(sf::Vector2u windowSize);
 			void render(sf::RenderWindow& window);
 
+			bool transitioned();
 
 			void updateStatus(); //executes JavaScript in the web control; accesses the top of the status stack; should be called in the same thread as view.
 			void setStatus(string status); //sets the login status message displayed on the interface

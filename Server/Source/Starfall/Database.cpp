@@ -52,7 +52,6 @@ bool Database::Select::TryLogin(LoginStruct& loginStruct) {
 		cout << "This user does not exist in the database." << endl;
 	}
 	else if(logins.size() == 1) {
-		cout << "(Found this user in the database)" << " userid=" << logins[0].userid << ";" << " usertype=" << logins[0].usertype << endl;
 		if(logins[0].userid != loginStruct.userid) {
 			loginStruct.userid = logins[0].userid;
 			loginStruct.usertype = logins[0].usertype;

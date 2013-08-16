@@ -11,6 +11,7 @@
 #include <Poco/Dynamic/Struct.h>
 
 #include <iostream>
+#include <iomanip>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -29,6 +30,8 @@ using namespace Starfall;
 
 using std::copy;
 using std::vector;
+using std::setfill;
+using std::setw;
 using std::cout;
 using std::endl;
 
@@ -55,15 +58,24 @@ bool Receive::LoginData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head
 	pPlayer->usertype = loginPacket->usertype;
 	pPlayer->username = loginPacket->username;
 	pPlayer->password = loginPacket->password;
-	cout << "Username: " << pPlayer->username << ", Password: " << pPlayer->password << ", Address: " << pPlayer->address << endl;
+
 
 	LoginStruct& loginStruct = loginPacket.value();
 	if(Database::Select::TryLogin(loginStruct)) {
-		pPlayer->state = 1; //logging in
+		pPlayer->state = LOGIN_STATE_LOGGING_IN; //logging in
 		pPlayer->userid  = loginStruct.userid;
 		pPlayer->usertype = loginStruct.usertype;
 		pPlayer->username = loginStruct.username;
 		pPlayer->password = loginStruct.password;
+
+		cout << endl;
+		cout << setw(8) << "Address." << setfill('.') << setw(30) << pPlayer->address << endl << setfill(' ');
+		cout << setw(8) << "Username" << setfill('.') << setw(30) << pPlayer->username << endl << setfill(' ');
+		cout << setw(8) << "Password" << setfill('.') << setw(30) << pPlayer->password << endl << setfill(' ');
+		cout << setw(8) << "Userid.." << setfill('.') << setw(30) << pPlayer->userid << endl << setfill(' ');
+		cout << setw(8) << "Usertype" << setfill('.') << setw(30) << pPlayer->usertype << endl << setfill(' ');
+		cout << endl;
+
 	}
 
 	if(!Send::LoginReply(pPlayer)) { return false; }

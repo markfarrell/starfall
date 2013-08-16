@@ -9,6 +9,46 @@
 
 using namespace Starfall;
 
+Transition::Transition() { 
+	this->active = false;
+	this->resetTime = sf::Int32(1000);
+	this->motionTime = sf::Int32(1000.0f/float(ConfigurationFile::Client().getInt("ui.maxFPS")));
+}
+
+void Transition::activate() {
+	if(!this->isActive()) {
+		this->active = true;
+		this->resetClock.restart();
+		this->motionClock.restart();
+	}
+}
+
+bool Transition::isActive() {
+	return this->active;
+}
+
+bool Transition::isDone() {
+	if(this->resetClock.getElapsedTime().asMilliseconds() >= this->resetTime) { 
+		this->active = false;
+		return true;
+	} 
+	return false;
+}
+
+bool Transition::move() {
+	if(this->isActive()) {
+		if(this->motionClock.getElapsedTime().asMilliseconds() >= this->motionTime) { 
+			this->motionClock.restart();
+			return true;
+		} 
+	}
+	return false;
+}
+
+float Transition::percentageSpeed() {
+	return float(this->motionTime) / float(this->resetTime);
+};
+
 
 LoginUI::LoginUI() :
 	config(ConfigurationFile::Client())
@@ -68,6 +108,16 @@ void LoginUI::updateSurface() {
 
 		uiClock.restart();
 	}
+
+	if(this->transition.move()) {
+		sf::Uint8 subtractAlpha = sf::Uint8(this->transition.percentageSpeed()*255.0f);
+		sf::Uint8 currentAlpha = this->surfaceSprite.getColor().a;
+		if((int(currentAlpha)-int(subtractAlpha)) >= 0) { //Color stores values as bytes; Prevent the alpha from being reset to 255
+			this->surfaceSprite.setColor(sf::Color(255,255,255,currentAlpha-subtractAlpha));
+			this->surfaceSprite.move(-this->transition.percentageSpeed()*this->surfaceSprite.getGlobalBounds().width/2.0f, 0.0f);
+		}
+		
+	}
 }
 
 void LoginUI::initSurface() {
@@ -82,6 +132,14 @@ void LoginUI::render(sf::RenderWindow& window) {
 	window.pushGLStates();
 	window.draw(surfaceSprite);
 	window.popGLStates();
+}
+
+bool LoginUI::transitioned() {
+	this->transition.activate();
+	if(this->transition.isDone()) {
+		return true;
+	}
+	return false;
 }
 
 void LoginUI::updateStatus() {

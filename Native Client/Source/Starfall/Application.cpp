@@ -3,6 +3,7 @@
 #include "Starfall\Application.h"
 #include "Starfall\Platform.h"
 #include "Starfall\Login.h"
+#include "Starfall\WorldScene.h"
 
 #include <Poco\NumberParser.h>
 #include <Poco\StringTokenizer.h>
@@ -28,21 +29,31 @@ Application::Application() :
 	unsigned short numFiles;
 	Awesomium::WriteDataPak(Awesomium::WSLit(Assets::Path("login.pak").c_str()), Awesomium::WSLit(Assets::Path("login").c_str()), Awesomium::WSLit(""), numFiles);
 
+	this->currentScene = NULL; //will be set to loginScene when application is run
 	this->loginScene = new LoginScene(this);
+	this->worldScene = new WorldScene(this);
+
+
 }
 
 
 Application::~Application() {
+	this->currentScene = NULL; //Note: don't delete currentScene; it points to objects already existing on the heap
 	delete this->loginScene;
+	delete this->worldScene;
 	Awesomium::WebCore::Shutdown();
 }
 
 void Application::update() {
-	this->loginScene->update();
+	if(this->currentScene != NULL) {
+		this->currentScene->update();
+	}
 }
 
 void Application::render() {
-	this->loginScene->render();
+	if(this->currentScene != NULL) {
+		this->currentScene->render();
+	}
 	// Finally, display the rendered frame on screen
 	window.display();
 }
@@ -99,13 +110,17 @@ void Application::run() {
 	}
 
 	this->loginScene->load();
-	this->loginScene->enter();
+	this->loginScene->enter(NULL, this->worldScene); //calls Application::changeScene to set the current scene
  
     while (window.isOpen())
     {
 		this->update();
 		this->render();
     }
+}
+
+void Application::changeScene(Scene* scene) {
+	this->currentScene = scene;
 }
 
 void Application::logout() {

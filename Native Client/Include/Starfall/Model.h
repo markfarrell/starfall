@@ -5,8 +5,13 @@
 #include <Poco/Dynamic/Struct.h>
 #include <Poco/Foundation.h>
 #include <Poco/SharedPtr.h>
+#include <Poco/Mutex.h>
+#include <Poco/Runnable.h>
+#include <Poco/ScopedLock.h>
 
 #include <SFML/Graphics.hpp>
+#include <GL/glew.h>
+#include <SFML/OpenGL.hpp>
 
 #include <iostream>
 #include <vector>
@@ -49,13 +54,41 @@ namespace Starfall {
 			Mesh() : name("Mesh") {}
 	};
 
-	class Model {
+
+	/** Description: Stores OpenGL valid data for a mesh. Should be reinstantiated when the geometry of a mesh is updated. **/
+	class MeshRenderer {
 		public:
-			
-			vector<Mesh> meshes;
+			typedef Poco::SharedPtr<MeshRenderer> Ptr; //allocate renderers on heap
+			vector<GLfloat> data; //stores vertex and color data
+			GLsizei count; //number of elements in data array
+			MeshRenderer(Mesh& mesh); //populate data and count
+	};
+
+
+	class Model : public Poco::Runnable {
+		public:
+
 			Model(string path); //load a .json 3D model from the given path
-			void render(); //renders the model.
+			~Model();
+
+			void load(); //load from path; thread-safe
+			void update(); //recreate mesh renderers
+			void render(); //renders the model; thread safe operation
+
+			bool isLoaded(); //check to see if the model is loaded; mutex is only lock to insert items into renderers and meshes 
+
+			virtual void run();
+
 		private:
+
+			Poco::Mutex mutex; //Model is loading in a separate thread. Is the model finished loading
+
+			//Members are not thread-safe; do not allow direct access
+			vector<MeshRenderer::Ptr> renderers; 
+			vector<Mesh> meshes;
+			string path; //the model's path
+
+			bool loaded;
 
 			/**
 			 *  Description: Rather than reloading a model each time from a file when it is instantiated, copy a vector that was already parsed. 
@@ -63,6 +96,7 @@ namespace Starfall {
 			 *  TODO: Mesh data and materials should be shared using Poco::Shared Pointers. Materials could be replaced with new shared pointers.
 			 */
 			static map<string, vector<Mesh>> Resources; 
+			static Poco::Mutex ResourcesMutex; //lock parallel access to Resources
 
 			template<typename T> 
 			T parse (string member, Poco::Dynamic::Struct<string>& fromStruct, bool debug=false);
@@ -70,6 +104,7 @@ namespace Starfall {
 			vector<Material::Ptr> parseMaterials(Poco::Dynamic::Struct<string>& meshStruct);
 			vector<Face::Ptr> parseFaces(Poco::Dynamic::Struct<string>& meshStruct);
 			vector<Mesh> parseMeshes(Poco::Dynamic::Var& jsonVar); 
+
 	};
 
 	template<typename T>

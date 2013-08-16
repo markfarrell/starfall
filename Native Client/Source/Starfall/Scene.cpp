@@ -14,6 +14,7 @@ void Scene::enter(Scene* prevScene, Scene* nextScene) {
 	this->prevScene = prevScene;
 	this->nextScene = nextScene;
 	this->initialize();
+	this->parent->changeScene(this);
 }
 
 void Scene::next() { 

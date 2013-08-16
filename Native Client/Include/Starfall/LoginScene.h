@@ -3,6 +3,7 @@
 
 #include "Starfall\Scene.h"
 #include "Starfall\Skybox.h"
+#include "Starfall\Camera.h"
 
 namespace Starfall {
 
@@ -16,7 +17,9 @@ namespace Starfall {
 
 			sf::Clock clock;
 			Skybox skybox;
+			Camera camera;
 			LoginUI* pLoginUI;
+		
 
 			LoginScene(Application* parent);
 			~LoginScene();

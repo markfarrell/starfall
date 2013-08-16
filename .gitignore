@@ -23,6 +23,8 @@
 *.pidb
 *.unityproj
 *.pyc
+*.blend1
+*.blend2
 __pycache__/
 ipch/
 Debug/

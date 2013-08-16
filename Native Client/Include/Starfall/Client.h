@@ -10,8 +10,9 @@
 
 #include <Poco/Foundation.h>
 #include <Poco/SharedPtr.h>
-#include <Poco/Mutex.h>
 #include <Poco/Thread.h>
+#include <Poco/Mutex.h>
+
 
 #include <vector>
 #include <map>
@@ -54,8 +55,9 @@ namespace Starfall {
 
 			static Client::Ptr Get(); //get the main client for usage by the application, clients[0]
 			void setLoginStruct(LoginStruct loginStruct);
-
 			bool tryLogin(LoginStruct loginStruct);
+			bool isLoggedIn(); //used by the login scene for a scene transition.
+
 
 			~Client();
 

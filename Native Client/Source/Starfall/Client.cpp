@@ -149,6 +149,11 @@ bool Client::tryLogin(LoginStruct loginStruct) {
 	return false;
 }
 
+bool Client::isLoggedIn() {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	return (this->loginStruct.state == LOGIN_STATE_LOGGED_IN);
+}
+
 Client::Ptr Client::Get() {
 	if(Client::Clients.size() == 0) {
 		Client::Clients.push_back(Client::Ptr(new Client(Client::Clients.size())));
@@ -213,8 +218,12 @@ ClientReceiver::ReceiveFunction ClientReceiver::at(Poco::UInt32 opcode) {
 }
 
 bool ClientReceiver::LoginReply(Buffer& buffer, Packet<Head>& head, Client::Ptr& pClient) {
+
 	Packet<LoginStruct> loginStruct;
 	buffer >> loginStruct;
+	
+	loginStruct->state = LOGIN_STATE_LOGGED_IN;
+
 	pClient->setLoginStruct(loginStruct.value());
 
 	return true;

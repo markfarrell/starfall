@@ -1,11 +1,17 @@
 //Copyright (c) 2013 Mark Farrell
 #include "Starfall\LoginScene.h"
+
+#include "Starfall\Client.h"
 #include "Starfall\Application.h"
 #include "Starfall\LoginUI.h"
 #include "Starfall\LoginControls.h"
 
+#include <GL/glew.h>
+#include <SFML/OpenGL.hpp>
 
 using namespace Starfall;
+
+
 
 LoginScene::LoginScene(Application* parent) :
 	Scene(parent),
@@ -15,27 +21,7 @@ LoginScene::LoginScene(Application* parent) :
 }
 
 void LoginScene::initialize() {
-	   // Set the color and depth clear values
-    glClearDepth(1.f);
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-
-    // Enable Z-buffer read and write
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-
-    // Disable lighting and texturing
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-
-    // Configure the viewport (the same size as the window)
-	glViewport(0, 0, this->parent->window.getSize().x, this->parent->window.getSize().y);
-
-    // Setup a perspective projection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-	GLfloat ratio = static_cast<float>(this->parent->window.getSize().x) / this->parent->window.getSize().y;
-    glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 866.f); //far is diagonal distance across skybox-cube (distance from 0,0,0 to oppose edge)
-
+	this->camera.initialize(this->parent->window);
 }
 
 void LoginScene::render() {
@@ -109,6 +95,13 @@ void LoginScene::update() {
 	}
 
 	this->pLoginUI->updateSurface();
+
+	if(Client::Get()->isLoggedIn()) {
+		if(this->pLoginUI->transitioned()) { //returns true when done transitioning
+			this->next();
+		}
+	}
+
 }
 
 LoginScene::~LoginScene() {
