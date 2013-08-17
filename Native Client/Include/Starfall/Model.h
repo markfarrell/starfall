@@ -79,6 +79,9 @@ namespace Starfall {
 
 			virtual void run();
 
+			sf::Vector3f position; //the model's position should only be accessed in one thread
+			sf::Vector3f rotation; //likewise, the model's rotation should only be accessed in one thread
+
 		private:
 
 			Poco::Mutex mutex; //Model is loading in a separate thread. Is the model finished loading

@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\WorldScene.h"
+#include "Starfall/WorldScene.h"
 
-#include "Starfall\Application.h"
+#include "Starfall/Application.h"
 
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
@@ -37,16 +37,15 @@ void WorldScene::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 	
-
+	glRotatef(this->camera.rotation.x, 1.0f, 0.0f, 0.0f);
 	gluLookAt(this->camera.position.x, this->camera.position.y, this->camera.position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0); //TODO: Replace with model positions
+	
 
 	if(this->isLoading) { 
 		//Draw loading screen
 	} else {
-		//glPushMatrix();
-		glRotatef(clock.getElapsedTime().asSeconds()*5.0f, 0.0f, 0.0f, 1.0f);
+		this->model.rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
 		this->model.render();
-		//glPopMatrix();
 	}
 
 	
@@ -74,6 +73,8 @@ void WorldScene::update() {
 		if(event.type == sf::Event::MouseButtonPressed) {
 			this->camera.position.z += 0.3f;
 		}
+
+		this->camera.controls.update(event);
 	}
 
 	if(this->isLoading) {
@@ -85,5 +86,6 @@ void WorldScene::update() {
 		}
 	}
 
+	this->camera.controls.apply();
 
 }

@@ -208,14 +208,21 @@ vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 
 void Model::render() {
 
+
+	glPushMatrix();
+
+
+	glTranslatef(this->position.x, this->position.y, this->position.z);
+	glRotatef(this->rotation.x, 1.0f, 0.0f, 0.0f);
+	glRotatef(this->rotation.y, 0.0f, 1.0f, 0.0f);
+	glRotatef(this->rotation.z, 0.0f, 0.0f, 1.0f);
+
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 
-
-	
 	/** lock(this->mutex) **/ { 
 		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 		for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {
@@ -237,6 +244,8 @@ void Model::render() {
 		}
 	}
 	
+
+	glPopMatrix();
 
 
 
