@@ -25,7 +25,7 @@ WorldScene::~WorldScene() {
 
 void WorldScene::initialize() { 
 	this->camera.initialize(this->parent->window);
-	this->camera.position = sf::Vector3f(0.3f, -5.0f, 5.0f);
+	this->camera.eye = sf::Vector3f(0.0f, 0.0f, 0.0f);
 }
 
 void WorldScene::render() {
@@ -37,13 +37,22 @@ void WorldScene::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 	
-	glRotatef(this->camera.rotation.x, 1.0f, 0.0f, 0.0f);
-	gluLookAt(this->camera.position.x, this->camera.position.y, this->camera.position.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0); //TODO: Replace with model positions
-	
+
+
+	gluLookAt(
+		this->camera.eye.x, this->camera.eye.y, this->camera.eye.z, 
+		this->camera.lookat.x, this->camera.lookat.y, this->camera.lookat.z, 
+		this->camera.up.x, this->camera.up.y, this->camera.up.z
+	); 
+
+	this->parent->skybox.position = this->camera.eye;
+	this->parent->skybox.render(this->parent->window);
 
 	if(this->isLoading) { 
+
 		//Draw loading screen
 	} else {
+
 		this->model.rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
 		this->model.render();
 	}
@@ -52,7 +61,6 @@ void WorldScene::render() {
 }
 
 void WorldScene::load() {
-
 }
 
 void WorldScene::update() {
@@ -68,10 +76,6 @@ void WorldScene::update() {
 		if (event.type == sf::Event::Resized) {
 			glViewport(0, 0, event.size.width, event.size.height);
 			this->parent->window.setView(sf::View(sf::Vector2f(float(event.size.width/2), float(event.size.height/2)), sf::Vector2f(float(event.size.width), float(event.size.height))));
-		}
-
-		if(event.type == sf::Event::MouseButtonPressed) {
-			this->camera.position.z += 0.3f;
 		}
 
 		this->camera.controls.update(event);

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Starfall\Scene.h"
-#include "Starfall\Skybox.h"
 #include "Starfall\Camera.h"
 
 namespace Starfall {
@@ -16,7 +15,6 @@ namespace Starfall {
 		public:
 
 			sf::Clock clock;
-			Skybox skybox;
 			Camera camera;
 			LoginUI* pLoginUI;
 		

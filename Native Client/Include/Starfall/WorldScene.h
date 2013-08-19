@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Starfall\Scene.h"
-#include "Starfall\Skybox.h"
 #include "Starfall\Camera.h"
 #include "Starfall\Model.h"
 

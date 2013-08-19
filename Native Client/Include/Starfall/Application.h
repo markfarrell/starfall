@@ -39,6 +39,8 @@ namespace Starfall {
 		public:
 			ConfigurationFile config;
 
+			Skybox skybox; //skybox shared by both scenes
+
 			Scene* currentScene; 
 			LoginScene* loginScene;
 			WorldScene* worldScene;

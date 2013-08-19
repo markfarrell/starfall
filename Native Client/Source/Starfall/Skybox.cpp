@@ -112,6 +112,9 @@ void Skybox::load() {
 
 void Skybox::render(sf::RenderWindow& window) {
 
+	glPushMatrix();
+	glTranslatef(this->position.x, this->position.y, this->position.z);
+
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	//Disable all client states that could interfere with drawing the skybox.
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -134,6 +137,8 @@ void Skybox::render(sf::RenderWindow& window) {
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	glDisable(GL_TEXTURE_CUBE_MAP);
+
+	glPopMatrix();
 }
 
 

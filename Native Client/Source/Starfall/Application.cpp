@@ -22,8 +22,8 @@ using namespace Starfall;
 
 Application::Application() : 
 	config(ConfigurationFile::Client()),
-
-	window(sf::VideoMode(config.getInt("window.width"), config.getInt("window.height")), config.getString("window.title", "Fail"), sf::Style::Default, sf::ContextSettings(32)) // Create the main window
+	window(sf::VideoMode(config.getInt("window.width"), config.getInt("window.height")), config.getString("window.title", "Fail"), sf::Style::Default, sf::ContextSettings(32)), // Create the main window
+	skybox(false)
 {
 
 	unsigned short numFiles;
@@ -109,6 +109,8 @@ void Application::run() {
 		Platform::Halt();
 	}
 
+	this->skybox.load();
+	this->worldScene->load();
 	this->loginScene->load();
 	this->loginScene->enter(NULL, this->worldScene); //calls Application::changeScene to set the current scene
  

@@ -211,7 +211,6 @@ void Model::render() {
 
 	glPushMatrix();
 
-
 	glTranslatef(this->position.x, this->position.y, this->position.z);
 	glRotatef(this->rotation.x, 1.0f, 0.0f, 0.0f);
 	glRotatef(this->rotation.y, 0.0f, 1.0f, 0.0f);

@@ -13,9 +13,8 @@ using namespace Starfall;
 
 
 
-LoginScene::LoginScene(Application* parent) :
-	Scene(parent),
-	skybox(false)
+LoginScene::LoginScene(Application* parent)
+	: Scene(parent)
 {
 	this->pLoginUI = new LoginUI();
 }
@@ -34,15 +33,13 @@ void LoginScene::render() {
 
     glRotatef(this->clock.getElapsedTime().asSeconds() * 1, 0.f, 0.f, 1.f);
 
-	this->skybox.render(this->parent->window);
+	this->parent->skybox.render(this->parent->window);
 	this->pLoginUI->render(this->parent->window);
 }
 
 void LoginScene::load() {
 	this->pLoginUI->initSurface();
 	this->pLoginUI->center(this->parent->window.getSize());
-	skybox.load();
-
 }
 
 void LoginScene::update() {
