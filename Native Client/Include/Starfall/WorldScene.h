@@ -5,31 +5,40 @@
 #include "Starfall\Camera.h"
 #include "Starfall\Model.h"
 
-#include <Poco/Thread.h>
 
-#include <SFML/System.hpp>
 
+#include <glm\glm.hpp>
+
+#include <string>
+using std::string;
 
 namespace Starfall {
 
 	class Application; 
 	
 	class WorldScene : public Scene { 
+		friend class LoadScene;
 		private:
 
 
-			bool isLoading;
-			
-			Poco::Thread resourceThread;
-			sf::Clock resourceClock;
-			sf::Int32 resourceTime;
 
 			sf::Clock clock;
 
 			Camera camera;
 			Model model;
 
+
+			GLuint modelMatrixLocation;
+			GLuint viewMatrixLocation;
+			GLuint eyeLocation;
+			GLuint vertexShaderID;
+			GLuint fragmentShaderID;
+			GLuint programID;
+
 			virtual void initialize();
+
+			GLuint createShader(GLuint type, string path);
+			GLuint createProgram();
 
 		public:
 

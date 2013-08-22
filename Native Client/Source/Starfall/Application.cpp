@@ -3,6 +3,7 @@
 #include "Starfall\Application.h"
 #include "Starfall\Platform.h"
 #include "Starfall\Login.h"
+#include "Starfall\LoadScene.h"
 #include "Starfall\WorldScene.h"
 
 #include <Poco\NumberParser.h>
@@ -30,6 +31,7 @@ Application::Application() :
 	Awesomium::WriteDataPak(Awesomium::WSLit(Assets::Path("login.pak").c_str()), Awesomium::WSLit(Assets::Path("login").c_str()), Awesomium::WSLit(""), numFiles);
 
 	this->currentScene = NULL; //will be set to loginScene when application is run
+	this->loadScene = new LoadScene(this);
 	this->loginScene = new LoginScene(this);
 	this->worldScene = new WorldScene(this);
 
@@ -39,6 +41,7 @@ Application::Application() :
 
 Application::~Application() {
 	this->currentScene = NULL; //Note: don't delete currentScene; it points to objects already existing on the heap
+	delete this->loadScene;
 	delete this->loginScene;
 	delete this->worldScene;
 	Awesomium::WebCore::Shutdown();
@@ -112,7 +115,8 @@ void Application::run() {
 	this->skybox.load();
 	this->worldScene->load();
 	this->loginScene->load();
-	this->loginScene->enter(NULL, this->worldScene); //calls Application::changeScene to set the current scene
+	this->loadScene->load();
+	this->loadScene->enter(NULL, this->loginScene); //calls Application::changeScene to set the current scene
  
     while (window.isOpen())
     {

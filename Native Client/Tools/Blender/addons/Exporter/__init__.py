@@ -27,7 +27,7 @@ class ExportStarfallFormat(bpy.types.Operator, ExportHelper):
                 "face" : { 
                     "vertices" : [(lambda x: [str(round(y,5)) for y in mesh.vertices[face.vertices[x]].co])(x) for x in [a,b,c]],
                     "material_index" : str(face.material_index),
-                    "normal" : [str(round(x,5)) for x in face.normal]
+                    "normals" : [(lambda x: [str(round(y,5)) for y in mesh.vertices[face.vertices[x]].normal])(x) for x in [a,b,c]]
                 } 
         };
      

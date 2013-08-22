@@ -12,6 +12,9 @@
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <vector>
@@ -31,16 +34,16 @@ namespace Starfall {
 			typedef Poco::SharedPtr<Material> Ptr;
 			string name;
 			float alpha;
-			sf::Vector3f specularColor;
-			sf::Vector3f diffuseColor;
+			glm::vec3 specularColor;
+			glm::vec3 diffuseColor;
 			Material() : alpha(0.0f), name("Material") {}
 	};
 
 	class Face {
 		public:
 			typedef Poco::SharedPtr<Face> Ptr;
-			vector<sf::Vector3f> vertices;
-			sf::Vector3f normal;
+			vector<glm::vec3> vertices;
+			vector<glm::vec3> normals;
 			Poco::UInt32 materialIndex;
 			Face() : materialIndex(0) {}
 	};
@@ -79,8 +82,10 @@ namespace Starfall {
 
 			virtual void run();
 
-			sf::Vector3f position; //the model's position should only be accessed in one thread
-			sf::Vector3f rotation; //likewise, the model's rotation should only be accessed in one thread
+			glm::mat4 matrix;
+			glm::vec3 position; //the model's position should only be accessed in one thread
+			glm::vec3 rotation; //likewise, the model's rotation should only be accessed in one thread
+			void apply(); //recalculate the model's matrix after a change in position or rotation
 
 		private:
 
@@ -117,7 +122,7 @@ namespace Starfall {
 	}
 
 	template<>
-	inline sf::Vector3f Model::parse<sf::Vector3f>(string member, Poco::Dynamic::Struct<string>& fromStruct, bool debug) {
+	inline glm::vec3 Model::parse<glm::vec3>(string member, Poco::Dynamic::Struct<string>& fromStruct, bool debug) {
 		if(fromStruct.contains(member)) {
 			if(fromStruct[member].isArray()) {
 				vector<Poco::Dynamic::Var> normal = fromStruct[member].extract<vector<Poco::Dynamic::Var>>(); 
@@ -127,7 +132,7 @@ namespace Starfall {
 					Poco::NumberParser::tryParseFloat(normal[1].extract<string>(), y);
 					Poco::NumberParser::tryParseFloat(normal[2].extract<string>(), z);
 					if(debug) { cout << "[Model::parse<sf::Vector3f>] " << "(" << x << "," << y << "," << z << ")"<< endl; }
-					return sf::Vector3f(float(x),float(y),float(z));
+					return glm::vec3(float(x),float(y),float(z));
 				}
 			}
 		}
@@ -136,10 +141,10 @@ namespace Starfall {
 	}
 
 	template<>
-	inline vector<sf::Vector3f> Model::parse<vector<sf::Vector3f>>(string member, Poco::Dynamic::Struct<string>& fromStruct, bool debug) {
+	inline vector<glm::vec3> Model::parse<vector<glm::vec3>>(string member, Poco::Dynamic::Struct<string>& fromStruct, bool debug) {
 		if(fromStruct.contains(member)) {
 			if(fromStruct[member].isArray()) {
-				vector<sf::Vector3f> parsedVector;
+				vector<glm::vec3> parsedVector;
 				vector<Poco::Dynamic::Var> elements = fromStruct[member].extract<vector<Poco::Dynamic::Var>>(); 
 				for(vector<Poco::Dynamic::Var>::iterator elementsIterator = elements.begin(); elementsIterator != elements.end(); elementsIterator++) {
 					if((*elementsIterator).isArray()) {
@@ -149,15 +154,15 @@ namespace Starfall {
 							Poco::NumberParser::tryParseFloat(element[0].extract<string>(), x);
 							Poco::NumberParser::tryParseFloat(element[1].extract<string>(), y);
 							Poco::NumberParser::tryParseFloat(element[2].extract<string>(), z);
-							if(debug) { cout << "[Model::parse<vector<sf::Vector3f>>] sf::Vector3f" << "(" << x << "," << y << "," << z << ")"<< endl; }
-							parsedVector.push_back(sf::Vector3f(float(x),float(y),float(z)));
+							if(debug) { cout << "[Model::parse<vector<glm::vec3>>] glm::vec3" << "(" << x << "," << y << "," << z << ")"<< endl; }
+							parsedVector.push_back(glm::vec3(float(x),float(y),float(z)));
 						}
 					}
 				}
 				return parsedVector;
 			}
 		} 
-		cout << "[Model::parse<vector<sf::Vector3f>>] Invalid Access Exception: Parsing Failed." << endl;
+		cout << "[Model::parse<vector<glm::vec3>>] Invalid Access Exception: Parsing Failed." << endl;
 		throw Poco::InvalidAccessException();
 	}
 

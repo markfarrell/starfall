@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
+#include <glm/glm.hpp>
 
 namespace Starfall {
 
@@ -18,7 +19,7 @@ namespace Starfall {
 
 	class Skybox {
 		public:
-			sf::Vector3f position;
+			glm::vec3 position;
 			Skybox(bool load=true); //TODO: PASS a camera class to the constructor to get information for the far clip plane
 			void load();
 			void render(sf::RenderWindow& window);

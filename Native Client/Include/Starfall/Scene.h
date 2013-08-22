@@ -1,7 +1,9 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include <SFML/Window.hpp>
+
+#include <SFML\Window.hpp>
+
 
 namespace Starfall {
 

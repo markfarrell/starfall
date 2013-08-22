@@ -2,6 +2,8 @@
 #include "Starfall/Model.h"
 #include "Starfall/ConfigurationFile.h"
 
+
+
 #include <fstream>
 
 using namespace Starfall;
@@ -12,7 +14,8 @@ Poco::Mutex Model::ResourcesMutex;
 MeshRenderer::MeshRenderer(Mesh& mesh) {
 	this->count = 0;
 	for(vector<Face::Ptr>::iterator faceIterator = mesh.faces.begin(); faceIterator != mesh.faces.end(); faceIterator++) {
-		vector<sf::Vector3f> vertices = (*faceIterator)->vertices;
+		vector<glm::vec3> vertices = (*faceIterator)->vertices;
+		vector<glm::vec3> normals = (*faceIterator)->normals;
 		Poco::UInt32 materialIndex = (*faceIterator )->materialIndex;
 		if(materialIndex < mesh.materials.size()) { // material index is valid
 			Material::Ptr pMaterial = mesh.materials[materialIndex];
@@ -21,14 +24,20 @@ MeshRenderer::MeshRenderer(Mesh& mesh) {
 			GLfloat b = GLfloat(pMaterial->diffuseColor.z);
 
 
-			if(vertices.size() == 3) {
-				for(vector<sf::Vector3f>::iterator verticesIterator = vertices.begin(); verticesIterator  != vertices.end(); verticesIterator++) {
-					sf::Vector3f vertex = (*verticesIterator);
+			if(vertices.size() == 3 &&
+				normals.size() == 3) {
+				for(Poco::UInt32 i = 0; i < 3; i++) {
+					glm::vec3 vertex = vertices[i];
+					glm::vec3 normal = normals[i];
+
 
 					//Format: 3 vertex values, 3 color values per vertex
 					this->data.push_back(GLfloat(vertex.x));
 					this->data.push_back(GLfloat(vertex.y));
 					this->data.push_back(GLfloat(vertex.z));
+					this->data.push_back(GLfloat(normal.x));
+					this->data.push_back(GLfloat(normal.y));
+					this->data.push_back(GLfloat(normal.z));
 					this->data.push_back(r);
 					this->data.push_back(g);
 					this->data.push_back(b);
@@ -150,8 +159,8 @@ vector<Material::Ptr> Model::parseMaterials(Poco::Dynamic::Struct<string>& meshS
 				Material::Ptr material(new Material);
 				material->alpha = this->parse<float>("alpha", materialStruct);
 				material->name = this->parse<string>("name", materialStruct);
-				material->diffuseColor = this->parse<sf::Vector3f>("diffuse_color", materialStruct);
-				material->specularColor = this->parse<sf::Vector3f>("specular_color", materialStruct);
+				material->diffuseColor = this->parse<glm::vec3>("diffuse_color", materialStruct);
+				material->specularColor = this->parse<glm::vec3>("specular_color", materialStruct);
 
 				ret.push_back(material);
 			}
@@ -169,8 +178,8 @@ vector<Face::Ptr> Model::parseFaces(Poco::Dynamic::Struct<string>& meshStruct) {
 				Poco::Dynamic::Struct<string> faceStruct = (*facesIterator)["face"].extract<Poco::Dynamic::Struct<string>>();
 
 				Face::Ptr face(new Face);
-				face->vertices = this->parse<vector<sf::Vector3f>>("vertices", faceStruct);
-				face->normal = this->parse<sf::Vector3f>("normal", faceStruct);
+				face->vertices = this->parse<vector<glm::vec3>>("vertices", faceStruct);
+				face->normals = this->parse<vector<glm::vec3>>("normals", faceStruct);
 				face->materialIndex = this->parse<Poco::UInt32>("material_index", faceStruct);
 
 				ret.push_back(face);
@@ -206,15 +215,25 @@ vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 	throw Poco::InvalidAccessException();
 }
 
+void Model::apply() {
+	this->matrix = glm::mat4(1.0f);
+	this->matrix = glm::translate(this->matrix, this->position);
+	this->matrix = glm::rotate(this->matrix, this->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	this->matrix = glm::rotate(this->matrix, this->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	this->matrix = glm::rotate(this->matrix, this->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+
 void Model::render() {
 
 
 	glPushMatrix();
 
-	glTranslatef(this->position.x, this->position.y, this->position.z);
-	glRotatef(this->rotation.x, 1.0f, 0.0f, 0.0f);
-	glRotatef(this->rotation.y, 0.0f, 1.0f, 0.0f);
-	glRotatef(this->rotation.z, 0.0f, 0.0f, 1.0f);
+	glMultMatrixf(glm::value_ptr(this->matrix));
+	//glTranslatef(this->position.x, this->position.y, this->position.z);
+	//glRotatef(this->rotation.x, 1.0f, 0.0f, 0.0f);
+	//glRotatef(this->rotation.y, 0.0f, 1.0f, 0.0f);
+	//glRotatef(this->rotation.z, 0.0f, 0.0f, 1.0f);
 
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -227,16 +246,19 @@ void Model::render() {
 		for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {
 
 			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_NORMAL_ARRAY);
 			glEnableClientState(GL_COLOR_ARRAY);
 
-			glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), &(*rendererIterator)->data[0]);
-			glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
+			glVertexPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0]);
+			glNormalPointer(GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
+			glColorPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 6);
 
 			// Draw the cube
 			glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
 
 
 			glDisableClientState(GL_VERTEX_ARRAY); //disable these client states again after skybox is done with them.
+			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_COLOR_ARRAY);
 
 

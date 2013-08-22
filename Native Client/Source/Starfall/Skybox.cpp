@@ -107,7 +107,7 @@ void Skybox::load() {
 
 		glDisable(GL_TEXTURE_CUBE_MAP);
 
-		this->cube.load(500.0f);
+		this->cube.load(float(ConfigurationFile::Client().getInt("view.size")));
 }
 
 void Skybox::render(sf::RenderWindow& window) {

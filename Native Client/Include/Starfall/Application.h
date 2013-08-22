@@ -32,6 +32,7 @@ using std::string;
 namespace Starfall {
 
 	class Scene;
+	class LoadScene;
 	class LoginScene;
 	class WorldScene;
 
@@ -42,6 +43,7 @@ namespace Starfall {
 			Skybox skybox; //skybox shared by both scenes
 
 			Scene* currentScene; 
+			LoadScene* loadScene;
 			LoginScene* loginScene;
 			WorldScene* worldScene;
 			sf::RenderWindow window;
