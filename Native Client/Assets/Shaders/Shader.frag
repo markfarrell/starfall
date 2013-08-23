@@ -1,12 +1,14 @@
 uniform vec3 eye;
+uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
-varying vec3 viewDirection;  //screen space position
-varying vec3 normalDirection; //screen space normal
+varying vec3 vertex;  //screen space position
+varying vec3 normal; //screen space normal
 
 void main()
 {
-    vec3 v = normalize(eye - viewDirection);
-    vec3 n = normalize(normalDirection);
+
+    vec3 v = normalize(eye-vertex);
+    vec3 n = normalize(normal);
     
     float intensity = max(dot(v, n),0.0);
     

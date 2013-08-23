@@ -16,12 +16,6 @@ namespace Starfall {
 		private:
 
 			
-			bool isLoading;
-			
-			Poco::Thread resourceThread;
-			sf::Clock resourceClock;
-			sf::Int32 resourceTime;
-
 			sf::Font font;
 			sf::Text text;
 

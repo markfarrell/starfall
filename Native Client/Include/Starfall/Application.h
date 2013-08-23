@@ -1,11 +1,9 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
+#include "Starfall\ConfigurationFile.h"
+#include "Starfall\Skybox.h"
+#include "Starfall\Loadable.h"
 
-
-#include <string>
-#include <algorithm>
-#include <cmath>
-#include <fstream>
 
 #include <Windows.h>
 #include <SFML/Window.hpp>
@@ -21,11 +19,13 @@
 #include <Awesomium/WebViewListener.h>
 
 
+#include <string>
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <vector>
 
-#include "Starfall\ConfigurationFile.h"
-#include "Starfall\Skybox.h"
-
-
+using std::vector;
 using std::string;
 
 
@@ -38,6 +38,10 @@ namespace Starfall {
 
 	class Application {
 		public:
+
+			vector<Loadable*> loadables; //Models, Shaders ... will be stored and access elsewhere; store pointers to the common base class
+			//TODO: add thread pool to manage how resources in this collect are loaded concurrently
+
 			ConfigurationFile config;
 
 			Skybox skybox; //skybox shared by both scenes

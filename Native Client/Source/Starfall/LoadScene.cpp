@@ -63,16 +63,7 @@ void LoadScene::update() {
 		}
 	}
 
-	if(this->isLoading) {
-		if(this->resourceClock.getElapsedTime().asMilliseconds() >= this->resourceTime) { //only check every half of a second to avoid too many changes in ownership over the shared resources of the model
-			if(this->parent->worldScene->model.isLoaded()) {
-				this->isLoading = false;
-			}
-			this->resourceClock.restart();
-		}
-	}
-
-	if(!this->isLoading) {
+	if(this->parent->worldScene->model.isLoaded()) {
 		this->nextScene->enter(NULL, this->parent->worldScene);
 	}
 }

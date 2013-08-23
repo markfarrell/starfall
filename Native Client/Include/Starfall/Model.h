@@ -1,6 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
+#include "Starfall/Shader.h"
+
 #include <Poco/Dynamic/Var.h>
 #include <Poco/Dynamic/Struct.h>
 #include <Poco/Foundation.h>
@@ -20,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <string>
+
 
 using std::map;
 using std::vector;
@@ -76,9 +79,9 @@ namespace Starfall {
 
 			void load(); //load from path; thread-safe
 			void update(); //recreate mesh renderers
-			void render(); //renders the model; thread safe operation
+			void render(Shader& shader); //renders the model; thread safe operation
 
-			bool isLoaded(); //check to see if the model is loaded; mutex is only lock to insert items into renderers and meshes 
+			bool isLoaded(); //check to see if the model is loaded; reading and writing booleans is an atomic operation; it is not necessary to use a mutex.
 
 			virtual void run();
 
@@ -90,13 +93,14 @@ namespace Starfall {
 		private:
 
 			Poco::Mutex mutex; //Model is loading in a separate thread. Is the model finished loading
+	
 
 			//Members are not thread-safe; do not allow direct access
 			vector<MeshRenderer::Ptr> renderers; 
 			vector<Mesh> meshes;
 			string path; //the model's path
 
-			bool loaded;
+			bool loaded; 
 
 			/**
 			 *  Description: Rather than reloading a model each time from a file when it is instantiated, copy a vector that was already parsed. 

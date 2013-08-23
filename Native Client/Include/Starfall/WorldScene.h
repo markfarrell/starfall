@@ -4,7 +4,7 @@
 #include "Starfall\Scene.h"
 #include "Starfall\Camera.h"
 #include "Starfall\Model.h"
-
+#include "Starfall\Shader.h"
 
 
 #include <glm\glm.hpp>
@@ -20,25 +20,21 @@ namespace Starfall {
 		friend class LoadScene;
 		private:
 
-
-
 			sf::Clock clock;
 
 			Camera camera;
+			Shader shader;
 			Model model;
 
 
 			GLuint modelMatrixLocation;
 			GLuint viewMatrixLocation;
 			GLuint eyeLocation;
-			GLuint vertexShaderID;
-			GLuint fragmentShaderID;
-			GLuint programID;
+
 
 			virtual void initialize();
 
-			GLuint createShader(GLuint type, string path);
-			GLuint createProgram();
+
 
 		public:
 

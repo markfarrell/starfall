@@ -67,10 +67,8 @@ void Model::run() {
 
 void Model::load() { //locks access to the model only when necessary; so that it's loading state can be checked by thread observers.
 
-	{ //Always set the loading state to false when loading begins; in case the model is reloaded
-		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
-		this->loaded = false;
-	}
+
+	this->loaded = false;
 
 
 	bool foundResource = false;
@@ -125,17 +123,14 @@ void Model::load() { //locks access to the model only when necessary; so that it
 		}
 	}
 
-	{
-		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
-		this->loaded = true;
-	}
+
+	this->loaded = true;
 
 	this->update();  //load geometry into mesh renderers; thread-safe 
 
 }
 
 bool Model::isLoaded() { 
-	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 	return this->loaded;
 }
 
@@ -224,16 +219,12 @@ void Model::apply() {
 }
 
 
-void Model::render() {
+void Model::render(Shader& shader) {
 
 
 	glPushMatrix();
 
 	glMultMatrixf(glm::value_ptr(this->matrix));
-	//glTranslatef(this->position.x, this->position.y, this->position.z);
-	//glRotatef(this->rotation.x, 1.0f, 0.0f, 0.0f);
-	//glRotatef(this->rotation.y, 0.0f, 1.0f, 0.0f);
-	//glRotatef(this->rotation.z, 0.0f, 0.0f, 1.0f);
 
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -253,8 +244,52 @@ void Model::render() {
 			glNormalPointer(GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
 			glColorPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 6);
 
-			// Draw the cube
+			//TODO: Create and pass an effect class
+
+			//effect.beginPasses();
+			glPushAttrib( GL_ALL_ATTRIB_BITS );
+			glEnable(GL_STENCIL_TEST);
+			glClearStencil(0);
+			glClear(GL_STENCIL_BUFFER_BIT);
+	
+			//foreach pass in effect
+			
+			//begin pass 0 
+			glStencilFunc( GL_ALWAYS, 1, 0xFFFF );
+			glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+			// Render the object in black
+			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+			//always call draw at end of each pass
 			glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
+
+			//end pass 0
+			
+
+			//begin pass 1
+			glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
+			glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+			// Draw the object with thick lines
+			glLineWidth( 3.0f );
+			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+			
+			shader.use();
+			shader.set<glm::vec4>("color", glm::vec4(1.0,0.0,0.0,1.0));
+
+			//always call draw at end of each pass
+			glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
+
+			//end pass 1
+			shader.clear();
+
+			//effect.endPasses(); //end all passes
+			glDisable(GL_STENCIL_TEST);
+			glPopAttrib();
+
+		
+
+	
+
 
 
 			glDisableClientState(GL_VERTEX_ARRAY); //disable these client states again after skybox is done with them.
