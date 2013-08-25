@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Starfall\ConfigurationFile.h"
+#include "Starfall\Assets.h"
 
 #include <SFML/Graphics.hpp>
 

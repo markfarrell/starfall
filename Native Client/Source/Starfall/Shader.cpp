@@ -2,6 +2,7 @@
 #include "Starfall\Shader.h"
 
 #include "Starfall\ConfigurationFile.h"
+#include "Starfall\Assets.h"
 
 #include <fstream>
 #include <iostream>
@@ -12,7 +13,8 @@ using std::endl;
 using namespace Starfall;
 
 Shader::Shader(string v, string f)
-	: vertexShaderID(NULL), 
+	: Asset(),
+	vertexShaderID(NULL), 
 	fragmentShaderID(NULL),
 	programID(NULL),
 	vertexPath(v), 
@@ -21,7 +23,7 @@ Shader::Shader(string v, string f)
 }
 
 Shader::~Shader() {
-
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 	if(!this->programID != NULL) {
 		glDetachShader(this->programID, this->vertexShaderID);
 		glDetachShader(this->programID, this->fragmentShaderID);
@@ -41,6 +43,7 @@ Shader::~Shader() {
 }
 
 void Shader::use() {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 	if(this->programID != NULL) {
 		glUseProgram(this->programID);
 	}
@@ -51,6 +54,7 @@ void Shader::clear() {
 }
 
 void Shader::find(string name) {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 	if(this->programID != NULL) { 
 		this->names[name] = glGetUniformLocation(this->programID, name.c_str());
 	}
@@ -58,6 +62,7 @@ void Shader::find(string name) {
 
 
 void Shader::load() {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 	this->vertexShaderID = this->createShader(GL_VERTEX_SHADER, this->vertexPath);
 	this->fragmentShaderID = this->createShader(GL_FRAGMENT_SHADER, this->fragmentPath);
 	this->programID = this->createProgram();
@@ -88,7 +93,8 @@ GLuint Shader::createShader(GLuint type, string path) {
 
 		int result = 0;
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
-		if(result != GL_TRUE) {
+		if(result != GL_TRUE) 
+		{
 				string infoLog;
 				int infoLogLength = 0;
 				int charsWritten = 0;

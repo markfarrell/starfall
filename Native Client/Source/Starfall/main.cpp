@@ -17,7 +17,6 @@
 PLATFORM_ENTRY_POINT
 {
 	Starfall::Platform::Init();
-	Starfall::Model("Models/Cube.json");
 	Starfall::Application application;	
 	application.run();
     return EXIT_SUCCESS;

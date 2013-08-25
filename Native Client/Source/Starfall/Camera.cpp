@@ -2,6 +2,7 @@
 
 #include "Starfall/Camera.h"
 #include "Starfall/ConfigurationFile.h"
+#include "Starfall/Assets.h"
 
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>

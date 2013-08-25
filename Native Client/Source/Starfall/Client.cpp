@@ -3,6 +3,7 @@
 
 
 #include "Starfall\ConfigurationFile.h"
+#include "Starfall\Assets.h"
 #include "Starfall\Head.h"
 #include "Starfall\Packet.h"
 #include "Starfall\Buffer.h"
@@ -87,7 +88,6 @@ void Client::run() {
 			while(!this->user.sendQueue.empty()) {
 				Buffer buffer = this->user.sendQueue.front();
 				if(this->socket.send(&buffer[0], buffer.size()) == sf::Socket::Done) {
-					cout << "test";
 					this->user.sendQueue.pop(); //delete the buffer if the socket was ready to send the data; else try again
 				}
 			}

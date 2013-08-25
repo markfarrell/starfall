@@ -1,8 +1,12 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
+#include "Starfall\Assets.h"
+
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
+
+#include <Poco/SharedPtr.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -32,9 +36,13 @@ namespace Starfall {
 	};
 
 
-	class Shader {
+	class Shader : public Asset {
+		friend class Pass;
+		friend class Technique; 
+
 		private: 
-			
+		
+
 			map<string, GLuint> names;
 
 			string vertexPath;
@@ -48,11 +56,13 @@ namespace Starfall {
 			GLuint createProgram();
 
 		public:
+			typedef Poco::SharedPtr<Shader> Ptr;
+
 			Shader(string vertexPath, string fragmentPath);
 			~Shader();
 
 
-			void load();
+			virtual void load();
 			void use(); //begin using the shader program
 			void clear(); //stop using the shader program
 			void find(string name); //get the uniform location of 'name' and store it in the Shader's 'names' map.
@@ -71,16 +81,19 @@ namespace Starfall {
 
 	template <>
 	inline void Shader::set<glm::mat4>(string name, glm::mat4& value) {
+		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 		glUniformMatrix4fv(this->names[name], 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	template <>
 	inline void Shader::set<glm::vec3>(string name, glm::vec3& value) {
+		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 		glUniform3f(this->names[name], value.x, value.y, value.z);
 	}
 
 	template <>
 	inline void Shader::set<glm::vec4>(string name, glm::vec4& value) {
+		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 		glUniform4f(this->names[name], value.x, value.y, value.z, value.w);
 	}
 

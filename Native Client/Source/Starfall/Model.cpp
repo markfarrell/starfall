@@ -1,6 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #include "Starfall/Model.h"
 #include "Starfall/ConfigurationFile.h"
+#include "Starfall/Assets.h"
 
 
 
@@ -54,8 +55,14 @@ MeshRenderer::MeshRenderer(Mesh& mesh) {
 	}
 }
 
-Model::Model(string path) {
-	this->loaded = false;
+Model::Ptr Model::Create(string path) {
+	Model::Ptr model(new Model(path));
+	Assets::Loader.enqueue(model);
+	return model;
+}
+
+Model::Model(string path)
+	: Asset() {
 	this->path = path;
 }
 
@@ -66,10 +73,6 @@ void Model::run() {
 }
 
 void Model::load() { //locks access to the model only when necessary; so that it's loading state can be checked by thread observers.
-
-
-	this->loaded = false;
-
 
 	bool foundResource = false;
 
@@ -123,16 +126,9 @@ void Model::load() { //locks access to the model only when necessary; so that it
 		}
 	}
 
-
-	this->loaded = true;
-
 	this->update();  //load geometry into mesh renderers; thread-safe 
-
 }
 
-bool Model::isLoaded() { 
-	return this->loaded;
-}
 
 void Model::update() { //thread-safe
 	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
@@ -219,7 +215,7 @@ void Model::apply() {
 }
 
 
-void Model::render(Shader& shader) {
+void Model::render(Technique::Ptr& technique) {
 
 
 	glPushMatrix();
@@ -233,7 +229,7 @@ void Model::render(Shader& shader) {
 
 
 	/** lock(this->mutex) **/ { 
-		Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+		Poco::ScopedLock<Poco::Mutex> modelLock(this->mutex);
 		for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {
 
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -244,58 +240,23 @@ void Model::render(Shader& shader) {
 			glNormalPointer(GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
 			glColorPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 6);
 
-			//TODO: Create and pass an effect class
+			/* lock(technique.mutex) */ {
+				Poco::ScopedLock<Poco::Mutex> techniqueLock(technique->mutex);
+				technique->beginPasses();
 
-			//effect.beginPasses();
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-			glEnable(GL_STENCIL_TEST);
-			glClearStencil(0);
-			glClear(GL_STENCIL_BUFFER_BIT);
-	
-			//foreach pass in effect
-			
-			//begin pass 0 
-			glStencilFunc( GL_ALWAYS, 1, 0xFFFF );
-			glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
-			// Render the object in black
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+				for(vector<Pass::Ptr>::iterator it = technique->passes.begin(); it != technique->passes.end(); it++) {
+					(*it)->beginPass();
+					glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
+					(*it)->endPass();
+				}
 
-			//always call draw at end of each pass
-			glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
+				technique->endPasses();
 
-			//end pass 0
-			
-
-			//begin pass 1
-			glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
-			glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
-			// Draw the object with thick lines
-			glLineWidth( 3.0f );
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-			
-			shader.use();
-			shader.set<glm::vec4>("color", glm::vec4(1.0,0.0,0.0,1.0));
-
-			//always call draw at end of each pass
-			glDrawArrays(GL_TRIANGLES, 0, (*rendererIterator)->count);
-
-			//end pass 1
-			shader.clear();
-
-			//effect.endPasses(); //end all passes
-			glDisable(GL_STENCIL_TEST);
-			glPopAttrib();
-
-		
-
-	
-
-
+			}
 
 			glDisableClientState(GL_VERTEX_ARRAY); //disable these client states again after skybox is done with them.
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_COLOR_ARRAY);
-
 
 		}
 	}

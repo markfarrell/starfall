@@ -4,13 +4,15 @@
 #include "Starfall\Scene.h"
 #include "Starfall\Camera.h"
 #include "Starfall\Model.h"
-#include "Starfall\Shader.h"
-
+#include "Starfall\ToonTechnique.h"
 
 #include <glm\glm.hpp>
 
 #include <string>
+#include <map>
+
 using std::string;
+using std::map;
 
 namespace Starfall {
 
@@ -23,8 +25,8 @@ namespace Starfall {
 			sf::Clock clock;
 
 			Camera camera;
-			Shader shader;
-			Model model;
+			Technique::Ptr technique;
+			Model::Ptr model;
 
 
 			GLuint modelMatrixLocation;

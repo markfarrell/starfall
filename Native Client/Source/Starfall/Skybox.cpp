@@ -1,5 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #include "Starfall\ConfigurationFile.h"
+#include "Starfall\Assets.h"
+
 #include "Starfall\Platform.h"
 #include "Starfall\Skybox.h"
 

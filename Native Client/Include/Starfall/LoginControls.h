@@ -5,7 +5,7 @@
 #include <SFML/Window.hpp>
 
 #include "Starfall\ConfigurationFile.h"
-
+#include "Starfall\Assets.h"
 
 namespace Starfall { 
 

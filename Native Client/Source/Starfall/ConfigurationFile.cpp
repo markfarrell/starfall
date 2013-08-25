@@ -1,6 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #include "Starfall\Platform.h"
 #include "Starfall\ConfigurationFile.h"
+#include "Starfall\Assets.h"
 
 #include <Poco\NumberParser.h>
 #include <Poco\StringTokenizer.h>

@@ -1,5 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
 #include "Starfall\LoadScene.h"
+#include "Starfall\Assets.h"
 #include "Starfall\ConfigurationFile.h"
 #include "Starfall\Application.h"
 #include "Starfall\WorldScene.h"
@@ -14,8 +15,7 @@ using namespace Starfall;
 LoadScene::LoadScene(Application* parent)
 	: Scene(parent)
 {
-	this->isLoading = true;
-	this->resourceTime = 500; //time to wait before checking the loading state of the model again
+
 }
 
 void LoadScene::load() {
@@ -31,7 +31,6 @@ void LoadScene::load() {
 		(float(this->parent->window.getSize().y)-text.getGlobalBounds().height) / 2.0f
 	);
 
-	this->resourceThread.start(this->parent->worldScene->model);
 }
 
 void LoadScene::initialize() { 
@@ -63,7 +62,7 @@ void LoadScene::update() {
 		}
 	}
 
-	if(this->parent->worldScene->model.isLoaded()) {
+	if(Assets::Loader.isLoaded()) {
 		this->nextScene->enter(NULL, this->parent->worldScene);
 	}
 }

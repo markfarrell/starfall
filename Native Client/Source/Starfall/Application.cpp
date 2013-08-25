@@ -117,6 +117,8 @@ void Application::run() {
 	this->loginScene->load();
 	this->loadScene->load();
 	this->loadScene->enter(NULL, this->loginScene); //calls Application::changeScene to set the current scene
+
+	Assets::Loader.load(); //load all assets concurrency that have been queued since application launch; the load scene will observe the loading state of the loader.
  
     while (window.isOpen())
     {

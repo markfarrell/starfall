@@ -19,10 +19,10 @@ using std::endl;
 using namespace Starfall;
 
 WorldScene::WorldScene(Application* parent)
-	: Scene(parent),
-	  model("Models/Humanoid.json"),
-	  shader("Shaders/Color.vert", "Shaders/Color.frag")
+	: Scene(parent)
 {
+	this->model = Model::Create("Models/Humanoid.json");
+	this->technique = ToonTechnique::Create();
 }
 
 WorldScene::~WorldScene() {
@@ -51,16 +51,15 @@ void WorldScene::render() {
 	this->parent->skybox.position = this->camera.eye;
 	this->parent->skybox.render(this->parent->window);
 
-	this->model.rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
-	this->model.apply();
-	this->model.render(shader);
+	this->model->rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
+	this->model->apply();
+	this->model->render(this->technique);
 
 	glUseProgram(NULL);
 }
 
 void WorldScene::load() {
-	this->shader.load();
-	this->shader.find("color");
+
 }
 
 void WorldScene::update() {

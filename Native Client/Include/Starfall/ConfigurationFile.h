@@ -23,16 +23,4 @@ namespace Starfall {
 			bool isInitialized;
 			std::map<string, string> map; //key value pairs of config values
 	};
-
-	class Assets {
-		public:
-			static string Path(string path) { return ConfigurationFile::Client().getString("assets.path")+path; } //declare inline
-			static std::vector<string> ConfigPaths() { //description: This static inline method returns possible places to search for the config file needed to start the application.
-				std::vector<string> paths;
-				paths.push_back("./client.cfg");
-				paths.push_back("../Assets/client.cfg");
-				return paths;
-			}
-	};
-
 }

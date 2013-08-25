@@ -1,7 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall/Shader.h"
+#include "Starfall/Assets.h"
+#include "Starfall/Technique.h"
 
 #include <Poco/Dynamic/Var.h>
 #include <Poco/Dynamic/Struct.h>
@@ -31,6 +32,7 @@ using std::endl;
 using std::string;
 
 namespace Starfall {
+
 
 	class Material {
 		public:
@@ -71,17 +73,17 @@ namespace Starfall {
 	};
 
 
-	class Model : public Poco::Runnable {
+	class Model : public Asset {
 		public:
+			typedef Poco::SharedPtr<Model> Ptr;
 
-			Model(string path); //load a .json 3D model from the given path
+			static Model::Ptr Model::Create(string path);
+
 			~Model();
 
-			void load(); //load from path; thread-safe
+			virtual void load(); //load from path; thread-safe
 			void update(); //recreate mesh renderers
-			void render(Shader& shader); //renders the model; thread safe operation
-
-			bool isLoaded(); //check to see if the model is loaded; reading and writing booleans is an atomic operation; it is not necessary to use a mutex.
+			void render(Technique::Ptr& technique); //renders the model; thread safe operation
 
 			virtual void run();
 
@@ -92,6 +94,8 @@ namespace Starfall {
 
 		private:
 
+			Model(string path); //load a .json 3D model from the given path
+
 			Poco::Mutex mutex; //Model is loading in a separate thread. Is the model finished loading
 	
 
@@ -100,7 +104,6 @@ namespace Starfall {
 			vector<Mesh> meshes;
 			string path; //the model's path
 
-			bool loaded; 
 
 			/**
 			 *  Description: Rather than reloading a model each time from a file when it is instantiated, copy a vector that was already parsed. 

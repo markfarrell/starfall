@@ -1,9 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
+#include "Starfall\Assets.h"
 #include "Starfall\ConfigurationFile.h"
 #include "Starfall\Skybox.h"
-#include "Starfall\Loadable.h"
-
 
 #include <Windows.h>
 #include <SFML/Window.hpp>
@@ -24,9 +23,11 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include <map>
 
-using std::vector;
 using std::string;
+using std::vector;
+using std::map;
 
 
 namespace Starfall {
@@ -38,10 +39,6 @@ namespace Starfall {
 
 	class Application {
 		public:
-
-			vector<Loadable*> loadables; //Models, Shaders ... will be stored and access elsewhere; store pointers to the common base class
-			//TODO: add thread pool to manage how resources in this collect are loaded concurrently
-
 			ConfigurationFile config;
 
 			Skybox skybox; //skybox shared by both scenes
