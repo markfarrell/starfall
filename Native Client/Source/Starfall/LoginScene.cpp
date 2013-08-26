@@ -11,8 +11,6 @@
 
 using namespace Starfall;
 
-
-
 LoginScene::LoginScene(Application* parent)
 	: Scene(parent)
 {
@@ -21,6 +19,7 @@ LoginScene::LoginScene(Application* parent)
 
 void LoginScene::initialize() {
 	this->camera.initialize(this->parent->window);
+	this->pLoginUI->center(this->parent->window.getSize());
 }
 
 void LoginScene::render() {
@@ -64,7 +63,6 @@ void LoginScene::update() {
 			this->pLoginUI->controls->mouseButtonReleased(event);
 		}
 
-		// Escape key: exit
 		if ((event.type == sf::Event::KeyPressed))
 		{
 			if(event.key.code == sf::Keyboard::Escape) {
@@ -82,7 +80,6 @@ void LoginScene::update() {
 			this->pLoginUI->controls->textEvent(event);
 		}
 
-		// Resize event: adjust the viewport
 		if (event.type == sf::Event::Resized) {
 			glViewport(0, 0, event.size.width, event.size.height);
 			this->parent->window.setView(sf::View(sf::Vector2f(float(event.size.width/2), float(event.size.height/2)), sf::Vector2f(float(event.size.width), float(event.size.height))));

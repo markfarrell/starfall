@@ -30,7 +30,7 @@ void LinePass::beginPass() {
 	glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
 	glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
 	// Draw the object with thick lines
-	glLineWidth( 3.0f );
+	glLineWidth( 1.5f );
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 	if(!this->shader->isLoaded()) {
@@ -44,7 +44,7 @@ void LinePass::beginPass() {
 	}
 
 	shader->use();
-	shader->set<glm::vec4>("color", glm::vec4(1.0,0.0,0.0,1.0));
+	shader->set<glm::vec4>("color", glm::vec4(0.0,0.0,0.0,1.0));
 }
 
 void LinePass::endPass() {

@@ -23,8 +23,11 @@ namespace Starfall {
 	class CameraControls {
 		friend class Camera;
 		private:
+
 			map<string, Poco::UInt32> states;
 			Camera* parent;
+
+
 
 			float moveSpeed;
 			float rotateSpeed;
@@ -44,39 +47,42 @@ namespace Starfall {
 
 	class Camera {
 
+		friend class WorldScene;
+		friend class CameraControls;
+
+		private:
+
+			/** Recalculated members **/
+			glm::mat4 projection;
+			glm::mat4 view;
+			glm::vec3 direction; //direction the forward vector is pointing in world space
+
+			void recalculate(); //updates the camera's view and direction; they can then be used several times without recalculation
+
 		public:
 
 		CameraControls controls;
 
+		float nearClip;
+		float farClip;
+
 		float distance; //distance to place camera behind its lookat position
-		glm::vec3 direction; //the direction that the camera is pointing in
 
-		glm::vec3 eye;
-		glm::vec3 lookat;
-		glm::vec3 up; 
-
-		glm::vec3 rotation;
-		glm::mat4 view;
-
+		glm::quat orientation;
+		glm::vec3 position;
+		glm::vec3 target;
 
 		Camera();
 
 		void initialize(sf::RenderWindow& window);
-		void recalculate(); //updates the camera's direction once; can then be used several times without recalculation
 
-		
-		inline float theta() {
-			return this->rotation.x;
-		}
+		inline float minimumDistance() { return 1.0f; } 
+		inline float maximumDistance() { return 5.0f; }
 
-		inline float phi() {
-			return this->rotation.y;
-		}
+		static float yfov(float xfov, float ratio); //utility function to calculate yfov from xfov
 
 
-
-		static void Clamp(float& angle, float delta); 
-
+	
 	};
 
 }

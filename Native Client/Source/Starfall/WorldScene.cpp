@@ -31,24 +31,20 @@ WorldScene::~WorldScene() {
 
 void WorldScene::initialize() { 
 	this->camera.initialize(this->parent->window);
-	this->camera.eye = glm::vec3(0.0f, 0.0f, 0.0f);
 
 }
 
 void WorldScene::render() {
 	glUseProgram(NULL);
 
-	// Clear the color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    // Apply some transformations to rotate the cube
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
 	glLoadMatrixf(glm::value_ptr(this->camera.view));
 
-	this->parent->skybox.position = this->camera.eye;
+	this->parent->skybox.position = this->camera.position;
 	this->parent->skybox.render(this->parent->window);
 
 	this->model->rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
@@ -66,12 +62,10 @@ void WorldScene::update() {
 	sf::Event event;
 	while (this->parent->window.pollEvent(event))
 	{
-		// Close window: exit
 		if (event.type == sf::Event::Closed) {
 			this->parent->window.close();
 		}
 
-		// Resize event: adjust the viewport
 		if (event.type == sf::Event::Resized) {
 			this->camera.initialize(this->parent->window);
 			this->parent->window.setView(sf::View(sf::Vector2f(float(event.size.width/2), float(event.size.height/2)), sf::Vector2f(float(event.size.width), float(event.size.height))));
