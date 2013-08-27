@@ -34,7 +34,12 @@ bool Asset::isLoaded() {
 
 AssetLoader::AssetLoader() : pool(2, 16, 60, 1024) {} 
 
+
 AssetLoader::~AssetLoader() { 
+	this->pool.stopAll();
+}
+
+void AssetLoader::stopAll() {
 	this->pool.stopAll();
 }
 

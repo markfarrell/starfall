@@ -3,6 +3,8 @@
 
 #include "Starfall/Assets.h"
 #include "Starfall/Technique.h"
+#include "Starfall/Skybox.h"
+#include "Starfall/Camera.h"
 
 #include <Poco/Dynamic/Var.h>
 #include <Poco/Dynamic/Struct.h>
@@ -53,12 +55,21 @@ namespace Starfall {
 			Face() : materialIndex(0) {}
 	};
 
+	class BoundingBox {
+		public:
+			typedef Poco::SharedPtr<BoundingBox> Ptr;
+			glm::vec3 min;
+			glm::vec3 max;
+			glm::vec3 size();
+	};
+
 
 	class Mesh {
 		public:
 			string name;
 			vector<Material::Ptr> materials; //materials are shared between instances of a mesh (new material pointers can be created for an instance of a mesh)
 			vector<Face::Ptr> faces; //faces are shared between instances of a mesh
+			BoundingBox::Ptr boundingBox;
 			Mesh() : name("Mesh") {}
 	};
 
@@ -69,7 +80,12 @@ namespace Starfall {
 			typedef Poco::SharedPtr<MeshRenderer> Ptr; //allocate renderers on heap
 			vector<GLfloat> data; //stores vertex and color data
 			GLsizei count; //number of elements in data array
+
+			sf::Image cubeImage;
+			Cube::Ptr cube;
+
 			MeshRenderer(Mesh& mesh); //populate data and count
+
 	};
 
 
@@ -79,21 +95,27 @@ namespace Starfall {
 
 			static Model::Ptr Model::Create(string path);
 
+			glm::mat4 matrix;
+			glm::vec3 position; //the model's position should only be accessed in one thread
+			glm::quat orientation; //likewise, the model's rotation should only be accessed in one thread
+
 			~Model();
+
+			virtual void run();
 
 			virtual void load(); //load from path; thread-safe
 			void update(); //recreate mesh renderers
 			void render(Technique::Ptr& technique); //renders the model; thread safe operation
 
-			virtual void run();
+			void apply(Camera& camera); //recalculate the model's matrix after a change in position or rotation
 
-			glm::mat4 matrix;
-			glm::vec3 position; //the model's position should only be accessed in one thread
-			glm::vec3 rotation; //likewise, the model's rotation should only be accessed in one thread
-			void apply(); //recalculate the model's matrix after a change in position or rotation
+			BoundingBox::Ptr boundingBox; //bounding volume around the entire mesh.
+
+			map<string, bool> states;
 
 		private:
 
+	
 			Model(string path); //load a .json 3D model from the given path
 
 			Poco::Mutex mutex; //Model is loading in a separate thread. Is the model finished loading
@@ -118,7 +140,11 @@ namespace Starfall {
 
 			vector<Material::Ptr> parseMaterials(Poco::Dynamic::Struct<string>& meshStruct);
 			vector<Face::Ptr> parseFaces(Poco::Dynamic::Struct<string>& meshStruct);
+			BoundingBox::Ptr calculateBoundingBox(vector<Face::Ptr>& meshFaces);
+
 			vector<Mesh> parseMeshes(Poco::Dynamic::Var& jsonVar); 
+
+
 
 	};
 

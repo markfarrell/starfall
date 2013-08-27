@@ -37,11 +37,11 @@ namespace Starfall {
 
 			void writeUInt32(Poco::UInt32 value);
 			void writeString(const string& value);
-			void writeFloat(double value);
+			void writeFloat(float value);
 
 			Poco::UInt32 readUInt32();
 			string		 readString();
-			double		 readFloat();
+			float		 readFloat();
 
 			template<typename T> 
 			void operator>> (T& into);

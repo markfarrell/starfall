@@ -23,6 +23,6 @@ namespace Starfall {
 			static std::ofstream out;
 		public:
 			static void Init(); //description: redirect cout to a text file.
-			static void Halt(); //description: log a message then close the application. Call this in case of a fatal error.
+			static void Halt(int code=1); //description: log a message then close the application. Call this in case of a fatal error.
 	};
 }

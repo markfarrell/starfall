@@ -2,6 +2,9 @@
 
 #include "Starfall/Player.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
+
 #include <iostream>
 
 using namespace Starfall;
@@ -50,7 +53,8 @@ void Player::transformEntity(Poco::UInt32 sessionid) {
 void Player::createEntity(Poco::UInt32 sessionid) {
 	try {
 			CreateEntityStruct createEntityStruct = Entity::FindCreateEntityStruct(sessionid); //Thread safe retrieval of entity information
-			if(Position::Distance(this->pEntity->position, createEntityStruct.position) <= farClipDistance) //Receive methods are thread safe for pPlayer
+
+			if(float(glm::length2(this->pEntity->position-createEntityStruct.position)) <= float(pow(farClipDistance,2))) //Receive methods are thread safe for pPlayer
 			{
 				this->createEntityQueue.push_back(createEntityStruct); //uses sharedptr
 			}

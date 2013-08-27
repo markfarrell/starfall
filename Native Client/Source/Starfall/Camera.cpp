@@ -60,17 +60,13 @@ void CameraControls::update(sf::Event& event) {
 			case sf::Keyboard::W:
 				this->configureState("move.forward", keyPressed);
 			break;
-			case sf::Keyboard::S:
-				this->configureState("move.forward", keyPressed);
-			break;
-
 		}
 
 	}
 
 	if(event.type == sf::Event::MouseWheelMoved) {
 		this->parent->distance = glm::clamp(
-			this->parent->distance + float(-event.mouseWheel.delta)*0.1f,
+			this->parent->distance + float(-event.mouseWheel.delta)*0.3f,
 			this->parent->minimumDistance(), 
 			this->parent->maximumDistance()
 		);
@@ -91,7 +87,7 @@ void CameraControls::configureState(string stateName, bool& keyPressed) {
 
 
 
-void CameraControls::apply() {
+bool CameraControls::apply() {
 	if(this->applyClock.getElapsedTime().asMilliseconds() >= this->applyTime) {
 
 		glm::vec3 zero = glm::zero<glm::vec3>();
@@ -103,14 +99,14 @@ void CameraControls::apply() {
 		this->applyToState("roll.negative", zero, glm::vec3(0.0f, 0.0f, -1.0f));
 		this->applyToState("roll.positive", zero, glm::vec3(0.0f, 0.0f, 1.0f));
 
-
 		this->applyToState("move.forward", this->parent->direction, zero);
-		this->applyToState("move.backward", -this->parent->direction, zero);
 
 		this->parent->recalculate();
 		
 		this->applyClock.restart();
+		return true;
 	}
+	return false;
 }
 
 void CameraControls::applyToState(string stateName, glm::vec3& deltaPosition, glm::vec3& deltaRotation) {
@@ -135,7 +131,8 @@ void CameraControls::applyToState(string stateName, glm::vec3& deltaPosition, gl
 
 
 Camera::Camera()
-	: distance(2.0f),
+	: distance(this->minimumDistance()),
+	up(0.0f, 1.0f, 0.0f),
 	controls(this) 
 {
 	float size = float(ConfigurationFile::Client().getInt("view.size")); //skybox size
@@ -153,7 +150,7 @@ void Camera::initialize(sf::RenderWindow& window) {
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_LESS);
 	glDepthRange(0.0f, 1.0f);
 
     glDisable(GL_LIGHTING);
@@ -175,17 +172,16 @@ void Camera::recalculate() {
 			this->direction = glm::normalize(this->direction);
 		}
 
-		glm::vec3 lookat(this->position+this->direction);
 
-		glm::vec3 up = glm::vec3(this->orientation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+		this->up = glm::vec3(this->orientation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
 
 		if(glm::length2(up) > 0.0f) {
 			up = glm::normalize(up);
 		}
 
-		glm::vec3 eye = this->position-this->direction*(glm::max(this->distance-1.0f, 0.0f));
+		glm::vec3 eye = this->position-this->direction*this->distance;
 
-		this->view = glm::lookAt(eye, lookat, up);
+		this->view = glm::lookAt(eye, this->position, up);
 }
 
 float Camera::yfov(float xfov, float ratio) {

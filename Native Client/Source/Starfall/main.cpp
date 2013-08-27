@@ -3,6 +3,7 @@
 #include "Starfall\Platform.h"
 #include "Starfall\Client.h"
 #include "Starfall\Application.h"
+#include "Starfall\Assets.h"
 #include "Starfall\Model.h"
 #include <iostream>
 
@@ -19,5 +20,6 @@ PLATFORM_ENTRY_POINT
 	Starfall::Platform::Init();
 	Starfall::Application application;	
 	application.run();
-    return EXIT_SUCCESS;
+	Starfall::Platform::Halt(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

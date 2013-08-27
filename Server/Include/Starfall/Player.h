@@ -26,7 +26,7 @@ namespace Starfall {
 		protected:
 
 			Entity::Ptr pEntity;
-			double farClipDistance; //the last clip distance received in a packet
+			float farClipDistance; //the last clip distance received in a packet
 
 			static Ptr create(string address); 
 

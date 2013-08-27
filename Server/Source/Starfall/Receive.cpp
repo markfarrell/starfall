@@ -119,7 +119,7 @@ bool Receive::TransformData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& 
 	//The entity's actual position is the most recent position; it is the last element in the path collection
 	if(transformsPacket->size() > 0) {
 		pPlayer->pEntity->position = transformsPacket->back().position;
-		pPlayer->pEntity->rotation = transformsPacket->back().rotation;
+		pPlayer->pEntity->orientation = transformsPacket->back().orientation;
 	}
 	pPlayer->pEntity->clearPath();
 	//Add the path nodes to the player's entity's transform queue.

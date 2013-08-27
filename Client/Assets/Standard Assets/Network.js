@@ -276,7 +276,23 @@ class Buffer {
 	}
 	
 	function WriteFloat(f : float) {
-		this.WriteString(f.ToString());
+		//this.WriteString(f.ToString());
+		var floatBytes : byte[] = System.BitConverter.GetBytes(f);
+		if(floatBytes.Length == 4) {
+			if(System.BitConverter.IsLittleEndian) {
+				WriteUInt8(floatBytes[3]);
+				WriteUInt8(floatBytes[2]);
+				WriteUInt8(floatBytes[1]);
+				WriteUInt8(floatBytes[0]);
+			} else {
+				WriteUInt8(floatBytes[0]);
+				WriteUInt8(floatBytes[1]);
+				WriteUInt8(floatBytes[2]);
+				WriteUInt8(floatBytes[3]);
+			}
+		} else {
+			Debug.LogError("[Buffer.WriteFloat] The length of floatBytes is not 4!");
+		}
 	}
 	
 	function ReadUInt32() {
@@ -293,10 +309,17 @@ class Buffer {
 			byte.TryParse(this.data[this.rpos].ToString(), d); this.rpos++;
 			
 			return (a<<24)|(b<<16)|(c<<8)|(d);
-		}else{
-			//TODO(April 20th, 2013): Add error / catch case
-			return 0;
 		}
+		return 0;
+	}
+	
+	function ReadUInt8() {
+		if((this.rpos+1-1) < data.length){
+			var a : byte = 0;
+			byte.TryParse(this.data[this.rpos].ToString(), a); this.rpos++;
+			return a;
+		}
+		return 0;
 	}
 	
 	function ReadString() {
@@ -311,11 +334,20 @@ class Buffer {
 	}
 	
 	function ReadFloat() {
-		var ret : float = 0.0;
-		if(!float.TryParse(this.ReadString(), ret)) {
-			throw new System.ArgumentException("Buffer.ReadFloat : Parsing float error.");
+		var floatBytes : byte[] = new byte[4];
+		
+		if(System.BitConverter.IsLittleEndian) { 
+			floatBytes[3] = ReadUInt8();
+			floatBytes[2] = ReadUInt8();
+			floatBytes[1] = ReadUInt8();
+			floatBytes[0] = ReadUInt8();
+		} else {
+			floatBytes[0] = ReadUInt8();
+			floatBytes[1] = ReadUInt8();
+			floatBytes[2] = ReadUInt8();
+			floatBytes[3] = ReadUInt8();
 		}
-		return ret;
+		return System.BitConverter.ToSingle(floatBytes, 0);
 	}
 
 }
@@ -415,13 +447,13 @@ class Send {
 			var transformStruct : TransformStruct = i as TransformStruct;
 			buffer.WriteUInt32(player.user.transformPlayerStruct.sessionid);
 			buffer.WriteUInt32(transformStruct.action);
-			buffer.WriteString(transformStruct.position.x.ToString());
-			buffer.WriteString(transformStruct.position.y.ToString());
-			buffer.WriteString(transformStruct.position.z.ToString());
-			buffer.WriteString(transformStruct.rotation.x.ToString());
-			buffer.WriteString(transformStruct.rotation.y.ToString());
-			buffer.WriteString(transformStruct.rotation.z.ToString());
-			buffer.WriteString(transformStruct.rotation.w.ToString());
+			buffer.WriteFloat(transformStruct.position.x);
+			buffer.WriteFloat(transformStruct.position.y);
+			buffer.WriteFloat(transformStruct.position.z);
+			buffer.WriteFloat(transformStruct.rotation.x);
+			buffer.WriteFloat(transformStruct.rotation.y);
+			buffer.WriteFloat(transformStruct.rotation.z);
+			buffer.WriteFloat(transformStruct.rotation.w);
 		}
 		return buffer;
 	}

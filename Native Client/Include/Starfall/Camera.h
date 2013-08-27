@@ -42,12 +42,13 @@ namespace Starfall {
 			CameraControls(Camera* parent);
 			void update(sf::Event& event);
 			void configureState(string stateName, bool& keyPressed); //0->1 : action activated on keypress, 1->2: action signalled to stop on keyrelease; 2->0:  when action is finished
-			void apply();
+			bool apply(); //returns true if recalculations were made
 	};
 
 	class Camera {
 
 		friend class WorldScene;
+		friend class Model;
 		friend class CameraControls;
 
 		private:
@@ -56,6 +57,7 @@ namespace Starfall {
 			glm::mat4 projection;
 			glm::mat4 view;
 			glm::vec3 direction; //direction the forward vector is pointing in world space
+			glm::vec3 up;
 
 			void recalculate(); //updates the camera's view and direction; they can then be used several times without recalculation
 
@@ -70,14 +72,13 @@ namespace Starfall {
 
 		glm::quat orientation;
 		glm::vec3 position;
-		glm::vec3 target;
 
 		Camera();
 
 		void initialize(sf::RenderWindow& window);
 
-		inline float minimumDistance() { return 1.0f; } 
-		inline float maximumDistance() { return 5.0f; }
+		inline float minimumDistance() { return 4.0f; } 
+		inline float maximumDistance() { return 10.0f; }
 
 		static float yfov(float xfov, float ratio); //utility function to calculate yfov from xfov
 

@@ -1,6 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 #include "Starfall\Platform.h"
+#include "Starfall\Assets.h"
 
 using namespace Starfall;
 
@@ -14,10 +15,22 @@ void Platform::Init() {
 #endif
 }
 
-void Platform::Halt() {
-	cout << "[Platform::Halt] The Application has crashed.\n\nPlease contact: markfarr2011@gmail.com" << endl;
+void Platform::Halt(int code) {
+
+	Assets::Loader.stopAll(); //Stop all threads currently running in the thread pool
+
 	if(Platform::out.is_open()) {
 		Platform::out.close();
 	}
-	exit(1);
+	
+	switch(code) {
+		case 0: 
+			cout << "[Platform::Halt] The Application has finished." << endl;
+		break;
+		case 1: 
+			cout << "[Platform::Halt] The Application has crashed.\n\nPlease contact: markfarr2011@gmail.com" << endl;
+		break;
+	}
+
+	exit(code);
 }

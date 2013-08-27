@@ -34,14 +34,11 @@ void LinePass::beginPass() {
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 	if(!this->shader->isLoaded()) {
-		cout << "Loading shader." << endl;
 		this->shader->loaded = false;
 		this->shader->load();
 		this->shader->find("color");
 		this->shader->loaded = true;
-	} else {
-		cout << "Not loading shader." << endl;
-	}
+	} 
 
 	shader->use();
 	shader->set<glm::vec4>("color", glm::vec4(0.0,0.0,0.0,1.0));

@@ -100,8 +100,7 @@ CreateEntityStruct Entity::castCreateEntityStruct() {
 	createEntityStruct.displayName = this->displayName;
 	createEntityStruct.mode = this->mode;
 	createEntityStruct.position = this->position;
-	createEntityStruct.rotation = this->rotation;
-	//createEntityStruct.appearance = this->appearance;
+	createEntityStruct.orientation = this->orientation;
 	return createEntityStruct;
 }
 

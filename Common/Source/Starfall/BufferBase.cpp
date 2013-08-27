@@ -1,11 +1,14 @@
 //Copyright (c) 2013 Mark Farrell
 
 #include "Starfall/BufferBase.h"
+
 #include <iostream>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <iterator>
+
+#include <glm/glm.hpp>
 
 using namespace Starfall;
 
@@ -90,13 +93,17 @@ Poco::UInt32 Buffer::readUInt32() {
 	return value;
 }
 
-double Buffer::readFloat() {
-	double ret = 0.0;
-	if(!Poco::NumberParser::tryParseFloat(this->readString(), ret))
+float Buffer::readFloat() {
+
+	union
 	{
-		throw new BufferException("Buffer::readFloat: Parsing error. ");
-	}
-	return ret;
+		float f;
+		Poco::UInt32 i;
+	} fi;
+
+	fi.i = this->readUInt32();
+
+	return fi.f;
 }
 
 void Buffer::writeUInt32(Poco::UInt32 value) {
@@ -112,6 +119,17 @@ void Buffer::writeString(const string& value) {
 	this->insert(this->end(), value.begin(), value.end());
 }
 
-void Buffer::writeFloat(double value) {
-	this->writeString(Poco::NumberFormatter::format(value));
+void Buffer::writeFloat(float value) {
+
+	union
+	{
+		float f;
+		Poco::UInt32 i;
+	} fi;
+
+	fi.f = value;
+
+
+
+	this->writeUInt32(fi.i);
 }

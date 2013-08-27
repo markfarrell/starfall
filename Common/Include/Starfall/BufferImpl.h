@@ -41,10 +41,10 @@ namespace Starfall {
 				transformStruct.position.x = this->readFloat();
 				transformStruct.position.y = this->readFloat();
 				transformStruct.position.z = this->readFloat();
-				transformStruct.rotation.x = this->readFloat();
-				transformStruct.rotation.y = this->readFloat();
-				transformStruct.rotation.z = this->readFloat();
-				transformStruct.rotation.w = this->readFloat();
+				transformStruct.orientation.x = this->readFloat();
+				transformStruct.orientation.y = this->readFloat();
+				transformStruct.orientation.z = this->readFloat();
+				transformStruct.orientation.w = this->readFloat();
 				transformsPacket->push_back(transformStruct);
 			}
 	}
@@ -79,10 +79,10 @@ namespace Starfall {
 		this->writeFloat(transform.position.x);
 		this->writeFloat(transform.position.y);
 		this->writeFloat(transform.position.z);
-		this->writeFloat(transform.rotation.x);
-		this->writeFloat(transform.rotation.y);
-		this->writeFloat(transform.rotation.z);
-		this->writeFloat(transform.rotation.w);
+		this->writeFloat(transform.orientation.x);
+		this->writeFloat(transform.orientation.y);
+		this->writeFloat(transform.orientation.z);
+		this->writeFloat(transform.orientation.w);
 	}
 
 	template<>
@@ -102,7 +102,7 @@ namespace Starfall {
 			this->writeString((*it).displayName);
 			Transform transform;
 			transform.position = (*it).position;
-			transform.rotation = (*it).rotation;
+			transform.orientation = (*it).orientation;
 			(*this) << transform;
 		}
 	}
@@ -118,7 +118,7 @@ namespace Starfall {
 				this->writeUInt32((*itPath).action);
 				Transform transform;
 				transform.position = (*itPath).position;
-				transform.rotation = (*itPath).rotation;
+				transform.orientation = (*itPath).orientation;
 				(*this) << transform;
 			}
 		}

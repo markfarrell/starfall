@@ -2,22 +2,54 @@
 #include "Starfall/Model.h"
 #include "Starfall/ConfigurationFile.h"
 #include "Starfall/Assets.h"
+#include "Starfall/Images.h"
 
+#include <glm/gtx/norm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
-
+#include <iomanip>
 #include <fstream>
 
+using std::setw;
+
 using namespace Starfall;
+
 
 map<string, vector<Mesh>> Model::Resources;
 Poco::Mutex Model::ResourcesMutex;
 
-MeshRenderer::MeshRenderer(Mesh& mesh) {
+
+glm::vec3 BoundingBox::size() {
+	return this->max-this->min;
+}
+
+
+MeshRenderer::MeshRenderer(Mesh& mesh) 
+ : cube(Cube::Ptr(new Cube)) {
+
 	this->count = 0;
+
+	if(!Images::Load(this->cubeImage, Assets::Path("Textures/box.png"))) {
+		cout << "[MeshRenderer::MeshRender] Failed to load " << Assets::Path("Textures/box.png") << endl;
+	}
+
+
+	this->cube->load(
+		0.5f*glm::vec3(
+			glm::abs(mesh.boundingBox->max.x-mesh.boundingBox->min.x),
+			glm::abs(mesh.boundingBox->max.y-mesh.boundingBox->min.y),
+			glm::abs(mesh.boundingBox->max.z-mesh.boundingBox->min.z)
+		)
+	); 
+
+	this->cube->matrix = glm::translate(glm::mat4(1.0f), 0.5f*(mesh.boundingBox->max+mesh.boundingBox->min));
+
 	for(vector<Face::Ptr>::iterator faceIterator = mesh.faces.begin(); faceIterator != mesh.faces.end(); faceIterator++) {
-		vector<glm::vec3> vertices = (*faceIterator)->vertices;
-		vector<glm::vec3> normals = (*faceIterator)->normals;
-		Poco::UInt32 materialIndex = (*faceIterator )->materialIndex;
+
+		vector<glm::vec3>& vertices = (*faceIterator)->vertices;
+		vector<glm::vec3>& normals = (*faceIterator)->normals;
+		Poco::UInt32& materialIndex = (*faceIterator )->materialIndex;
+
 		if(materialIndex < mesh.materials.size()) { // material index is valid
 			Material::Ptr pMaterial = mesh.materials[materialIndex];
 			GLfloat r = GLfloat(pMaterial->diffuseColor.x);
@@ -30,7 +62,6 @@ MeshRenderer::MeshRenderer(Mesh& mesh) {
 				for(Poco::UInt32 i = 0; i < 3; i++) {
 					glm::vec3 vertex = vertices[i];
 					glm::vec3 normal = normals[i];
-
 
 					//Format: 3 vertex values, 3 color values per vertex
 					this->data.push_back(GLfloat(vertex.x));
@@ -63,7 +94,9 @@ Model::Ptr Model::Create(string path) {
 
 Model::Model(string path)
 	: Asset() {
+	this->boundingBox = BoundingBox::Ptr(new BoundingBox);
 	this->path = path;
+	this->states["debug.boundingboxes"] = false;
 }
 
 Model::~Model() {}
@@ -136,6 +169,14 @@ void Model::update() { //thread-safe
 	this->renderers.clear(); //release previous mesh renderers
 	for(vector<Mesh>::iterator meshIterator = this->meshes.begin(); meshIterator != this->meshes.end(); meshIterator++) { //map meshes to new mesh renderers
 		this->renderers.push_back(MeshRenderer::Ptr(new MeshRenderer(*meshIterator)));
+
+		this->boundingBox->min.x = glm::min((*meshIterator).boundingBox->min.x, this->boundingBox->min.x);
+		this->boundingBox->min.y = glm::min((*meshIterator).boundingBox->min.y, this->boundingBox->min.y);
+		this->boundingBox->min.z = glm::min((*meshIterator).boundingBox->min.z, this->boundingBox->min.z);
+		this->boundingBox->max.x = glm::max((*meshIterator).boundingBox->max.x, this->boundingBox->max.x);
+		this->boundingBox->max.y = glm::max((*meshIterator).boundingBox->max.y, this->boundingBox->max.y);
+		this->boundingBox->max.z = glm::max((*meshIterator).boundingBox->max.z, this->boundingBox->max.z);
+
 	}
 }
 
@@ -182,6 +223,8 @@ vector<Face::Ptr> Model::parseFaces(Poco::Dynamic::Struct<string>& meshStruct) {
 
 vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 {
+
+	
 	if(jsonVar.isStruct()) {
 		if(jsonVar["meshes"].isArray()) {
 			vector<Poco::Dynamic::Var> asset = jsonVar["meshes"].extract<vector<Poco::Dynamic::Var>>(); //an asset is a collection (array) of objects, including meshes
@@ -196,6 +239,7 @@ vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 						mesh.name = this->parse<string>("name", meshStruct);
 						mesh.faces = this->parseFaces(meshStruct);
 						mesh.materials = this->parseMaterials(meshStruct);
+						mesh.boundingBox = this->calculateBoundingBox(mesh.faces);
 						meshes.push_back(mesh);
 					}
 				}
@@ -206,26 +250,87 @@ vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 	throw Poco::InvalidAccessException();
 }
 
-void Model::apply() {
+BoundingBox::Ptr Model::calculateBoundingBox(vector<Face::Ptr>& meshFaces) {
+	BoundingBox::Ptr boundingBox(new BoundingBox);
+
+	bool initialized = false;
+	float minX,maxX,minY, maxY, minZ, maxZ;
+						
+	for(vector<Face::Ptr>::iterator faceIterator = meshFaces.begin(); faceIterator != meshFaces.end(); faceIterator++) {
+		vector<glm::vec3>& vertices = (*faceIterator)->vertices;
+		for(vector<glm::vec3>::iterator verticesIterator = vertices.begin(); verticesIterator != vertices.end(); verticesIterator++) {
+
+			glm::vec3& vertex = (*verticesIterator); 
+			if(!initialized) {
+				minX = vertex.x;
+				maxX = vertex.x;
+				minY = vertex.y;
+				maxY = vertex.y;
+				minZ = vertex.z;
+				maxZ = vertex.z;
+				initialized = true;
+			} else {
+				if(minX > vertex.x) {
+					minX = vertex.x;
+				} 
+
+				if(maxX < vertex.x) {
+					maxX = vertex.x;
+				}
+
+				if(minY > vertex.y) {
+					minY = vertex.y;
+				}
+
+				if(maxY < vertex.y) {
+					maxY = vertex.y;
+				}
+
+				if(minZ > vertex.z) { 
+					minZ = vertex.z;
+				}
+
+				if(maxZ < vertex.z) {
+					maxZ = vertex.z;
+				}
+
+					
+			}
+		}
+	}
+
+	boundingBox->min.x = minX;
+	boundingBox->min.y = minY;
+	boundingBox->min.z = minZ;
+	boundingBox->max.x = maxX;
+	boundingBox->max.y = maxY;
+	boundingBox->max.z = maxZ;
+
+	return boundingBox;
+}
+
+void Model::apply(Camera& camera) {
+	glm::vec3 offset = -0.5f*glm::vec3(0.0f, this->boundingBox->size().y, 0.0f);
+	this->position = camera.position + offset;
+	this->orientation = glm::normalize(glm::quat(glm::inverse(camera.view))); 
 	this->matrix = glm::mat4(1.0f);
-	this->matrix = glm::translate(this->matrix, this->position);
-	this->matrix = glm::rotate(this->matrix, this->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-	this->matrix = glm::rotate(this->matrix, this->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-	this->matrix = glm::rotate(this->matrix, this->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+	this->matrix = glm::translate(this->matrix, this->position-offset);
+	this->matrix *= glm::toMat4(this->orientation);
+	this->matrix = glm::translate(this->matrix, offset);
 }
 
 
 void Model::render(Technique::Ptr& technique) {
 
-
 	glPushMatrix();
-
 	glMultMatrixf(glm::value_ptr(this->matrix));
 
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
 
 
 	/** lock(this->mutex) **/ { 
@@ -251,18 +356,35 @@ void Model::render(Technique::Ptr& technique) {
 				}
 
 				technique->endPasses();
-
 			}
 
-			glDisableClientState(GL_VERTEX_ARRAY); //disable these client states again after skybox is done with them.
+			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_COLOR_ARRAY);
+		}
 
+		if(this->states["debug.boundingboxes"]) { 
+			for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {
+			
+				if(!(*rendererIterator)->cube->uploaded) {
+					(*rendererIterator)->cube->upload(
+						(*rendererIterator)->cubeImage,
+						(*rendererIterator)->cubeImage,
+						(*rendererIterator)->cubeImage,
+						(*rendererIterator)->cubeImage,
+						(*rendererIterator)->cubeImage,
+						(*rendererIterator)->cubeImage
+					);
+				}
+			
+				(*rendererIterator)->cube->render();
+			}
 		}
 	}
 	
 
 	glPopMatrix();
+
 
 
 

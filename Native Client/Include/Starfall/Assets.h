@@ -47,6 +47,7 @@ namespace Starfall {
 			void clear();
 			virtual void load();
 			virtual bool isLoaded(); //Returns true if all assets that were enqueued are loaded.
+			void stopAll();
 	};
 
 	class Assets {

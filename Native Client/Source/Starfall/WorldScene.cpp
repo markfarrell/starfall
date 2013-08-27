@@ -9,6 +9,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include <math.h>
 #include <iostream>
@@ -31,7 +33,6 @@ WorldScene::~WorldScene() {
 
 void WorldScene::initialize() { 
 	this->camera.initialize(this->parent->window);
-
 }
 
 void WorldScene::render() {
@@ -47,8 +48,6 @@ void WorldScene::render() {
 	this->parent->skybox.position = this->camera.position;
 	this->parent->skybox.render(this->parent->window);
 
-	this->model->rotation.z = clock.getElapsedTime().asSeconds()*5.0f;
-	this->model->apply();
 	this->model->render(this->technique);
 
 	glUseProgram(NULL);
@@ -71,9 +70,19 @@ void WorldScene::update() {
 			this->parent->window.setView(sf::View(sf::Vector2f(float(event.size.width/2), float(event.size.height/2)), sf::Vector2f(float(event.size.width), float(event.size.height))));
 		}
 
+		//TODO: Move to model.controls
+		if(event.type == sf::Event::KeyPressed) {
+			if(event.key.code == sf::Keyboard::F1) {
+				this->model->states["debug.boundingboxes"] = !this->model->states["debug.boundingboxes"];
+			}
+		}
+
 		this->camera.controls.update(event);
 	}
 
-	this->camera.controls.apply();
+	//TODO: Move to model.controls
+	if(this->camera.controls.apply()) {
+		this->model->apply(this->camera);
+	}
 
 }
