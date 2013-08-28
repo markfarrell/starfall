@@ -66,16 +66,22 @@ namespace Starfall {
 
 	class Mesh {
 		public:
+			typedef Poco::SharedPtr<Mesh> Ptr;
 			string name;
 			vector<Material::Ptr> materials; //materials are shared between instances of a mesh (new material pointers can be created for an instance of a mesh)
 			vector<Face::Ptr> faces; //faces are shared between instances of a mesh
 			BoundingBox::Ptr boundingBox;
-			Mesh() : name("Mesh") {}
+			Mesh();
+			Mesh(Mesh::Ptr& mesh);
 	};
 
 
 	/** Description: Stores OpenGL valid data for a mesh. Should be reinstantiated when the geometry of a mesh is updated. **/
 	class MeshRenderer {
+
+		private: 
+			Mesh::Ptr mesh; 
+
 		public:
 			typedef Poco::SharedPtr<MeshRenderer> Ptr; //allocate renderers on heap
 			vector<GLfloat> data; //stores vertex and color data
@@ -84,7 +90,8 @@ namespace Starfall {
 			sf::Image cubeImage;
 			Cube::Ptr cube;
 
-			MeshRenderer(Mesh& mesh); //populate data and count
+			MeshRenderer(Mesh::Ptr& mesh); //populate data and count
+			void update(Mesh::Ptr& mesh);
 
 	};
 
@@ -99,6 +106,10 @@ namespace Starfall {
 			glm::vec3 position; //the model's position should only be accessed in one thread
 			glm::quat orientation; //likewise, the model's rotation should only be accessed in one thread
 
+			BoundingBox::Ptr boundingBox; //bounding volume around the entire mesh.
+
+			map<string, bool> states;
+
 			~Model();
 
 			virtual void run();
@@ -109,9 +120,7 @@ namespace Starfall {
 
 			void apply(Camera& camera); //recalculate the model's matrix after a change in position or rotation
 
-			BoundingBox::Ptr boundingBox; //bounding volume around the entire mesh.
-
-			map<string, bool> states;
+	
 
 		private:
 
@@ -123,7 +132,7 @@ namespace Starfall {
 
 			//Members are not thread-safe; do not allow direct access
 			vector<MeshRenderer::Ptr> renderers; 
-			vector<Mesh> meshes;
+			vector<Mesh::Ptr> meshes;
 			string path; //the model's path
 
 
@@ -132,7 +141,7 @@ namespace Starfall {
 			 *  In C++ vectors are deep copied: each mesh will be new (on the heap because it's stored in a vector)
 			 *  TODO: Mesh data and materials should be shared using Poco::Shared Pointers. Materials could be replaced with new shared pointers.
 			 */
-			static map<string, vector<Mesh>> Resources; 
+			static map<string, vector<Mesh::Ptr>> Resources; 
 			static Poco::Mutex ResourcesMutex; //lock parallel access to Resources
 
 			template<typename T> 
@@ -142,7 +151,7 @@ namespace Starfall {
 			vector<Face::Ptr> parseFaces(Poco::Dynamic::Struct<string>& meshStruct);
 			BoundingBox::Ptr calculateBoundingBox(vector<Face::Ptr>& meshFaces);
 
-			vector<Mesh> parseMeshes(Poco::Dynamic::Var& jsonVar); 
+			vector<Mesh::Ptr> parseMeshes(Poco::Dynamic::Var& jsonVar); 
 
 
 

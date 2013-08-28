@@ -15,7 +15,7 @@ using std::setw;
 using namespace Starfall;
 
 
-map<string, vector<Mesh>> Model::Resources;
+map<string, vector<Mesh::Ptr>> Model::Resources;
 Poco::Mutex Model::ResourcesMutex;
 
 
@@ -24,37 +24,60 @@ glm::vec3 BoundingBox::size() {
 }
 
 
-MeshRenderer::MeshRenderer(Mesh& mesh) 
+Mesh::Mesh() : name("Mesh")
+{
+
+}
+
+Mesh::Mesh(Mesh::Ptr& mesh)
+{
+	this->name = mesh->name;
+	this->boundingBox = mesh->boundingBox;
+	this->faces = mesh->faces;
+	this->materials = mesh->materials;
+}
+
+MeshRenderer::MeshRenderer(Mesh::Ptr& mesh) 
  : cube(Cube::Ptr(new Cube)) {
 
-	this->count = 0;
 
 	if(!Images::Load(this->cubeImage, Assets::Path("Textures/box.png"))) {
 		cout << "[MeshRenderer::MeshRender] Failed to load " << Assets::Path("Textures/box.png") << endl;
 	}
 
+	this->update(mesh);
+}
+
+void MeshRenderer::update(Mesh::Ptr& mesh) {
+
+	this->mesh = mesh;
+
+	this->count = 0;
+	this->data.clear();
 
 	this->cube->load(
 		0.5f*glm::vec3(
-			glm::abs(mesh.boundingBox->max.x-mesh.boundingBox->min.x),
-			glm::abs(mesh.boundingBox->max.y-mesh.boundingBox->min.y),
-			glm::abs(mesh.boundingBox->max.z-mesh.boundingBox->min.z)
+			glm::abs(mesh->boundingBox->max.x-mesh->boundingBox->min.x),
+			glm::abs(mesh->boundingBox->max.y-mesh->boundingBox->min.y),
+			glm::abs(mesh->boundingBox->max.z-mesh->boundingBox->min.z)
 		)
 	); 
 
-	this->cube->matrix = glm::translate(glm::mat4(1.0f), 0.5f*(mesh.boundingBox->max+mesh.boundingBox->min));
+	this->cube->matrix = glm::translate(glm::mat4(1.0f), 0.5f*(mesh->boundingBox->max+mesh->boundingBox->min));
 
-	for(vector<Face::Ptr>::iterator faceIterator = mesh.faces.begin(); faceIterator != mesh.faces.end(); faceIterator++) {
+
+	for(vector<Face::Ptr>::iterator faceIterator = mesh->faces.begin(); faceIterator != mesh->faces.end(); faceIterator++) {
 
 		vector<glm::vec3>& vertices = (*faceIterator)->vertices;
 		vector<glm::vec3>& normals = (*faceIterator)->normals;
 		Poco::UInt32& materialIndex = (*faceIterator )->materialIndex;
 
-		if(materialIndex < mesh.materials.size()) { // material index is valid
-			Material::Ptr pMaterial = mesh.materials[materialIndex];
+		if(materialIndex < mesh->materials.size()) { // material index is valid
+			Material::Ptr pMaterial = mesh->materials[materialIndex];
 			GLfloat r = GLfloat(pMaterial->diffuseColor.x);
 			GLfloat g = GLfloat(pMaterial->diffuseColor.y);
 			GLfloat b = GLfloat(pMaterial->diffuseColor.z);
+			GLfloat a = GLfloat(pMaterial->alpha);
 
 
 			if(vertices.size() == 3 &&
@@ -73,15 +96,16 @@ MeshRenderer::MeshRenderer(Mesh& mesh)
 					this->data.push_back(r);
 					this->data.push_back(g);
 					this->data.push_back(b);
+					this->data.push_back(a);
 
 					this->count++; //Increase total count on success
 				}
 			} else {
-				cout << "[MeshRenderer::MeshRenderer] Invalid number of vertices on face " << vertices.size() << endl;
+				cout << "[MeshRenderer::update] Invalid number of vertices on face " << vertices.size() << endl;
 			}
 
 		} else {
-			cout << "[MeshRenderer::MeshRenderer] Invalid material index " << materialIndex << endl;
+			cout << "[MeshRenderer::update] Invalid material index " << materialIndex << endl;
 		}
 	}
 }
@@ -109,11 +133,17 @@ void Model::load() { //locks access to the model only when necessary; so that it
 
 	bool foundResource = false;
 
+	this->meshes.clear();
+
+
 	/* lock(Model::Resources) */ { 
 		Poco::ScopedLock<Poco::Mutex> resourcesLock(Model::ResourcesMutex);
 		if(Model::Resources.find(path) != Model::Resources.end()) {
 			Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
-			this->meshes = Model::Resources[path];
+			vector<Mesh::Ptr> resource =  Model::Resources[path];
+			for(vector<Mesh::Ptr>::iterator it = resource.begin(); it != resource.end(); it++) {
+				this->meshes.push_back(Mesh::Ptr(new Mesh(*it)));
+			}
 			foundResource = true;
 		} 
 	}
@@ -152,7 +182,11 @@ void Model::load() { //locks access to the model only when necessary; so that it
 				/* lock(Model::Resources) */ {
 					Poco::ScopedLock<Poco::Mutex> resourcesLock(Model::ResourcesMutex);
 
-					Model::Resources[path] = this->meshes; //copy this model's meshes to resources.
+					vector<Mesh::Ptr> resource;
+					for(vector<Mesh::Ptr>::iterator it = this->meshes.begin(); it != this->meshes.end(); it++) {
+						resource.push_back(Mesh::Ptr(new Mesh(*it)));
+					}
+					Model::Resources[path] = resource; //copy this model's meshes to resources.
 				}
 
 			}
@@ -167,15 +201,15 @@ void Model::update() { //thread-safe
 	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 
 	this->renderers.clear(); //release previous mesh renderers
-	for(vector<Mesh>::iterator meshIterator = this->meshes.begin(); meshIterator != this->meshes.end(); meshIterator++) { //map meshes to new mesh renderers
+	for(vector<Mesh::Ptr>::iterator meshIterator = this->meshes.begin(); meshIterator != this->meshes.end(); meshIterator++) { //map meshes to new mesh renderers
 		this->renderers.push_back(MeshRenderer::Ptr(new MeshRenderer(*meshIterator)));
 
-		this->boundingBox->min.x = glm::min((*meshIterator).boundingBox->min.x, this->boundingBox->min.x);
-		this->boundingBox->min.y = glm::min((*meshIterator).boundingBox->min.y, this->boundingBox->min.y);
-		this->boundingBox->min.z = glm::min((*meshIterator).boundingBox->min.z, this->boundingBox->min.z);
-		this->boundingBox->max.x = glm::max((*meshIterator).boundingBox->max.x, this->boundingBox->max.x);
-		this->boundingBox->max.y = glm::max((*meshIterator).boundingBox->max.y, this->boundingBox->max.y);
-		this->boundingBox->max.z = glm::max((*meshIterator).boundingBox->max.z, this->boundingBox->max.z);
+		this->boundingBox->min.x = glm::min((*meshIterator)->boundingBox->min.x, this->boundingBox->min.x);
+		this->boundingBox->min.y = glm::min((*meshIterator)->boundingBox->min.y, this->boundingBox->min.y);
+		this->boundingBox->min.z = glm::min((*meshIterator)->boundingBox->min.z, this->boundingBox->min.z);
+		this->boundingBox->max.x = glm::max((*meshIterator)->boundingBox->max.x, this->boundingBox->max.x);
+		this->boundingBox->max.y = glm::max((*meshIterator)->boundingBox->max.y, this->boundingBox->max.y);
+		this->boundingBox->max.z = glm::max((*meshIterator)->boundingBox->max.z, this->boundingBox->max.z);
 
 	}
 }
@@ -221,25 +255,25 @@ vector<Face::Ptr> Model::parseFaces(Poco::Dynamic::Struct<string>& meshStruct) {
 	return ret;
 }
 
-vector<Mesh> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
+vector<Mesh::Ptr> Model::parseMeshes(Poco::Dynamic::Var& jsonVar)
 {
 
 	
 	if(jsonVar.isStruct()) {
 		if(jsonVar["meshes"].isArray()) {
 			vector<Poco::Dynamic::Var> asset = jsonVar["meshes"].extract<vector<Poco::Dynamic::Var>>(); //an asset is a collection (array) of objects, including meshes
-			vector<Mesh> meshes;
+			vector<Mesh::Ptr> meshes;
 			for(vector<Poco::Dynamic::Var>::iterator assetIterator = asset.begin(); assetIterator != asset.end(); assetIterator++) {
 				if((*assetIterator).isStruct()) {
 					if((*assetIterator)["mesh"].isStruct()) {
 
 						Poco::Dynamic::Struct<string> meshStruct = (*assetIterator)["mesh"].extract<Poco::Dynamic::Struct<string>>();
 								
-						Mesh mesh;
-						mesh.name = this->parse<string>("name", meshStruct);
-						mesh.faces = this->parseFaces(meshStruct);
-						mesh.materials = this->parseMaterials(meshStruct);
-						mesh.boundingBox = this->calculateBoundingBox(mesh.faces);
+						Mesh::Ptr mesh(new Mesh);
+						mesh->name = this->parse<string>("name", meshStruct);
+						mesh->faces = this->parseFaces(meshStruct);
+						mesh->materials = this->parseMaterials(meshStruct);
+						mesh->boundingBox = this->calculateBoundingBox(mesh->faces);
 						meshes.push_back(mesh);
 					}
 				}
@@ -341,9 +375,9 @@ void Model::render(Technique::Ptr& technique) {
 			glEnableClientState(GL_NORMAL_ARRAY);
 			glEnableClientState(GL_COLOR_ARRAY);
 
-			glVertexPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0]);
-			glNormalPointer(GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
-			glColorPointer(3, GL_FLOAT, 9 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 6);
+			glVertexPointer(3, GL_FLOAT, 10 * sizeof(GLfloat), &(*rendererIterator)->data[0]);
+			glNormalPointer(GL_FLOAT, 10 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
+			glColorPointer(4, GL_FLOAT, 10 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 6);
 
 			/* lock(technique.mutex) */ {
 				Poco::ScopedLock<Poco::Mutex> techniqueLock(technique->mutex);
