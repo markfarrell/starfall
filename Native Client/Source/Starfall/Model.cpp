@@ -364,16 +364,14 @@ void Model::render(Technique::Ptr& technique) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 
 
 	/** lock(this->mutex) **/ { 
 		Poco::ScopedLock<Poco::Mutex> modelLock(this->mutex);
 		for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
 
 			glVertexPointer(3, GL_FLOAT, 10 * sizeof(GLfloat), &(*rendererIterator)->data[0]);
 			glNormalPointer(GL_FLOAT, 10 * sizeof(GLfloat), &(*rendererIterator)->data[0] + 3);
@@ -392,10 +390,11 @@ void Model::render(Technique::Ptr& technique) {
 				technique->endPasses();
 			}
 
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_COLOR_ARRAY);
 		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 
 		if(this->states["debug.boundingboxes"]) { 
 			for(vector<MeshRenderer::Ptr>::iterator rendererIterator = this->renderers.begin(); rendererIterator != this->renderers.end(); rendererIterator++) {

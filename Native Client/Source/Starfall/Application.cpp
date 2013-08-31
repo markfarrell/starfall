@@ -8,8 +8,10 @@
 
 #include <Poco\NumberParser.h>
 #include <Poco\StringTokenizer.h>
+#include <Poco\String.h>
 
 #include <Windows.h>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -63,14 +65,33 @@ void Application::render() {
 
 bool Application::checkRequirements() {
 	bool hasRequirements = true;
+	
+	std::ostringstream versionStream;
+	string versionString;
+	string versionTokens;
+	string::size_type spaceIndex;
+
 	if(GLEW_OK != glewInit()) {
-		cout << "[Application::run] Glew failed to initialized." << endl;
+		cout << "[Application::checkRequirements] Glew failed to initialized." << endl;
 		hasRequirements = false;
 	}
-
-	std::ostringstream versionStream;
+	
 	versionStream << glGetString(GL_VERSION);
-	Poco::StringTokenizer tokenizer(versionStream.str(), ".", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
+
+	versionString = versionStream.str();
+	
+	//GL_VERSION contains more info than just the version itself: e.g. 2.1 Mesa 7.12-devel (git-8cad948)
+	//Only the OpenGL version itself should be tokenized. 
+
+	spaceIndex = versionString.find(" ", 0);
+
+	if(spaceIndex != string::npos) {
+		versionTokens = versionString.substr(0, spaceIndex+1);
+	} else {
+		versionTokens = versionString;
+	}
+
+	Poco::StringTokenizer tokenizer(versionTokens, ".", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
 	if(tokenizer.count() >= 2) {
 		int majorVersion;
 		int minorVersion;
@@ -89,11 +110,13 @@ bool Application::checkRequirements() {
 				}
 		} else {
 			hasRequirements = false;
+			cout << "[Application::checkRequirements] Failed to parse. GL_VERSION=" << versionStream.str() << endl;
 		}
 	} else {
 		hasRequirements = false;
 	}
-	
+
+
 	return hasRequirements;
 }
 
@@ -105,17 +128,24 @@ void Application::run() {
 		Platform::Halt();
 	}
 
+
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	
     window.setActive();  // Make it the active window for OpenGL calls
+
 
 	if(!this->checkRequirements()) {
 		Platform::Halt();
 	}
 
 	this->skybox.load();
+
 	this->worldScene->load();
+
 	this->loginScene->load();
+
 	this->loadScene->load();
+
 	this->loadScene->enter(NULL, this->loginScene); //calls Application::changeScene to set the current scene
 
 	Assets::Loader.load(); //load all assets concurrency that have been queued since application launch; the load scene will observe the loading state of the loader.

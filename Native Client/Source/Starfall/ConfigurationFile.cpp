@@ -71,6 +71,16 @@ int ConfigurationFile::getInt(std::string key, int default) {
 	return ret;
 }
 
+bool ConfigurationFile::getBool(std::string key, bool default) {
+	bool ret = default;
+	if(this->map[key] == "true") {
+		ret = true;
+	} else if(this->map[key] == "false") {
+		ret = false;
+	}
+	return ret;
+}
+
 string ConfigurationFile::getString(std::string key, string default) {
 	string ret = default;
 	if(this->map.find(key) != this->map.end()) {

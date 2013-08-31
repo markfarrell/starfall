@@ -12,50 +12,61 @@
 using namespace Starfall;
 
 
-void FillPass::beginPass() {
-
-
-	glStencilFunc( GL_ALWAYS, 1, 0xFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
-	// Render the object in black
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+FillPass::FillPass(bool& enabled) {
+	this->enabled = enabled;
 }
 
+void FillPass::beginPass() {
+	if(this->enabled) { 
+		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+		glStencilFunc( GL_ALWAYS, 1, 1 );
+		glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+	}
+}
+
+void FillPass::endPass() {
+
+}
 
 
 
 void LinePass::beginPass() {
+	if(this->enabled) { 
 
+		glStencilFunc( GL_NOTEQUAL, 1, 1 );
+		glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+		// Draw the object with thick lines
+		glLineWidth( 1.5f );
+		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-	glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
-	glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
-	// Draw the object with thick lines
-	glLineWidth( 1.5f );
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		if(!this->shader->isLoaded()) {
+			this->shader->loaded = false;
+			this->shader->load();
+			this->shader->find("color");
+			this->shader->loaded = true;
+		} 
 
-	if(!this->shader->isLoaded()) {
-		this->shader->loaded = false;
-		this->shader->load();
-		this->shader->find("color");
-		this->shader->loaded = true;
-	} 
-
-	shader->use();
-	shader->set<glm::vec4>("color", glm::vec4(0.0,0.0,0.0,1.0));
+		shader->use();
+		shader->set<glm::vec4>("color", glm::vec4(0.0,0.0,0.0,1.0));
+	}
 }
 
 void LinePass::endPass() {
-	shader->clear();
+	if(this->enabled) { 
+		shader->clear();
+	}
 }
 
 
-LinePass::LinePass(Shader::Ptr s) 
+LinePass::LinePass(Shader::Ptr s, bool& enabled) 
 {
 	this->shader = s;
+	this->enabled = enabled;
 }
 
 
 ToonTechnique::ToonTechnique() : Technique() {
+	this->enabled = ConfigurationFile::Client().getBool("stencil.enabled");
 	this->shader = Shader::Ptr(new Shader("Shaders/Color.vert", "Shaders/Color.frag"));
 }
 
@@ -69,20 +80,24 @@ void ToonTechnique::load() {
 	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
 
 	this->passes.clear();
+ 
 	this->passes.resize(2);
-	this->passes[0] = (Pass::Ptr(new FillPass())); 
-	this->passes[1] = (Pass::Ptr(new LinePass(shader))); //line pass loads on acquisition
+	this->passes[0] = (Pass::Ptr(new FillPass(this->enabled))); 
+	this->passes[1] = (Pass::Ptr(new LinePass(shader, this->enabled))); //line pass loads on acquisition
 }
 
 void ToonTechnique::beginPasses() { 
-
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
-	glEnable(GL_STENCIL_TEST);
-	glClearStencil(0);
-	glClear(GL_STENCIL_BUFFER_BIT);
+	if(this->enabled) { 
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+		glClearStencil(0);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glEnable(GL_STENCIL_TEST);
+	}
 }
 
 void ToonTechnique::endPasses() {
-	glDisable(GL_STENCIL_TEST);
-	glPopAttrib();
+	if(this->enabled) {
+		glDisable(GL_STENCIL_TEST);
+		glPopAttrib();
+	}
 }
