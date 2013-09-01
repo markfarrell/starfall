@@ -1,8 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\Scene.h"
-#include "Starfall\Camera.h"
+#include "Starfall/Scene.h"
+#include "Starfall/Camera.h"
 
 namespace Starfall {
 

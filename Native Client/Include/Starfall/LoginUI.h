@@ -1,8 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\ConfigurationFile.h"
-#include "Starfall\Assets.h"
+#include "Starfall/ConfigurationFile.h"
+#include "Starfall/Assets.h"
 
 #include <SFML/Graphics.hpp>
 

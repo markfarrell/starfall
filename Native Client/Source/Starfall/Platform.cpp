@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
-#include "Starfall\Platform.h"
-#include "Starfall\Assets.h"
+#include "Starfall/Platform.h"
+#include "Starfall/Assets.h"
 
 using namespace Starfall;
 

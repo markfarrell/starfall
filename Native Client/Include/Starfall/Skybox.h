@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include <Poco\SharedPtr.h>
+#include <Poco/SharedPtr.h>
 
 #include <vector>
 #include <SFML/Graphics.hpp>

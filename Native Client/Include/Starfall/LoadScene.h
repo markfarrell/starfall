@@ -1,12 +1,12 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\Scene.h"
+#include "Starfall/Scene.h"
 
-#include <Poco\Thread.h>
+#include <Poco/Thread.h>
 
-#include <SFML\System.hpp>
-#include <SFML\Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace Starfall {
 

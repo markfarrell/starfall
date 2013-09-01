@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\LoginUI.h"
+#include "Starfall/LoginUI.h"
 
-#include "Starfall\LoginControls.h"
+#include "Starfall/LoginControls.h"
 
 #include <cmath>
 #include <algorithm>

@@ -1,8 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\Shader.h"
+#include "Starfall/Shader.h"
 
-#include "Starfall\ConfigurationFile.h"
-#include "Starfall\Assets.h"
+#include "Starfall/ConfigurationFile.h"
+#include "Starfall/Assets.h"
 
 #include <fstream>
 #include <iostream>

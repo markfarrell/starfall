@@ -1,5 +1,5 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\CreateEntityStruct.h"
+#include "Starfall/CreateEntityStruct.h"
 
 using namespace Starfall;
 

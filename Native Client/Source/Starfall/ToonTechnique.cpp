@@ -1,6 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
 
-#include "Starfall\ToonTechnique.h"
+#include "Starfall/ToonTechnique.h"
 
 
 #include <GL/glew.h>
