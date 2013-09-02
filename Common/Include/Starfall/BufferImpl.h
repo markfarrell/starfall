@@ -12,7 +12,7 @@
 
 namespace Starfall {
 	template <>
-	inline void Buffer::operator>> <Packet<Head>>(Packet<Head>& head) {
+	inline void Buffer::operator>> < Packet<Head> >(Packet<Head>& head) {
 			head.setHex(this->hex());
 			head->begin  = this->readUInt32(); 
 			head->opcode = this->readUInt32();
@@ -21,7 +21,7 @@ namespace Starfall {
 	}
 
 	template <>
-	inline void Buffer::operator>> <Packet<LoginStruct>>(Packet<LoginStruct>& loginPacket) {
+	inline void Buffer::operator>> < Packet<LoginStruct> >(Packet<LoginStruct>& loginPacket) {
 			loginPacket.setHex(this->hex());
 			loginPacket->state = this->readUInt32();
 			loginPacket->userid  = this->readUInt32(); 
@@ -31,7 +31,7 @@ namespace Starfall {
 	}
 
 	template <>
-	inline void Buffer::operator>> <Packet<vector<TransformStruct>>>(Packet<vector<TransformStruct>>& transformsPacket) {
+	inline void Buffer::operator>> < Packet< vector<TransformStruct> > >(Packet< vector<TransformStruct> >& transformsPacket) {
 			transformsPacket.setHex(this->hex());
 			Poco::UInt32 size = this->readUInt32();
 			for(Poco::UInt32 i = 0; i < size; i++) {
@@ -50,7 +50,7 @@ namespace Starfall {
 	}
 
 	template <>
-	inline void Buffer::operator>> <Packet<vector<Poco::UInt32>>>(Packet<vector<Poco::UInt32>>& collectionPacket) {
+	inline void Buffer::operator>> < Packet< vector<Poco::UInt32> > >(Packet< vector<Poco::UInt32> >& collectionPacket) {
 		Poco::UInt32 size = this->readUInt32();
 		for(Poco::UInt32 i = 0; i < size; i++) {
 			collectionPacket->push_back(this->readUInt32());
@@ -86,7 +86,7 @@ namespace Starfall {
 	}
 
 	template<>
-	inline void Buffer::operator<< <vector<DestroyEntityStruct>>(vector<DestroyEntityStruct>& destroyEntityQueue) {
+	inline void Buffer::operator<< < vector<DestroyEntityStruct> >(vector<DestroyEntityStruct>& destroyEntityQueue) {
 		this->writeUInt32(destroyEntityQueue.size());
 		for(vector<DestroyEntityStruct>::iterator it = destroyEntityQueue.begin(); it != destroyEntityQueue.end(); it++) {
 			this->writeUInt32((*it).sessionid);
@@ -94,7 +94,7 @@ namespace Starfall {
 	}
 
 	template<>
-	inline void Buffer::operator<< <vector<CreateEntityStruct>>(vector<CreateEntityStruct>& createEntityQueue) {
+	inline void Buffer::operator<< < vector<CreateEntityStruct> >(vector<CreateEntityStruct>& createEntityQueue) {
 		this->writeUInt32(createEntityQueue.size());
 		for(vector<CreateEntityStruct>::iterator it = createEntityQueue.begin(); it != createEntityQueue.end(); it++) {
 			this->writeUInt32((*it).sessionid);
@@ -109,7 +109,7 @@ namespace Starfall {
 
 
 	template<>
-	inline void Buffer::operator<< <vector<TransformEntityStruct>>(vector<TransformEntityStruct>& transformEntityQueue) {
+	inline void Buffer::operator<< < vector<TransformEntityStruct> >(vector<TransformEntityStruct>& transformEntityQueue) {
 		this->writeUInt32(transformEntityQueue.size());
 		for(vector<TransformEntityStruct>::iterator it = transformEntityQueue.begin(); it != transformEntityQueue.end(); it++) {
 			this->writeUInt32((*it).sessionid);

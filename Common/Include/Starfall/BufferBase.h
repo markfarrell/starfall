@@ -25,6 +25,7 @@ namespace Starfall {
 			string msg;
 		public:
 			BufferException(const string m="Buffer Exception: No implementation for this type.") : msg(m) { }
+			virtual ~BufferException() throw() {};
 			const char* what() { return msg.c_str(); }
 	};
 

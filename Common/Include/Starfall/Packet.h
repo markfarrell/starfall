@@ -30,7 +30,7 @@ namespace Starfall {
 			}
 		
 
-			void setHex(string& hex) { 
+			void setHex(string hex) { 
 				this->hex = hex;
 			}
 
