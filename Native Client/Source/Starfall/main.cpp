@@ -1,10 +1,10 @@
 ﻿//Copyright (c) 2013 Mark Farrell
 
-#include "Starfall\Platform.h"
-#include "Starfall\Client.h"
-#include "Starfall\Application.h"
-#include "Starfall\Assets.h"
-#include "Starfall\Model.h"
+#include "Starfall/Platform.h"
+#include "Starfall/Client.h"
+#include "Starfall/Application.h"
+#include "Starfall/Assets.h"
+#include "Starfall/Model.h"
 #include <iostream>
 
 

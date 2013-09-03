@@ -1,10 +1,10 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\LoginScene.h"
+#include "Starfall/LoginScene.h"
 
-#include "Starfall\Client.h"
-#include "Starfall\Application.h"
-#include "Starfall\LoginUI.h"
-#include "Starfall\LoginControls.h"
+#include "Starfall/Client.h"
+#include "Starfall/Application.h"
+#include "Starfall/LoginUI.h"
+#include "Starfall/LoginControls.h"
 
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>

@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\Assets.h"
+#include "Starfall/Assets.h"
 
 #include <vector>
 #include <Poco/SharedPtr.h>

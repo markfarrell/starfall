@@ -1,10 +1,9 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\LoginControls.h"
+#include "Starfall/LoginControls.h"
 
-#include "Starfall\LoginUI.h"
-
-#include "Starfall\LoginStruct.h"
-#include "Starfall\Client.h"
+#include "Starfall/LoginUI.h"
+#include "Starfall/LoginStruct.h"
+#include "Starfall/Client.h"
 
 #include <Awesomium/WebCore.h>
 #include <Awesomium/BitmapSurface.h>

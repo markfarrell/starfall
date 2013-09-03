@@ -1,6 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\Application.h"
-#include "Starfall\Scene.h"
+#include "Starfall/Application.h"
+#include "Starfall/Scene.h"
 
 using namespace Starfall;
 

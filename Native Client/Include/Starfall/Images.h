@@ -1,9 +1,9 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include <Poco\ScopedLock.h>
-#include <Poco\Mutex.h>
-#include <SFML\Graphics.hpp>
+#include <Poco/ScopedLock.h>
+#include <Poco/Mutex.h>
+#include <SFML/Graphics.hpp>
 
 #include <map>
 #include <string>

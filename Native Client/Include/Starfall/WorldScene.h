@@ -1,12 +1,12 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\Scene.h"
-#include "Starfall\Camera.h"
-#include "Starfall\Model.h"
-#include "Starfall\ToonTechnique.h"
+#include "Starfall/Scene.h"
+#include "Starfall/Camera.h"
+#include "Starfall/Model.h"
+#include "Starfall/ToonTechnique.h"
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <map>
