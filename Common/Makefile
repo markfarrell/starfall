@@ -1,7 +1,5 @@
 ## Copyright (c) 2013 Mark Farrell
 
-CC=clang
-
 STARFALL_DEPENDENCIES = $(HOME)/Development
 
 POCO_DIR=poco-1.4.6p1-all
