@@ -73,7 +73,7 @@ bool Database::Select::TryConsole(std::ostream& out, Poco::UInt32 nRows, Poco::U
 	if(!Database::Select::TryMaxConsoleID(maxID)) { //Fail conditions
 		return false;
 	}
-	if(maxID-offset < 0) { //Subtract 1 from nRows since row at the offset is loaded.
+	if(int(maxID)-int(offset) < int(0)) { //Subtract 1 from nRows since row at the offset is loaded.
 		return false;
 	}
 	ostringstream queryStream;
@@ -149,7 +149,7 @@ bool Database::Insert::TryNewItem(string& jsonString) {
 }
 
 
-bool Database::Insert::TryConsole(Poco::Dynamic::Var& var) {
+bool Database::Insert::TryConsole(Poco::Dynamic::Var var) {
 	string messageString = "";
 	if(var.isString()) { //assume the var is in JSON format
 		var.convert(messageString);

@@ -7,6 +7,8 @@
 /Client/Builds
 /Client/Data
 /Client/Library
+/Server/bin
+/Server/obj
 /Server/Data/server.db
 /Server/Source/Source.rc
 /Server/Source/resource.h

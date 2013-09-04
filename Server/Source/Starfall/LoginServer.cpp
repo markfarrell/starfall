@@ -194,8 +194,8 @@ Poco::UInt16 LoginServer::port() const {
 
 Buffer LoginHTTPRequest::LoadFile(string fileName){
 	Buffer buffer;
-	//string pageString;
-	ifstream pageFile(Defines::Path::Plugins()+fileName, std::ios::binary); //Code from: cplusplus.com
+
+	ifstream pageFile((Defines::Path::Plugins()+fileName).c_str(), std::ios::binary); //Code from: cplusplus.com
 	if(pageFile.is_open()){
 		pageFile.seekg(0, std::ios::end);
 		std::streamoff len = pageFile.tellg();
@@ -216,7 +216,8 @@ Poco::Net::NameValueCollection LoginHTTPRequest::ReadNameValueCollection(Poco::N
 		string str(((unsigned int)(len)), '\0');
 		req.stream().read(&str[0],len);
 		Strings::ReplaceAll(str, "&", ";"); //Needed for Poco::Net::MessageHeader
-		Poco::Net::MessageHeader::splitParameters(str.cbegin(), str.cend(), params); //Break the string str into a map.
+		const std::basic_string<char>& ref = str;
+		Poco::Net::MessageHeader::splitParameters(ref.begin(), ref.end(), params); //Break the string str into a map.
 	}
 	return params;
 }

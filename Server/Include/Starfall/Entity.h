@@ -31,6 +31,7 @@ namespace Starfall {
 		public:
 			IDException(const string m="IDException: The maximum possible ID has been exceeded.") : msg(m) { }
 			const char* what() { return msg.c_str(); }
+			virtual ~IDException() throw() {}
 	};
 
 	class IDGenerator {
