@@ -1,7 +1,5 @@
 ## Copyright (c) 2013 Mark Farrell
 
-CC=clang
-
 STARFALL_DEPENDENCIES = $(HOME)/Development
 
 POCO_DIR=poco-1.4.6p1-all
@@ -19,9 +17,9 @@ STARFALL_INCLUDES := $(STARFALL_INCLUDES) -I ../Common/Include
 
 STARFALL_INCLUDES := $(STARFALL_INCLUDES)  -I Include
 
-STARFALL_LIBRARIES := -L$(STARFALL_DEPENDENCIES)/$(POCO_DIR)/lib/Darwin/x86_64/ -L$(STARFALL_DEPENDENCIES)/v8/out/native -L../Common/lib
+STARFALL_LIBRARIES := -L$(STARFALL_DEPENDENCIES)/$(POCO_DIR)/lib/Darwin/x86_64/ -L$(STARFALL_DEPENDENCIES)/v8/out/x64.release -L../Common/lib
 
-STARFALL_LINK := -lPocoFoundation -lPocoNet -lPocoUtil -lPocoData -lPocoDataSQLite -lv8_base -lv8_snapshot -lcommon
+STARFALL_LINK := -lPocoFoundation -lPocoNet -lPocoUtil -lPocoData -lPocoDataSQLite -lv8_base -lv8_nosnapshot -lcommon
 
 STARFALL_SERVER_SRC = Source/Starfall
 STARFALL_SERVER_SRCS := $(wildcard $(STARFALL_SERVER_SRC)/*.cpp)
@@ -30,7 +28,7 @@ STARFALL_SERVER_OBJ := obj
 STARFALL_SERVER_OBJS := $(patsubst $(STARFALL_SERVER_SRC)/%.cpp, $(STARFALL_SERVER_OBJ)/%.o, $(STARFALL_SERVER_SRCS))
 
 STARFALL_SERVER_BIN := bin
-STARFALL_SERVER_RELEASE := release
+STARFALL_SERVER_RELEASE := server.release
 
 .DEFAULT_GOAL := release
 
@@ -41,10 +39,10 @@ $(STARFALL_SERVER_OBJ):
 	mkdir -p $(STARFALL_SERVER_OBJ)
 
 $(STARFALL_SERVER_OBJ)/%.o: $(STARFALL_SERVER_SRC)/%.cpp $(STARFALL_SERVER_OBJ)
-	$(CC) -c -o $@ $< $(STARFALL_INCLUDES) -Wno-deprecated-declarations
+	$(CXX)  -c -o $@ $< $(STARFALL_INCLUDES) -Wno-deprecated-declarations
 
 release: $(STARFALL_SERVER_OBJS) $(STARFALL_SERVER_BIN)
-	$(CC) $(STARFALL_SERVER_OBJS) -o $(STARFALL_SERVER_BIN)/$(STARFALL_SERVER_RELEASE) $(STARFALL_LIBRARIES)  $(STARFALL_LINK)
+	$(CXX) $(STARFALL_SERVER_OBJS) -o $(STARFALL_SERVER_BIN)/$(STARFALL_SERVER_RELEASE) $(STARFALL_LIBRARIES)  $(STARFALL_LINK)
 
 .PHONY: clean
 

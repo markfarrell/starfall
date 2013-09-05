@@ -41,7 +41,7 @@ namespace Starfall {
 
 	template<typename T>
 	inline void Console::Write(T& data) {
-		throw new ConsoleException();
+		throw ConsoleException();
 	}
 
 	template<> 
