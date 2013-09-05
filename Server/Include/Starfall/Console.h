@@ -26,7 +26,7 @@ namespace Starfall {
 		public:
 			ConsoleException(const string m="Console Exception: No implementation for this type.") : msg(m) { }
 			const char* what() { return msg.c_str(); }
-			virtual ~ConsoleException() throw();
+			virtual ~ConsoleException() throw() {};
 	};
 
 	class Console {
