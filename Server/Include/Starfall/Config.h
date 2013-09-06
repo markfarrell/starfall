@@ -39,7 +39,7 @@ namespace Starfall {
 			static v8::Handle<v8::String> LoadScript(string scriptName);
 			static bool TryScript(string scriptName, v8::Handle<v8::Value>& result); //try to execute one script, given an execution environment exists; use run
 			static v8::Persistent<v8::Context> Context(); //Instantiate a script environment
-			static v8::Handle<v8::Value> IO::Run(string scriptName); //Run a script in an environment using main.js; throws an exception if failed
+			static v8::Handle<v8::Value> Run(string scriptName); //Run a script in an environment using main.js; throws an exception if failed
 			static string Resource(string fileName);
 	};
 

@@ -29,7 +29,7 @@ bool JSONConsoleStruct::extract(Poco::Dynamic::Struct<string> convertedStruct, s
 	if(convertedStruct.contains(name)) {
 		Poco::Dynamic::Var nameVar = convertedStruct[name];
 			if(nameVar.isStruct()) {
-				Poco::Dynamic::Struct<string> nameStruct = nameVar.extract<Poco::Dynamic::Struct<string>>(); 
+				Poco::Dynamic::Struct<string> nameStruct = nameVar.extract< Poco::Dynamic::Struct<string> >(); 
 				std::set<string> keys = nameStruct.members();
 				for(std::set<string>::iterator it = keys.begin(); it != keys.end(); it++) {
 					string key = (*it);
@@ -45,7 +45,7 @@ bool JSONConsoleStruct::extract(Poco::Dynamic::Struct<string> convertedStruct, s
 
 bool JSONConsoleStruct::copy(Poco::Dynamic::Var& var) {
 	if(var.isStruct()) {
-		Poco::Dynamic::Struct<string> s = var.extract<Poco::Dynamic::Struct<string>>();
+		Poco::Dynamic::Struct<string> s = var.extract< Poco::Dynamic::Struct<string> >();
 		if(!this->extract(s, "head", this->head)) { return false; }
 		if(!this->extract(s, "body", this->body)) { return false; }	
 		if(!this->extract(s, "foot", this->foot)) { return false; }

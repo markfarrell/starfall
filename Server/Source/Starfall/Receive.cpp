@@ -114,7 +114,7 @@ bool Receive::ConsoleData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& he
 }
 
 bool Receive::TransformData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head) { 
-	Packet<vector<TransformStruct>> transformsPacket;
+	Packet< vector<TransformStruct> > transformsPacket;
 	buffer >> transformsPacket;
 	//The entity's actual position is the most recent position; it is the last element in the path collection
 	if(transformsPacket->size() > 0) {
@@ -133,7 +133,7 @@ bool Receive::ObjectsData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& he
 
 	Poco::UInt32 clientUpdateState = buffer.readUInt32(); //client waits until it receives a response to send another request
 	pPlayer->farClipDistance = buffer.readFloat();
-	Packet<vector<Poco::UInt32>> objectsPacket;
+	Packet< vector<Poco::UInt32> > objectsPacket;
 	buffer >> objectsPacket;
 
 	vector<Poco::UInt32> keys = Entity::Keys();

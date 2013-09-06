@@ -26,13 +26,14 @@ namespace Starfall {
 		public:
 			ConsoleException(const string m="Console Exception: No implementation for this type.") : msg(m) { }
 			const char* what() { return msg.c_str(); }
+			virtual ~ConsoleException() throw() {};
 	};
 
 	class Console {
 		private:
 			static Poco::JSON::Object::Ptr GetHexMap(string name, string type, Poco::UInt32 beginIdx, Poco::UInt32 endIdx);
 		public:
-			static void Print(Poco::Dynamic::Var& var); //Data is already formatted as JSON
+			static void Print(Poco::Dynamic::Var var); //Data is already formatted as JSON
 			template <typename T>
 			static void Write(T& data);
 			static string Time();
@@ -52,7 +53,7 @@ namespace Starfall {
 	}
 
 	template<>
-	inline void Console::Write<Packet<Head>>(Packet<Head>& head) {
+	inline void Console::Write< Packet<Head> >(Packet<Head>& head) {
 		JSONConsoleStruct json;
 		json.head->set("name", "Head");
 		json.body->set("begin", (Poco::UInt32)head->begin);
@@ -75,7 +76,7 @@ namespace Starfall {
 	}
 
 	template<>
-	inline void Console::Write<Packet<LoginStruct>>(Packet<LoginStruct>& loginPacket) {
+	inline void Console::Write< Packet<LoginStruct> >(Packet<LoginStruct>& loginPacket) {
 		JSONConsoleStruct json;
 		json.head->set("name", "LoginStruct");
 		json.body->set("state", loginPacket->state);

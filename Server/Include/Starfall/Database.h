@@ -41,7 +41,7 @@ namespace Starfall {
 		};
 		class Insert {
 			public:
-				static bool TryConsole(Poco::Dynamic::Var& var);
+				static bool TryConsole(Poco::Dynamic::Var var);
 				static bool TryItemType(string& jsonString);
 				static bool TryNewItem(string& jsonString);
 		};

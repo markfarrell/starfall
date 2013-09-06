@@ -58,7 +58,7 @@ v8::Handle<v8::Value> JS::Time(const v8::Arguments& args) {
 
 string IO::LoadSource(string fileName) { 
 	Buffer buffer;
-	ifstream pageFile(fileName, std::ios::binary); //Code from: cplusplus.com
+	ifstream pageFile(fileName.c_str(), std::ios::binary); //Code from: cplusplus.com
 	if(pageFile.is_open()){
 		pageFile.seekg(0, std::ios::end);
 		std::streamoff len = pageFile.tellg();
