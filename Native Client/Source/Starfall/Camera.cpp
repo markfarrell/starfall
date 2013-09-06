@@ -29,6 +29,7 @@ CameraControls::CameraControls(Camera* parent)
 	this->states["roll.negative"] = 0; //roll = z rotation
 	this->states["roll.positive"] = 0;
 	this->states["move.forward"] = 0; 
+	this->states["offset.yaw"] = 0;
 }
 
 void CameraControls::update(sf::Event& event) { 
@@ -60,6 +61,9 @@ void CameraControls::update(sf::Event& event) {
 			case sf::Keyboard::W:
 				this->configureState("move.forward", keyPressed);
 			break;
+			case sf::Keyboard::R:
+				this->parent->offsets = glm::quat(glm::vec3(0.0f,0.0f,0.0f));
+			break;
 		}
 
 	}
@@ -70,6 +74,35 @@ void CameraControls::update(sf::Event& event) {
 			this->parent->minimumDistance(), 
 			this->parent->maximumDistance()
 		);
+	}
+
+	if(event.type == sf::Event::MouseButtonPressed) {
+		if(event.mouseButton.button == sf::Mouse::Middle) {
+			if(this->states["offset.yaw"] == 0) {
+				this->states["offset.yaw"] = 1;
+			}
+		}
+	}
+
+	if(event.type == sf::Event::MouseButtonReleased) {
+		if(event.mouseButton.button == sf::Mouse::Middle) {
+			if(this->states["offset.yaw"] == 1) {
+				this->states["offset.yaw"] = 0;
+			}
+		}
+	}
+
+	if(event.type == sf::Event::MouseMoved) {
+		if(this->states["offset.yaw"] == 1) {
+			sf::Vector2f mouseLocation = sf::Vector2f(float(event.mouseMove.x), float(event.mouseMove.y));
+			float sign = ((mouseLocation-this->previousMouseLocation).x > 0.0f) ? 1.0f : -1.0f;
+				this->parent->offsets = glm::rotate(
+					this->parent->offsets,
+					sign * this->applyClock.getElapsedTime().asMilliseconds()/1000.0f*this->rotateSpeed,
+					glm::vec3(0.0f,1.0f,0.0f)
+				);
+			this->previousMouseLocation = mouseLocation;
+		}
 	}
 }
 
@@ -84,8 +117,6 @@ void CameraControls::configureState(string stateName, bool& keyPressed) {
 		}
 	}
 }
-
-
 
 bool CameraControls::apply() {
 	if(this->applyClock.getElapsedTime().asMilliseconds() >= this->applyTime) {
@@ -144,6 +175,7 @@ Camera::Camera()
 void Camera::initialize(sf::RenderWindow& window) { 
 	GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
 	this->projection = glm::frustum(-ratio, ratio, -1.f, 1.f, this->nearClip, this->farClip);
+	this->size = window.getSize();
 	
     glClearDepth(1.f);
     glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -156,7 +188,8 @@ void Camera::initialize(sf::RenderWindow& window) {
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
-	glViewport(0, 0, window.getSize().x, window.getSize().y);
+
+	glViewport(0, 0, this->size.x, this->size.y);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -172,7 +205,6 @@ void Camera::recalculate() {
 			this->direction = glm::normalize(this->direction);
 		}
 
-
 		this->up = glm::vec3(this->orientation * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
 
 		if(glm::length2(up) > 0.0f) {
@@ -181,7 +213,11 @@ void Camera::recalculate() {
 
 		glm::vec3 eye = this->position-this->direction*this->distance;
 
-		this->view = glm::lookAt(eye, this->position, up);
+		this->defaultView = glm::lookAt(eye, this->position, up);
+
+		glm::vec3 offsetEye = this->position- glm::vec3(this->orientation * this->offsets * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f))*this->distance;
+
+		this->view = glm::lookAt(offsetEye, this->position, up);
 }
 
 float Camera::yfov(float xfov, float ratio) {
