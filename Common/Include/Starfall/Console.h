@@ -6,9 +6,9 @@
 #include "Starfall/Buffer.h"
 #include "Starfall/Database.h"
 
-#include "Poco/Data/Common.h"
-#include "Poco/JSON/Object.h"
-#include "Poco/Dynamic/Var.h"
+#include <Poco/Data/Common.h>
+#include <Poco/JSON/Object.h>
+#include <Poco/Dynamic/Var.h>
 
 #include <string>
 #include <vector>

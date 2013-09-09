@@ -1,6 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
-
 #pragma once
+
 #include <Poco/Net/Net.h>
 #include <Poco/SharedPtr.h>
 #include <Poco/Mutex.h>
@@ -25,44 +25,6 @@ using std::exception;
 
 namespace Starfall {
 
-	class IDException : public exception { 
-		private:
-			string msg;
-		public:
-			IDException(const string m="IDException: The maximum possible ID has been exceeded.") : msg(m) { }
-			const char* what() { return msg.c_str(); }
-			virtual ~IDException() throw() {}
-	};
-
-	class IDGenerator {
-		friend class Entity;
-		private:
-			static Poco::Mutex mutex; 
-			static Poco::UInt32 id;
-		protected:
-			static Poco::UInt32 next(); //uses a mutex to stop simultaneous access
-	};
-
-
-	class Isolates {
-		friend class Entity;
-		protected:
-			static v8::Isolate* Acquire(); //Create a new isolate if one doesn't exist in the current thread. Stores the isolate pointer in a map and increases its reference count.
-			/** 
-				Description:
-					Decrease the reference count on a given isolate shared by entities in the same thread.
-				Returns: 
-					The new count.
-					If the count is 0, the isolate has been exited from and disposed. 
-			 */
-			static Poco::UInt32 Release(v8::Isolate* releaseIsolate); 
-		private:
-			static Poco::Mutex Mutex; 
-			static map<v8::Isolate*, Poco::UInt32> Map; //Key: Isolate pointer; Value: Reference Count
-
-	};
-
-
 	class Entity : private Transform {
 		friend class CreateEntityStruct;
 		friend class User;
@@ -73,7 +35,6 @@ namespace Starfall {
 			~Entity();
 
 			string displayName;
-			string appearance;
 			Poco::UInt32 mode; //0->Tagged, 1->Clickable, 2->Controlled By Camera
 			Poco::UInt32 sessionid;
 

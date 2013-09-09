@@ -7,5 +7,4 @@ CreateEntityStruct::CreateEntityStruct() {
 	this->sessionid = 0;
 	this->mode = 0;
 	this->displayName = "";
-	this->appearance = "";
 }

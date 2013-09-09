@@ -1,24 +1,24 @@
 
 //Copyright (c) 2013 Mark Farrell
 
-#include "Poco/SharedPtr.h"
-
-#include "Poco/DateTime.h"
-#include "Poco/DateTimeFormat.h"
-#include "Poco/DateTimeFormatter.h"
-
 #include "Starfall/Database.h"
+
 #include "Starfall/Strings.h"
 #include "Starfall/Defines.h"
+
+#include <Poco/SharedPtr.h>
+#include <Poco/DateTime.h>
+#include <Poco/DateTimeFormat.h>
+#include <Poco/DateTimeFormatter.h>
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
-using namespace Starfall;
-
 using std::cout;
 using std::endl;
+
+using namespace Starfall;
 
 
 std::vector<Poco::Data::Session> Database::Connection::SessionContainer;

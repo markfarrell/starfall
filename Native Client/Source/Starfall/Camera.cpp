@@ -188,7 +188,6 @@ void Camera::initialize(sf::RenderWindow& window) {
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
-
 	glViewport(0, 0, this->size.x, this->size.y);
 
     glMatrixMode(GL_PROJECTION);

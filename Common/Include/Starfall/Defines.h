@@ -1,7 +1,5 @@
 //Copyright (c) 2013 Mark Farrell
 
-
-
 #pragma once
 #include <string>
 using std::string;

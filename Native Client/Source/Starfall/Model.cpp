@@ -417,8 +417,4 @@ void Model::render(Technique::Ptr& technique) {
 	
 
 	glPopMatrix();
-
-
-
-
 }

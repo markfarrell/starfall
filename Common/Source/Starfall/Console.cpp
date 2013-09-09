@@ -18,7 +18,6 @@ Poco::JSON::Object::Ptr Console::GetHexMap(string name, string type, Poco::UInt3
 string Console::Time() {
 	return Poco::DateTimeFormatter::format(Poco::DateTime(), Poco::DateTimeFormat::SORTABLE_FORMAT);
 }
-
 void Console::Print(Poco::Dynamic::Var var) {
 	if(!Database::Insert::TryConsole(var)) {
 		throw ConsoleException("Console Exception: Database Failed.");

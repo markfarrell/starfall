@@ -1,6 +1,4 @@
 //Copyright (c) 2013 Mark Farrell
-
-
 #pragma once
 
 
@@ -21,9 +19,8 @@ using std::string;
 using std::cout;
 using std::wcout;
 using std::endl;
-using std::ostringstream;
 using std::copy;
-using std::ostream_iterator;
+using std::ostringstream;
 
 namespace Starfall {
 
