@@ -131,16 +131,16 @@ bool Receive::TransformData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& 
 
 bool Receive::ObjectsData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& head) {
 
-	Poco::UInt32 clientUpdateState = buffer.readUInt32(); //client waits until it receives a response to send another request
-	pPlayer->farClipDistance = buffer.readFloat();
-	Packet< vector<Poco::UInt32> > objectsPacket;
+	Packet<ObjectsStruct> objectsPacket;
 	buffer >> objectsPacket;
+
+	pPlayer->farClipDistance = objectsPacket->farClipDistance;
 
 	vector<Poco::UInt32> keys = Entity::Keys();
 
 	for(vector<Poco::UInt32>::iterator keysIterator = keys.begin(); keysIterator != keys.end(); keysIterator++) {
 		Poco::UInt32 entityState = 0; //create
-		for(vector<Poco::UInt32>::iterator it = objectsPacket->begin(); it != objectsPacket->end(); it++) {
+		for(vector<Poco::UInt32>::iterator it = objectsPacket->ids.begin(); it != objectsPacket->ids.end(); it++) {
 
 			if(std::find(keys.begin(), keys.end(), (*it)) == keys.end()) { //server does not have the entity anymore
 				entityState = 1; //delete

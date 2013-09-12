@@ -1,9 +1,12 @@
 //Copyright (c) 2013 Mark Farrell
 
 #include "Starfall/Send.h"
-#include "Starfall/Head.h"
 
-#include "Poco/NumberFormatter.h"
+#include "Starfall/Head.h"
+#include "Starfall/ObjectsUpdateStruct.h"
+
+#include <Poco/NumberFormatter.h>
+
 #include <iostream>
 #include <vector>
 
@@ -25,6 +28,7 @@ bool Send::Enqueue(Player::Ptr& pPlayer, SendFunction caller, Buffer& body) {
 		head.end = 0xFFFFFFFF;
 		Buffer buffer;
 		buffer << head;
+
 		buffer.insert(buffer.end(), body.begin(), body.end());
 		pPlayer->sendQueue.push(buffer);
 		return true;
@@ -51,29 +55,39 @@ bool Send::LoginReply(Player::Ptr& pPlayer) {
 	loginStruct.usertype = pPlayer->usertype;
 	loginStruct.username = pPlayer->username;
 	loginStruct.password = pPlayer->password;
+
 	buffer << loginStruct;
+
 	return Send::Enqueue(pPlayer, &Send::LoginReply, buffer);
 }
 
-/** 
- * Note: This function does not alter the contents of the player's create entity queue. 
- */
 bool Send::CreateEntityData(Player::Ptr& pPlayer) { 
 	Buffer buffer;
+	
 	buffer << pPlayer->createEntityQueue;
+
 	return Send::Enqueue(pPlayer, &Send::CreateEntityData, buffer);
 }
 
 bool Send::TransformEntityData(Player::Ptr& pPlayer) { 
 	Buffer buffer;
+
 	buffer << pPlayer->transformEntityQueue;
+
 	return Send::Enqueue(pPlayer, &Send::TransformEntityData, buffer);
 }
 
 bool Send::ObjectsReply(Player::Ptr& pPlayer) {
 	Buffer buffer;
-	buffer.writeUInt32(1); //set state; allow another objectsData packet to be sent.
-	buffer << pPlayer->createEntityQueue; 
-	buffer << pPlayer->destroyEntityQueue;
+
+	ObjectsUpdateStruct updateStruct; //allocate the update struct on the heap since the number of entities being created and deleted is uncertain.
+
+	updateStruct.state = 1; //allow another objects data packet to be sent
+	updateStruct.farClipDistance = pPlayer->farClipDistance;
+	updateStruct.createEntities = pPlayer->createEntityQueue; //Copy operation is acceptable to fit design pattern: Data structures sent over the network should be contained within their own block of memory.
+	updateStruct.destroyEntities = pPlayer->destroyEntityQueue;
+
+	buffer << updateStruct; 
+
 	return Send::Enqueue(pPlayer, &Send::ObjectsReply, buffer);
 }

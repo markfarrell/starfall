@@ -5,6 +5,8 @@
 #include "Starfall/CreateEntityStruct.h"
 #include "Starfall/TransformEntityStruct.h"
 #include "Starfall/DestroyEntityStruct.h"
+#include "Starfall/ObjectsStruct.h"
+#include "Starfall/ObjectsUpdateStruct.h"
 #include "Starfall/Transform.h"
 #include "Starfall/LoginStruct.h"
 #include "Starfall/Packet.h"
@@ -56,6 +58,24 @@ namespace Starfall {
 			collectionPacket->push_back(this->readUInt32());
 		}
 	}
+
+	template <>
+	inline void Buffer::operator>> < vector<Poco::UInt32> >( vector<Poco::UInt32>& list) {
+		Poco::UInt32 size = this->readUInt32();
+		for(Poco::UInt32 i = 0; i < size; i++) {
+			list.push_back(this->readUInt32());
+		}
+	}
+
+
+	template <>
+	inline void Buffer::operator>> < Packet<ObjectsStruct> >( Packet<ObjectsStruct>& objectsStruct) {
+		objectsStruct->state = this->readUInt32();
+		objectsStruct->farClipDistance = this->readFloat();
+		(*this) >> objectsStruct->ids;
+	}
+
+
 
 	template<>
 	inline void Buffer::operator<< <Head> (Head& head) {
@@ -122,5 +142,12 @@ namespace Starfall {
 				(*this) << transform;
 			}
 		}
+	}
+
+	template<>
+	inline void Buffer::operator<< <ObjectsUpdateStruct>( ObjectsUpdateStruct& updateStruct) {
+		this->writeUInt32(updateStruct.state); //set state; allow another objectsData packet to be sent.
+		(*this) << updateStruct.createEntities;
+		(*this) << updateStruct.destroyEntities;
 	}
 }
