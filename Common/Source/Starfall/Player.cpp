@@ -12,12 +12,12 @@ using namespace Starfall;
 using std::cout;
 using std::endl;
 
-Player::Ptr Player::create(string address) { 
-	return Player::Ptr(new Player(address));
+Player::Ptr Player::Create(string address, Poco::UInt32 sessionid) { 
+	return Player::Ptr(new Player(address, sessionid));
 }
 
-Player::Player(string address) : User(address) {
-	this->pEntity = Entity::Create();
+Player::Player(string address, Poco::UInt32 sessionid) : User(address) {
+	this->pEntity = Entity::Create(sessionid);
 	this->pEntity->displayName = "Player";
 	this->pEntity->mode = 2; //Controlled by camera
 	this->farClipDistance = 0.0;
@@ -33,6 +33,10 @@ void Player::lock() {
 
 void Player::unlock() {
 	this->pEntity->mutex.unlock();
+}
+
+Poco::Mutex& Player::mutex() {
+	return this->pEntity->mutex;
 }
 
 void Player::destroyEntity(Poco::UInt32 sessionid) {

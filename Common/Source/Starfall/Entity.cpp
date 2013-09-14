@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 
 #include "Starfall/Entity.h"
-#include "Starfall/IDGenerator.h"
+
 #include "Starfall/Isolates.h"
 #include "Starfall/Config.h"
 
@@ -13,19 +13,19 @@ using namespace Starfall;
 Poco::Mutex  Entity::CollectionMutex;
 Poco::HashMap<Poco::UInt32, Entity::Ptr> Entity::Map;
 
-Entity::Entity() {
+Entity::Entity(Poco::UInt32 sessionid) {
 	this->isolate = Isolates::Acquire();
 	this->persistentContext = IO::Context();
 	this->displayName = "";
 	this->mode = 0;
-	this->sessionid = IDGenerator::next();
+	this->sessionid = sessionid;
 	this->Load();
 }
 
 void Entity::Load() {
-	v8::HandleScope handleScope(this->isolate); 
-	v8::Context::Scope contextScope(this->persistentContext); 
-	v8::Handle<v8::Value> result = IO::Run("Script/Entity/context.js");
+	//v8::HandleScope handleScope(this->isolate); 
+	//v8::Context::Scope contextScope(this->persistentContext); 
+	//v8::Handle<v8::Value> result = IO::Run("Script/Entity/context.js");
 }
 
 Entity::~Entity() {
@@ -67,8 +67,8 @@ TransformEntityStruct Entity::castTransformEntityStruct() {
 
 
 
-Entity::Ptr Entity::Create() { 
-	Entity::Ptr pEntity = Entity::Ptr(new Entity());
+Entity::Ptr Entity::Create(Poco::UInt32 sessionid) { 
+	Entity::Ptr pEntity = Entity::Ptr(new Entity(sessionid));
 	Entity::CollectionMutex.lock(); //The map isn't thread safe; so we must claim ownership when accessing it.
 	Entity::Map[pEntity->sessionid] = pEntity; 
 	Entity::CollectionMutex.unlock(); //Release ownership

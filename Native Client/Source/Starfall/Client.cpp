@@ -1,20 +1,25 @@
 //Copyright (c) 2013 Mark Farrell
-#include "Starfall\Client.h"
+#include "Starfall/Client.h"
 
 
-#include "Starfall\ConfigurationFile.h"
-#include "Starfall\Assets.h"
-#include "Starfall\Head.h"
-#include "Starfall\Packet.h"
-#include "Starfall\Buffer.h"
+#include "Starfall/ConfigurationFile.h"
+#include "Starfall/Assets.h"
+#include "Starfall/Head.h"
+#include "Starfall/Packet.h"
+#include "Starfall/Buffer.h"
+#include "Starfall/CreateEntityStruct.h"
 
-#include <Poco\NumberParser.h>
-#include <Poco\StringTokenizer.h>
-#include <Poco\ScopedLock.h>
+
+#include <Poco/NumberParser.h>
+#include <Poco/StringTokenizer.h>
+#include <Poco/ScopedLock.h>
+
 
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
 using namespace Starfall;
 
@@ -26,10 +31,9 @@ std::vector<Client::Ptr> Client::Clients;
 
 Client::Client(Poco::UInt32 v)
 	: id(v),
-	  isConnected(false),
-	  user(ConfigurationFile::Client().getString("server.address")) //User address is set based on INET address format using config
+	  isConnected(false)
 {
-
+	this->pPlayer = Player::Create(ConfigurationFile::Client().getString("server.address"));
 } 
 
 Client::~Client() {
@@ -70,7 +74,7 @@ void Client::run() {
 
 									 for(vector<Client::Ptr>::iterator it = Client::Clients.begin(); it != Client::Clients.end(); it++) { //find the original sharedptr to pass to the receive function; update the reference count properly
 										 if((*it)->id == this->id) {
-											 (*receiveFunction)(bodyBuffer, head, (*it)); //call the function pointer
+											 (*receiveFunction)(bodyBuffer, head, (*it)->pPlayer); //call the function pointer
 										 }
 									 }
 
@@ -84,11 +88,15 @@ void Client::run() {
 				}
 			}
 			
-			//Send Packets
-			while(!this->user.sendQueue.empty()) {
-				Buffer buffer = this->user.sendQueue.front();
-				if(this->socket.send(&buffer[0], buffer.size()) == sf::Socket::Done) {
-					this->user.sendQueue.pop(); //delete the buffer if the socket was ready to send the data; else try again
+
+			{
+				Poco::ScopedLock<Poco::Mutex> lock(this->pPlayer->mutex());
+				//Send Packets
+				while(!this->pPlayer->sendQueue.empty()) {
+					Buffer buffer = this->pPlayer->sendQueue.front();
+					if(this->socket.send(&buffer[0], buffer.size()) == sf::Socket::Done) {
+						this->pPlayer->sendQueue.pop(); //delete the buffer if the socket was ready to send the data; else try again
+					}
 				}
 			}
 
@@ -104,7 +112,7 @@ bool Client::connect() {
 		if(!this->socket.isBlocking()) {
 			this->socket.setBlocking(true); //keep blocking state until connected.
 		}
-		Poco::StringTokenizer tokenizer(this->user.address, ":", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
+		Poco::StringTokenizer tokenizer(this->pPlayer->address, ":", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
 		if(tokenizer.count() == 2) { //ip address, port
 			string ipString = tokenizer[0];
 			int port;
@@ -135,15 +143,19 @@ bool Client::disconnect() {
 }
 
 void Client::setLoginStruct(LoginStruct loginStruct) {
-	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
-	this->loginStruct = loginStruct;
+	Poco::ScopedLock<Poco::Mutex> lock(this->pPlayer->mutex());
+	this->pPlayer->state = loginStruct.state; 
+	this->pPlayer->userid = loginStruct.userid; 
+	this->pPlayer->usertype = loginStruct.usertype; 
+	this->pPlayer->username = loginStruct.username;
+	this->pPlayer->password = loginStruct.password;
 }
 
 bool Client::tryLogin(LoginStruct loginStruct) {
-	Poco::ScopedLock<Poco::Mutex> lock(this->mutex); //mutexes are recursive; this mutex gets locked twice and unlocked twice; this is safe
-	if(this->loginStruct.state == LOGIN_STATE_NOT_LOGGED_IN) { //only allow the user to log in once before a result is received
+	Poco::ScopedLock<Poco::Mutex> lock(this->pPlayer->mutex());
+	if(this->pPlayer->state == LOGIN_STATE_NOT_LOGGED_IN) { //only allow the user to log in once before a result is received
 		this->setLoginStruct(loginStruct);
-		ClientSender::LoginData();
+		ClientSender::LoginData(this->pPlayer);
 		return true;
 	}
 	return false;
@@ -151,7 +163,7 @@ bool Client::tryLogin(LoginStruct loginStruct) {
 
 bool Client::isLoggedIn() {
 	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
-	return (this->loginStruct.state == LOGIN_STATE_LOGGED_IN);
+	return (this->pPlayer->state == LOGIN_STATE_LOGGED_IN);
 }
 
 Client::Ptr Client::Get() {
@@ -165,14 +177,19 @@ ClientSender::ClientSender() {
 	this->map[&ClientSender::LoginData] = 0x01;
 }
 
-bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer, Client::Ptr& pClient) {
+bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer,	Player::Ptr& pPlayer) {
+
 
 	Buffer buffer;
 	Buffer headBuffer;
 	Head head;
 
 	head.begin = 0xFFFFFFFF;
-	head.opcode = this->map.at(caller);
+
+	this->mutex.lock();
+	head.opcode = this->map.at(caller); 
+	this->mutex.unlock();
+
 	head.bodysize = bodyBuffer.size();
 	head.end = 0xFFFFFFFF;
 
@@ -181,19 +198,30 @@ bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer, Client::Ptr&
 	buffer.insert(buffer.end(), headBuffer.begin(), headBuffer.end());
 	buffer.insert(buffer.end(), bodyBuffer.begin(), bodyBuffer.end());
 
-	pClient->mutex.lock(); //queue will be read in another thread.
-	pClient->user.sendQueue.push(buffer);
-	pClient->mutex.unlock();
+	{
+		Poco::ScopedLock<Poco::Mutex> playerLock(pPlayer->mutex());
+		pPlayer->sendQueue.push(buffer);
+	}
 
 	return true;
 }
 
-bool ClientSender::LoginData(Client::Ptr& pClient) {
-	pClient->mutex.lock(); 
+bool ClientSender::LoginData(Player::Ptr& pPlayer) {
+
+	Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
+
 	Buffer buffer;
-	buffer << pClient->loginStruct;
-	Client::Send.enqueue(&ClientSender::LoginData, buffer, pClient);
-	pClient->mutex.unlock();
+
+	LoginStruct loginStruct;
+	loginStruct.state = pPlayer->state;
+	loginStruct.userid = pPlayer->userid;
+	loginStruct.usertype = pPlayer->usertype;
+	loginStruct.username = pPlayer->username;
+	loginStruct.password = pPlayer->password;
+
+	buffer << loginStruct;
+	Client::Send.enqueue(&ClientSender::LoginData, buffer, pPlayer);
+
 	return true;
 }
 
@@ -207,6 +235,8 @@ Poco::UInt32 ClientSender::at(SendFunction caller) {
 
 ClientReceiver::ClientReceiver() {
 	this->map[0x10000000 | 0x01] = &ClientReceiver::LoginReply;
+	this->map[0x10000000 | 0x04] = &ClientReceiver::ObjectsReply;
+	this->map[0x10000000 | 0x06] = &ClientReceiver::TransformEntityData;
 }
 
 ClientReceiver::ReceiveFunction ClientReceiver::at(Poco::UInt32 opcode) {
@@ -217,14 +247,56 @@ ClientReceiver::ReceiveFunction ClientReceiver::at(Poco::UInt32 opcode) {
 	return receiveFunction;
 }
 
-bool ClientReceiver::LoginReply(Buffer& buffer, Packet<Head>& head, Client::Ptr& pClient) {
+bool ClientReceiver::LoginReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
 
 	Packet<LoginStruct> loginStruct;
 	buffer >> loginStruct;
 	
 	loginStruct->state = LOGIN_STATE_LOGGED_IN;
+	
+	{
+		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
+		pPlayer->state = loginStruct->state; 
+		pPlayer->userid = loginStruct->userid; 
+		pPlayer->usertype = loginStruct->usertype; 
+		pPlayer->username = loginStruct->username;
+		pPlayer->password = loginStruct->password;
+	}
 
-	pClient->setLoginStruct(loginStruct.value());
 
 	return true;
 }
+
+
+bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
+
+	Packet<ObjectsUpdateStruct> updateStruct;
+
+	buffer >> updateStruct;
+
+
+	{
+		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
+		pPlayer->createEntityQueue.insert(pPlayer->createEntityQueue.begin(), updateStruct->createEntities.begin(), updateStruct->createEntities.end()); 
+		pPlayer->destroyEntityQueue.insert(pPlayer->destroyEntityQueue.begin(), updateStruct->destroyEntities.begin(), updateStruct->destroyEntities.end()); 
+	}
+
+	return true;
+}
+
+bool ClientReceiver::TransformEntityData(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
+
+
+	Packet< vector<TransformEntityStruct> > transformEntityStructs;
+
+	buffer >> transformEntityStructs;
+
+	{
+		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
+		pPlayer->transformEntityQueue.insert(pPlayer->transformEntityQueue.begin(), transformEntityStructs->begin(), transformEntityStructs->end()); 
+	}
+
+
+	return true;
+}
+

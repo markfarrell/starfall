@@ -22,10 +22,11 @@ namespace Starfall {
 
 	class IDGenerator {
 		friend class Entity;
+		friend class Player;
 		private:
 			static Poco::Mutex mutex; 
 			static Poco::UInt32 id;
 		protected:
-			static Poco::UInt32 next(); //uses a mutex to stop simultaneous access
+			static Poco::UInt32	Next(); //uses a mutex to stop simultaneous access
 	};
 }

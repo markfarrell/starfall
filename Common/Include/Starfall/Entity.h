@@ -17,6 +17,7 @@
 #include "Starfall/Transform.h"
 #include "Starfall/TransformEntityStruct.h"
 #include "Starfall/CreateEntityStruct.h"
+#include "Starfall/IDGenerator.h"
 
 using std::map;
 using std::vector;
@@ -49,7 +50,7 @@ namespace Starfall {
 			void addToPath(TransformStruct transformStruct); //thread-safe 
 			void clearPath();
 
-			static Ptr Create();
+			static Ptr Create(Poco::UInt32 sessionid=IDGenerator::Next());
 			/* 
 			 * Note: Lookups using a hash map are fast! The find function should run in constant time, whereas an iteration over the map would be linear.
 			 */
@@ -64,7 +65,7 @@ namespace Starfall {
 			v8::Persistent<v8::Context> persistentContext; //A persistent javascript context holding dynamic data such as the entity's inventory
 			vector<TransformStruct> path;
 
-			Entity();
+			Entity(Poco::UInt32 sessionid);
 			
 			void Load(); //Load the entity's scripts.
 
