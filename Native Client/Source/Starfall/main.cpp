@@ -20,6 +20,8 @@ PLATFORM_ENTRY_POINT
 	Starfall::Platform::Init();
 	Starfall::Application application;	
 	application.run();
+
+	Starfall::Client::Clear();
+
 	Starfall::Platform::Halt(EXIT_SUCCESS);
-	return EXIT_SUCCESS;
 }

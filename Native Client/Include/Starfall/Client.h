@@ -45,6 +45,7 @@ namespace Starfall {
 			bool connect(); //trys to connect to the server and runs the thread if successful to send and receive packets
 			bool disconnect(); //stops the execution of the thread.
 
+			static Poco::Mutex ClientsMutex; //avoid race condition on accessing Clients in separate threads
 			static std::vector<Client::Ptr> Clients; //all clients will be deleted when the program ends automatically.
 		public:
 
@@ -52,6 +53,8 @@ namespace Starfall {
 			static ClientReceiver Receive;
 
 			static Client::Ptr Get(); //get the main client for usage by the application, clients[0]
+			static void Clear(); //delete all clients before data in other static structures, such as the collection of Entity IDs, is deleted.
+
 			void setLoginStruct(LoginStruct loginStruct);
 			bool tryLogin(LoginStruct loginStruct);
 			bool isLoggedIn(); //used by the login scene for a scene transition.

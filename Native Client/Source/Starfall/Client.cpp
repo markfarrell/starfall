@@ -26,6 +26,9 @@ using namespace Starfall;
 ClientSender Client::Send;
 ClientReceiver Client::Receive;
 
+
+Poco::Mutex Client::ClientsMutex;
+
 std::vector<Client::Ptr> Client::Clients;
 
 
@@ -69,12 +72,16 @@ void Client::run() {
 						if(this->socket.receive(&bodyBuffer[0], bodyBuffer.size(), bodyReceived) == sf::Socket::Done) {
 							if(bodyReceived > 0) {
 								try {
-
+									
 									 ClientReceiver::ReceiveFunction receiveFunction = Client::Receive.at(head->opcode);
 
-									 for(vector<Client::Ptr>::iterator it = Client::Clients.begin(); it != Client::Clients.end(); it++) { //find the original sharedptr to pass to the receive function; update the reference count properly
-										 if((*it)->id == this->id) {
-											 (*receiveFunction)(bodyBuffer, head, (*it)->pPlayer); //call the function pointer
+									 {
+										 Poco::ScopedLock<Poco::Mutex> clientsLock(Client::ClientsMutex);
+										 for(vector<Client::Ptr>::iterator it = Client::Clients.begin(); it != Client::Clients.end(); it++) { //find the original sharedptr to pass to the receive function; update the reference count properly
+											 if((*it)->id == this->id) {
+
+												 (*receiveFunction)(bodyBuffer, head, (*it)->pPlayer); //call the function pointer
+											 }
 										 }
 									 }
 
@@ -108,6 +115,7 @@ void Client::run() {
 
 bool Client::connect() {
 	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	Poco::ScopedLock<Poco::Mutex> playerLock(this->pPlayer->mutex());
 	if(!this->isConnected) {
 		if(!this->socket.isBlocking()) {
 			this->socket.setBlocking(true); //keep blocking state until connected.
@@ -120,7 +128,9 @@ bool Client::connect() {
 				if(this->socket.connect(sf::IpAddress(ipString), (unsigned short)(port), sf::seconds(3)) != sf::Socket::Error) {
 					this->socket.setBlocking(false); //turn off blocking state for sending and receiving
 					this->isConnected = true;
+					cout << "[Client::connect] Connected. " << endl;
 					this->thread.start(*this);
+					cout << "[Client::connect] Started thread. " << endl;
 					return true;
 				}
 			}
@@ -162,15 +172,20 @@ bool Client::tryLogin(LoginStruct loginStruct) {
 }
 
 bool Client::isLoggedIn() {
-	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	Poco::ScopedLock<Poco::Mutex> lock(this->pPlayer->mutex());
 	return (this->pPlayer->state == LOGIN_STATE_LOGGED_IN);
 }
 
 Client::Ptr Client::Get() {
+	Poco::ScopedLock<Poco::Mutex> clientsLock(Client::ClientsMutex);
 	if(Client::Clients.size() == 0) {
 		Client::Clients.push_back(Client::Ptr(new Client(Client::Clients.size())));
 	}
 	return Client::Clients[0]; //note: if clients[0] was deleted, all elements would receive new positions; it is safe to return clients[0] based on vector size.
+}
+
+void Client::Clear() {
+	Client::Clients.clear();
 }
 
 ClientSender::ClientSender() {
@@ -270,7 +285,7 @@ bool ClientReceiver::LoginReply(Buffer& buffer, Packet<Head>& head, Player::Ptr&
 
 bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
 
-	Packet<ObjectsUpdateStruct> updateStruct;
+	/*Packet<ObjectsUpdateStruct> updateStruct;
 
 	buffer >> updateStruct;
 
@@ -279,7 +294,7 @@ bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Pt
 		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
 		pPlayer->createEntityQueue.insert(pPlayer->createEntityQueue.begin(), updateStruct->createEntities.begin(), updateStruct->createEntities.end()); 
 		pPlayer->destroyEntityQueue.insert(pPlayer->destroyEntityQueue.begin(), updateStruct->destroyEntities.begin(), updateStruct->destroyEntities.end()); 
-	}
+	}*/
 
 	return true;
 }
@@ -287,14 +302,14 @@ bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Pt
 bool ClientReceiver::TransformEntityData(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
 
 
-	Packet< vector<TransformEntityStruct> > transformEntityStructs;
+	/*Packet< vector<TransformEntityStruct> > transformEntityStructs;
 
 	buffer >> transformEntityStructs;
 
 	{
 		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
 		pPlayer->transformEntityQueue.insert(pPlayer->transformEntityQueue.begin(), transformEntityStructs->begin(), transformEntityStructs->end()); 
-	}
+	}*/
 
 
 	return true;

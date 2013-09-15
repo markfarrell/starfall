@@ -23,8 +23,8 @@ Entity::Entity(Poco::UInt32 sessionid) {
 }
 
 void Entity::Load() {
-	//v8::HandleScope handleScope(this->isolate); 
-	//v8::Context::Scope contextScope(this->persistentContext); 
+	v8::HandleScope handleScope(this->isolate); 
+	v8::Context::Scope contextScope(this->persistentContext); 
 	//v8::Handle<v8::Value> result = IO::Run("Script/Entity/context.js");
 }
 
