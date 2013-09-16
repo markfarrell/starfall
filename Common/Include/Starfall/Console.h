@@ -41,14 +41,14 @@ namespace Starfall {
 
 	template<typename T>
 	inline void Console::Write(T& data) {
-		throw new ConsoleException();
+		throw ConsoleException();
 	}
 
 	template<> 
 	inline void Console::Write<string>(string& str) {
 		Poco::Dynamic::Var message(str);
 		if(!Database::Insert::TryConsole(message)) { //a string should be able to be a poco dynamic var
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace Starfall {
 		json.foot->set("maps", hexMapVector);
 
 		if(!Database::Insert::TryConsole(json.zip())) {
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 
@@ -118,7 +118,7 @@ namespace Starfall {
 		json.foot->set("maps", hexMapVector);
 
 		if(!Database::Insert::TryConsole(json.zip())) {
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 
