@@ -1,8 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include <Poco\Foundation.h>
-#include <Poco\Mutex.h>
+#include <Poco/Foundation.h>
+#include <Poco/Mutex.h>
 
 #include <v8.h>
 

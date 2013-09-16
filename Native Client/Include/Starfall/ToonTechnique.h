@@ -1,8 +1,8 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\Technique.h"
-#include "Starfall\Shader.h"
+#include "Starfall/Technique.h"
+#include "Starfall/Shader.h"
 
 
 

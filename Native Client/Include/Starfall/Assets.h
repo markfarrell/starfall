@@ -1,7 +1,7 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
 
-#include "Starfall\ConfigurationFile.h"
+#include "Starfall/ConfigurationFile.h"
 
 #include <Poco/Foundation.h>
 #include <Poco/ThreadPool.h>

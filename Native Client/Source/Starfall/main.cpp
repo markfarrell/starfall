@@ -1,5 +1,9 @@
 ﻿//Copyright (c) 2013 Mark Farrell
 
+#ifdef PLATFORM_IS_WINDOWS
+  #include <Windows.h>
+#endif
+
 #include "Starfall/Platform.h"
 #include "Starfall/Client.h"
 #include "Starfall/Application.h"
