@@ -2,6 +2,8 @@
 #include "Starfall/WorldScene.h"
 
 #include "Starfall/Application.h"
+#include "Starfall/Client.h"
+#include "Starfall/ConfigurationFile.h"
 
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
@@ -21,9 +23,11 @@ using std::endl;
 using namespace Starfall;
 
 WorldScene::WorldScene(Application* parent)
-	: Scene(parent)
+	: Scene(parent),
+	updateInterval(Poco::UInt32(ConfigurationFile::Client().getInt("world.updateInterval"))),
+	humanoidModelPath(ConfigurationFile::Client().getString("world.humanoidModelPath"))
 {
-	this->model = Model::Create("Models/Humanoid.json");
+	this->humanoidModel = Model::Create(this->humanoidModelPath);
 	this->technique = ToonTechnique::Create();
 }
 
@@ -48,13 +52,24 @@ void WorldScene::render() {
 	this->parent->skybox.position = this->camera.position;
 	this->parent->skybox.render(this->parent->window);
 
-	this->model->render(this->technique);
+	//this->model->render(this->technique);
 
 	glUseProgram(NULL);
 }
 
 void WorldScene::load() {
 
+}
+
+bool WorldScene::checkPlayer() {
+	bool ret = false;
+	if(Client::Get()->isLoggedIn()) {
+		Poco::ScopedLock<Poco::Mutex> lock(Client::Get()->pPlayer->mutex());
+		if(this->objectsMap.find(Client::Get()->pPlayer->pEntity->sessionid) != this->objectsMap.end()) {
+			ret = true;
+		}
+	}
+	return ret;
 }
 
 void WorldScene::update() {
@@ -73,7 +88,7 @@ void WorldScene::update() {
 		//TODO: Move to model.controls
 		if(event.type == sf::Event::KeyPressed) {
 			if(event.key.code == sf::Keyboard::F1) {
-				this->model->states["debug.boundingboxes"] = !this->model->states["debug.boundingboxes"];
+				this->humanoidModel->states["debug.boundingboxes"] = !this->humanoidModel->states["debug.boundingboxes"];
 			}
 		}
 
@@ -82,7 +97,49 @@ void WorldScene::update() {
 
 	//TODO: Move to model.controls
 	if(this->camera.controls.apply()) {
-		this->model->apply(this->camera);
+		this->humanoidModel->apply(this->camera);
+	}
+
+	if(this->clock.getElapsedTime().asMilliseconds() >= this->updateInterval) {
+
+		Player::Ptr pPlayer = Client::Get()->pPlayer;
+
+		vector<CreateEntityStruct> createEntities;
+		vector<TransformEntityStruct> transformEntities;
+		vector<DestroyEntityStruct> destroyEntities;
+
+		{ //Lock, copy, then unlock to free up access to the player in networking more quickly
+			Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
+			
+			createEntities.insert(createEntities.begin(), pPlayer->createEntityQueue.begin(), pPlayer->createEntityQueue.end());
+			transformEntities.insert(transformEntities.begin(), pPlayer->transformEntityQueue.begin(), pPlayer->transformEntityQueue.end());
+			destroyEntities.insert(destroyEntities.begin(), pPlayer->destroyEntityQueue.begin(), pPlayer->destroyEntityQueue.end());
+		}
+
+
+		for(vector<CreateEntityStruct>::iterator it = createEntities.begin(); it != createEntities.end(); it++) {
+			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
+				cout << "[WorldScene::update] Warning: Entity " << (*it).sessionid << " has already been created." << endl;
+			} else {
+				this->objectsMap[(*it).sessionid] = GameObject::Ptr(new GameObject(Entity::Create((*it).sessionid), Model::Ptr(new Model(this->humanoidModel))));
+			}
+		}
+
+		for(vector<TransformEntityStruct>::iterator it = transformEntities.begin(); it != transformEntities.end(); it++) {
+			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
+				for(vector<TransformStruct>::iterator pathIterator = (*it).path.begin(); pathIterator != (*it).path.end(); pathIterator++) {
+					this->objectsMap[(*it).sessionid]->pEntity->addToPath((*pathIterator));
+				}
+			}
+		}
+
+		for(vector<DestroyEntityStruct>::iterator it = destroyEntities.begin(); it != destroyEntities.end(); it++) {
+			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
+
+			}
+		}
+	
+		this->clock.restart();
 	}
 
 }

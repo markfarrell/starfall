@@ -110,6 +110,7 @@ namespace Starfall {
 
 			map<string, bool> states;
 
+			Model(Model::Ptr pModel); //create model from existing model in memory
 			~Model();
 
 			virtual void run();

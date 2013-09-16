@@ -110,10 +110,17 @@ void MeshRenderer::update(Mesh::Ptr& mesh) {
 	}
 }
 
+
 Model::Ptr Model::Create(string path) {
 	Model::Ptr model(new Model(path));
 	Assets::Loader.enqueue(model);
 	return model;
+}
+
+Model::Model(Model::Ptr pModel) { 
+	for(vector<Mesh::Ptr>::iterator it = pModel->meshes.begin(); it != pModel->meshes.end(); it++) {
+		this->meshes.push_back(Mesh::Ptr(new Mesh(*it))); //create new meshes from pre-existing meshes; each mesh points to the same vertex attributes in memory, but can have its own unique transform information.
+	}
 }
 
 Model::Model(string path)

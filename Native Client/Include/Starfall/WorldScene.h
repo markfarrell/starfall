@@ -3,8 +3,11 @@
 
 #include "Starfall/Scene.h"
 #include "Starfall/Camera.h"
-#include "Starfall/Model.h"
+#include "Starfall/GameObject.h"
 #include "Starfall/ToonTechnique.h"
+
+#include <Poco/Foundation.h>
+#include <Poco/HashMap.h>
 
 #include <glm/glm.hpp>
 
@@ -17,7 +20,7 @@ using std::map;
 namespace Starfall {
 
 	class Application; 
-	
+
 	class WorldScene : public Scene { 
 		friend class LoadScene;
 		private:
@@ -26,17 +29,22 @@ namespace Starfall {
 
 			Camera camera;
 			Technique::Ptr technique;
-			Model::Ptr model;
+			Model::Ptr humanoidModel;
+
+			Poco::HashMap<Poco::UInt32, GameObject::Ptr> objectsMap; //Maps sessionid -> gameObject for quick insertions and searches 
 
 
 			GLuint modelMatrixLocation;
 			GLuint viewMatrixLocation;
 			GLuint eyeLocation;
 
+			Poco::UInt32 updateInterval;
+			string humanoidModelPath;
+
 
 			virtual void initialize();
 
-
+			bool checkPlayer(); //check to see if there exists a player object that can be controlled; a CreateEntityStruct must first be sent from the server and the player must be logged in.
 
 		public:
 

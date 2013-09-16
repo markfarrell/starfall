@@ -26,6 +26,8 @@ namespace Starfall {
 		friend class ClientSender;
 		friend class ClientReceiver;
 		friend class LoginControls;
+		friend class WorldScene;
+
 		private:
 			typedef Poco::SharedPtr<Client> Ptr; //allocate space for clients on the heap so many can be instantiated for benchmarking
 

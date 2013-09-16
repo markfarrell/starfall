@@ -27,6 +27,8 @@ namespace Starfall {
 		friend class ClientSender;
 		friend class ClientReceiver;
 
+		friend class WorldScene;
+
 		public:
 			typedef Poco::SharedPtr<Player> Ptr;
 			~Player(); 

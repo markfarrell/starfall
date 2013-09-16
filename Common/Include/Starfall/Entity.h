@@ -30,7 +30,12 @@ namespace Starfall {
 		friend class CreateEntityStruct;
 		friend class User;
 		friend class Player;
+
 		friend class Receive;
+
+		friend class WorldScene;
+
+
 		public:
 			typedef Poco::SharedPtr<Entity> Ptr;
 			~Entity();
