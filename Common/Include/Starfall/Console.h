@@ -6,9 +6,9 @@
 #include "Starfall/Buffer.h"
 #include "Starfall/Database.h"
 
-#include "Poco/Data/Common.h"
-#include "Poco/JSON/Object.h"
-#include "Poco/Dynamic/Var.h"
+#include <Poco/Data/Common.h>
+#include <Poco/JSON/Object.h>
+#include <Poco/Dynamic/Var.h>
 
 #include <string>
 #include <vector>
@@ -48,7 +48,7 @@ namespace Starfall {
 	inline void Console::Write<string>(string& str) {
 		Poco::Dynamic::Var message(str);
 		if(!Database::Insert::TryConsole(message)) { //a string should be able to be a poco dynamic var
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace Starfall {
 		json.foot->set("maps", hexMapVector);
 
 		if(!Database::Insert::TryConsole(json.zip())) {
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 
@@ -118,7 +118,7 @@ namespace Starfall {
 		json.foot->set("maps", hexMapVector);
 
 		if(!Database::Insert::TryConsole(json.zip())) {
-			throw new ConsoleException("Console Exception: Database Failed.");
+			throw ConsoleException("Console Exception: Database Failed.");
 		}
 	}
 

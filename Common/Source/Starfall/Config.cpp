@@ -11,7 +11,6 @@ using namespace Starfall;
 
 map<string,string> IO::Resources;
 
-
 v8::Handle<v8::Value> JS::Include(const v8::Arguments& args) {
 	v8::HandleScope handleScope(args.GetIsolate());
 	for (int i = 0; i < args.Length(); i++) {

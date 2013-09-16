@@ -445,7 +445,6 @@ class Send {
 		buffer.WriteUInt32(player.user.transformPlayerStruct.path.length);
 		for(var i in player.user.transformPlayerStruct.path) { 
 			var transformStruct : TransformStruct = i as TransformStruct;
-			buffer.WriteUInt32(player.user.transformPlayerStruct.sessionid);
 			buffer.WriteUInt32(transformStruct.action);
 			buffer.WriteFloat(transformStruct.position.x);
 			buffer.WriteFloat(transformStruct.position.y);

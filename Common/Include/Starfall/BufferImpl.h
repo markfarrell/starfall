@@ -5,6 +5,8 @@
 #include "Starfall/CreateEntityStruct.h"
 #include "Starfall/TransformEntityStruct.h"
 #include "Starfall/DestroyEntityStruct.h"
+#include "Starfall/ObjectsStruct.h"
+#include "Starfall/ObjectsUpdateStruct.h"
 #include "Starfall/Transform.h"
 #include "Starfall/LoginStruct.h"
 #include "Starfall/Packet.h"
@@ -31,31 +33,123 @@ namespace Starfall {
 	}
 
 	template <>
-	inline void Buffer::operator>> < Packet< vector<TransformStruct> > >(Packet< vector<TransformStruct> >& transformsPacket) {
-			transformsPacket.setHex(this->hex());
-			Poco::UInt32 size = this->readUInt32();
-			for(Poco::UInt32 i = 0; i < size; i++) {
-				TransformStruct transformStruct;
-				Poco::UInt32 sessionid = this->readUInt32();
-				transformStruct.action = this->readUInt32();
-				transformStruct.position.x = this->readFloat();
-				transformStruct.position.y = this->readFloat();
-				transformStruct.position.z = this->readFloat();
-				transformStruct.orientation.x = this->readFloat();
-				transformStruct.orientation.y = this->readFloat();
-				transformStruct.orientation.z = this->readFloat();
-				transformStruct.orientation.w = this->readFloat();
-				transformsPacket->push_back(transformStruct);
-			}
+	inline void Buffer::operator>> <Transform> (Transform& transform) {
+			transform.position.x = this->readFloat();
+			transform.position.y = this->readFloat();
+			transform.position.z = this->readFloat();
+			transform.orientation.x = this->readFloat();
+			transform.orientation.y = this->readFloat();
+			transform.orientation.z = this->readFloat();
+			transform.orientation.w = this->readFloat();
+	}
+
+
+	template <>
+	inline void Buffer::operator>> < vector<CreateEntityStruct> >( vector<CreateEntityStruct>& createEntities) {
+
+		Poco::UInt32 size = this->readUInt32();
+		for(Poco::UInt32 i = 0; i < size; i++) {
+
+			CreateEntityStruct createEntityStruct;
+			Transform transform;
+
+			createEntityStruct.sessionid = this->readUInt32();
+			createEntityStruct.mode = this->readUInt32();
+			createEntityStruct.displayName = this->readUInt32();
+
+			(*this) >> transform;
+
+			createEntityStruct.position = transform.position;
+			createEntityStruct.orientation = transform.orientation;
+
+			createEntities.push_back(createEntityStruct);
+
+		}
 	}
 
 	template <>
-	inline void Buffer::operator>> < Packet< vector<Poco::UInt32> > >(Packet< vector<Poco::UInt32> >& collectionPacket) {
+	inline void Buffer::operator>> < vector<DestroyEntityStruct> >( vector<DestroyEntityStruct>& destroyEntities) {
+
 		Poco::UInt32 size = this->readUInt32();
+
 		for(Poco::UInt32 i = 0; i < size; i++) {
-			collectionPacket->push_back(this->readUInt32());
+
+			DestroyEntityStruct destroyEntityStruct;
+			
+			destroyEntityStruct.sessionid = this->readUInt32();
+
+			destroyEntities.push_back(destroyEntityStruct);
+
 		}
 	}
+
+	template <>
+	inline void Buffer::operator>> < vector<TransformStruct> >(vector<TransformStruct>& transformStructs) {
+
+		Poco::UInt32 size = this->readUInt32();
+		for(Poco::UInt32 i = 0; i < size; i++) {
+
+			TransformStruct transformStruct;
+			Transform transform;
+
+			transformStruct.action = this->readUInt32();
+
+			(*this) >> transform;
+
+			transformStruct.position = transform.position;
+			transformStruct.orientation = transform.orientation;
+
+			transformStructs.push_back(transformStruct);
+		}
+	}
+
+	template <>
+	inline void Buffer::operator>> < Packet< vector<TransformStruct> > >(Packet< vector<TransformStruct> >& transformsPacket) {
+		transformsPacket.setHex(this->hex());
+		(*this) >> transformsPacket.value();
+	}
+
+	template <>
+	inline void Buffer::operator>> < Packet< vector<TransformEntityStruct> > >(Packet< vector<TransformEntityStruct> >& transformEntityStructs) {
+		transformEntityStructs.setHex(this->hex());
+
+		Poco::UInt32 size = this->readUInt32();
+		for(Poco::UInt32 i = 0; i < size; i++) {
+
+			TransformEntityStruct transformEntityStruct;
+
+			transformEntityStruct.sessionid = this->readUInt32();
+
+			(*this) >> transformEntityStruct.path;
+
+			transformEntityStructs->push_back(transformEntityStruct);
+			
+		}
+	}
+
+	template <>
+	inline void Buffer::operator>> < vector<Poco::UInt32> >( vector<Poco::UInt32>& list) {
+		Poco::UInt32 size = this->readUInt32();
+		for(Poco::UInt32 i = 0; i < size; i++) {
+			list.push_back(this->readUInt32());
+		}
+	}
+
+	template <>
+	inline void Buffer::operator>> < Packet<ObjectsStruct> >( Packet<ObjectsStruct>& objectsStruct) {
+		objectsStruct->state = this->readUInt32();
+		objectsStruct->farClipDistance = this->readFloat();
+		(*this) >> objectsStruct->ids;
+	}
+
+	template <>
+	inline void Buffer::operator>> < Packet<ObjectsUpdateStruct> >( Packet<ObjectsUpdateStruct>& updateStruct) {
+		updateStruct->state = this->readUInt32();
+		(*this) >> updateStruct->createEntities;
+		(*this) >> updateStruct->destroyEntities;
+	}
+
+
 
 	template<>
 	inline void Buffer::operator<< <Head> (Head& head) {
@@ -107,20 +201,31 @@ namespace Starfall {
 		}
 	}
 
+	template<>
+	inline void Buffer::operator<< < vector<TransformStruct> >(vector<TransformStruct>& path){
+		this->writeUInt32(path.size());
+		for(vector<TransformStruct>::iterator itPath = path.begin();  itPath != path.end(); itPath++) {
+			this->writeUInt32((*itPath).action);
+			Transform transform;
+			transform.position = (*itPath).position;
+			transform.orientation = (*itPath).orientation;
+			(*this) << transform;
+		}
+	}
 
 	template<>
 	inline void Buffer::operator<< < vector<TransformEntityStruct> >(vector<TransformEntityStruct>& transformEntityQueue) {
 		this->writeUInt32(transformEntityQueue.size());
 		for(vector<TransformEntityStruct>::iterator it = transformEntityQueue.begin(); it != transformEntityQueue.end(); it++) {
 			this->writeUInt32((*it).sessionid);
-			this->writeUInt32((*it).path.size());
-			for(vector<TransformStruct>::iterator itPath = (*it).path.begin();  itPath != (*it).path.end(); itPath++) {
-				this->writeUInt32((*itPath).action);
-				Transform transform;
-				transform.position = (*itPath).position;
-				transform.orientation = (*itPath).orientation;
-				(*this) << transform;
-			}
+			(*this) << (*it).path;
 		}
+	}
+
+	template<>
+	inline void Buffer::operator<< <ObjectsUpdateStruct>( ObjectsUpdateStruct& updateStruct) {
+		this->writeUInt32(updateStruct.state); //set state; allow another objectsData packet to be sent.
+		(*this) << updateStruct.createEntities;
+		(*this) << updateStruct.destroyEntities;
 	}
 }

@@ -2,6 +2,7 @@
 
 #include "Starfall/ConsoleStruct.h"
 #include "Starfall/Console.h"
+
 #include <iostream>
 #include <sstream>
 

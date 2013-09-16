@@ -29,6 +29,7 @@
 *.pyc
 *.blend1
 *.blend2
+*.rc
 __pycache__/
 ipch/
 Debug/

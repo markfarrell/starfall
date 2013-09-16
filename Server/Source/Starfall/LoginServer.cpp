@@ -58,7 +58,7 @@ LoginConnectionHandler::LoginConnectionHandler(Poco::Net::StreamSocket& socket, 
 	_reactor.addEventHandler(_socket, _errorObserver);
 	_reactor.addEventHandler(_socket, _timeoutObserver);
 
-	_pPlayer = Player::create(_socket.address().toString());
+	_pPlayer = Player::Create(_socket.address().toString());
 
 }
 

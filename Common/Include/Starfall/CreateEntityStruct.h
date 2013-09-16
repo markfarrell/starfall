@@ -14,7 +14,6 @@ namespace Starfall {
 			Poco::UInt32 sessionid;
 			Poco::UInt32 mode;
 			string displayName;
-			string appearance;
 			CreateEntityStruct();
 	};
 }

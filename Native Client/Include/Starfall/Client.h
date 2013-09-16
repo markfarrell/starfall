@@ -3,6 +3,8 @@
 
 #include "Starfall/User.h"
 #include "Starfall/LoginStruct.h"
+#include "Starfall/Player.h"
+
 
 #include <SFML/System/Utf.hpp>
 #include <SFML/Network/TcpSocket.hpp>
@@ -33,11 +35,7 @@ namespace Starfall {
 			Poco::Mutex mutex; //a mutex to lock this socket that constantly sends and receives in another thread.
 			sf::TcpSocket socket;
 			
-			/** TODO: Replace with a pointer to a player. **/
-			LoginStruct loginStruct; 
-			User user;
-			/**********************************************/
-
+			Player::Ptr pPlayer;
 
 			bool isConnected; //current connection state of the socket.
 			
@@ -47,6 +45,7 @@ namespace Starfall {
 			bool connect(); //trys to connect to the server and runs the thread if successful to send and receive packets
 			bool disconnect(); //stops the execution of the thread.
 
+			static Poco::Mutex ClientsMutex; //avoid race condition on accessing Clients in separate threads
 			static std::vector<Client::Ptr> Clients; //all clients will be deleted when the program ends automatically.
 		public:
 
@@ -54,6 +53,8 @@ namespace Starfall {
 			static ClientReceiver Receive;
 
 			static Client::Ptr Get(); //get the main client for usage by the application, clients[0]
+			static void Clear(); //delete all clients before data in other static structures, such as the collection of Entity IDs, is deleted.
+
 			void setLoginStruct(LoginStruct loginStruct);
 			bool tryLogin(LoginStruct loginStruct);
 			bool isLoggedIn(); //used by the login scene for a scene transition.
@@ -67,13 +68,13 @@ namespace Starfall {
 	class ClientSender { //ClientSender could be shared between multiple clients; it could be accessed from multiple threads
 		friend class Client;
 		public:
-			typedef bool (*SendFunction) (Client::Ptr& pClient);
+			typedef bool (*SendFunction) (Player::Ptr& pPlayer);
 			Poco::UInt32 at(SendFunction caller); //thread-safe way to get 
-			static bool LoginData(Client::Ptr& pClient = Client::Get());
+			static bool LoginData(Player::Ptr& pPlayer);
 		private:
 			Poco::Mutex mutex;
 			std::map<SendFunction, Poco::UInt32> map;
-			bool enqueue(SendFunction caller, Buffer& bodyBuffer, Client::Ptr& pClient = Client::Get());
+			bool enqueue(SendFunction caller, Buffer& bodyBuffer, Player::Ptr&pPlayer);
 			ClientSender();
 
 	};
@@ -83,12 +84,14 @@ namespace Starfall {
 	class ClientReceiver {
 		friend class Client;
 		public:
-			typedef bool (*ReceiveFunction) (Buffer& buffer, Packet<Head>& head, Client::Ptr& client);
+			typedef bool (*ReceiveFunction) (Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer);
 			ReceiveFunction at(Poco::UInt32 opcode);
 		private:
 			Poco::Mutex mutex;
 			std::map<Poco::UInt32, ReceiveFunction> map;
 			ClientReceiver();
-			static bool LoginReply(Buffer& buffer, Packet<Head>& head, Client::Ptr& pClient);
+			static bool LoginReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer);
+			static bool ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer);
+			static bool TransformEntityData(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer);
 	};
 }

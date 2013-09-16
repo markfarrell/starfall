@@ -28,15 +28,15 @@ namespace Starfall {
 			Camera* parent;
 
 
-
 			float moveSpeed;
 			float rotateSpeed;
 
 			sf::Clock applyClock;
 			sf::Int32 applyTime;
 
-			void applyToState(string stateName, glm::vec3& deltaPosition, glm::vec3& deltaRotation);
+			sf::Vector2f previousMouseLocation; //To rotate the camera with the mouse, the direction that the user is moving the camera must be tracked.
 
+			void applyToState(string stateName, glm::vec3& deltaPosition, glm::vec3& deltaRotation);
 
 		public: 
 			CameraControls(Camera* parent);
@@ -55,35 +55,38 @@ namespace Starfall {
 
 			/** Recalculated members **/
 			glm::mat4 projection;
+			glm::mat4 defaultView;
 			glm::mat4 view;
 			glm::vec3 direction; //direction the forward vector is pointing in world space
 			glm::vec3 up;
 
+			glm::quat offsets; //euler angle offsets for rotation after view as been calculated
+
 			void recalculate(); //updates the camera's view and direction; they can then be used several times without recalculation
+
+			sf::Vector2u size;
 
 		public:
 
-		CameraControls controls;
+			CameraControls controls;
 
-		float nearClip;
-		float farClip;
+			float nearClip;
+			float farClip;
 
-		float distance; //distance to place camera behind its lookat position
+			float distance; //distance to place camera behind its lookat position
 
-		glm::quat orientation;
-		glm::vec3 position;
+			glm::quat orientation;
+			glm::vec3 position;
 
-		Camera();
+			Camera();
 
-		void initialize(sf::RenderWindow& window);
+			void initialize(sf::RenderWindow& window);
 
-		inline float minimumDistance() { return 4.0f; } 
-		inline float maximumDistance() { return 10.0f; }
+			inline float minimumDistance() { return 4.0f; } 
+			inline float maximumDistance() { return 10.0f; }
 
-		static float yfov(float xfov, float ratio); //utility function to calculate yfov from xfov
+			static float yfov(float xfov, float ratio); //utility function to calculate yfov from xfov
 
-
-	
 	};
 
 }

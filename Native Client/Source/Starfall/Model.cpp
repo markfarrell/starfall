@@ -346,7 +346,7 @@ BoundingBox::Ptr Model::calculateBoundingBox(vector<Face::Ptr>& meshFaces) {
 void Model::apply(Camera& camera) {
 	glm::vec3 offset = -0.5f*glm::vec3(0.0f, this->boundingBox->size().y, 0.0f);
 	this->position = camera.position + offset;
-	this->orientation = glm::normalize(glm::quat(glm::inverse(camera.view))); 
+	this->orientation = glm::normalize(glm::quat(glm::inverse(camera.defaultView))); 
 	this->matrix = glm::mat4(1.0f);
 	this->matrix = glm::translate(this->matrix, this->position-offset);
 	this->matrix *= glm::toMat4(this->orientation);
@@ -417,8 +417,4 @@ void Model::render(Technique::Ptr& technique) {
 	
 
 	glPopMatrix();
-
-
-
-
 }

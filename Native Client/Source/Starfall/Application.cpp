@@ -1,14 +1,16 @@
 //Copyright (c) 2013 Mark Farrell
 
 #include "Starfall\Application.h"
-#include "Starfall\Platform.h"
-#include "Starfall\Login.h"
-#include "Starfall\LoadScene.h"
-#include "Starfall\WorldScene.h"
 
-#include <Poco\NumberParser.h>
-#include <Poco\StringTokenizer.h>
-#include <Poco\String.h>
+#include "Starfall/Platform.h"
+#include "Starfall/Login.h"
+#include "Starfall/LoadScene.h"
+#include "Starfall/WorldScene.h"
+#include "Starfall/Client.h"
+
+#include <Poco/NumberParser.h>
+#include <Poco/StringTokenizer.h>
+#include <Poco/String.h>
 
 #include <Windows.h>
 #include <algorithm>
