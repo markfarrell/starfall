@@ -13,7 +13,7 @@
 #include <Awesomium/DataPak.h>
 #include <Awesomium/WebViewListener.h>
 
-#include <Poco\Mutex.h>
+#include <Poco/Mutex.h>
 
 #include <stack>
 #include <string>

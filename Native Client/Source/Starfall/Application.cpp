@@ -1,6 +1,6 @@
 //Copyright (c) 2013 Mark Farrell
 
-#include "Starfall\Application.h"
+#include "Starfall/Application.h"
 
 #include "Starfall/Platform.h"
 #include "Starfall/Login.h"
@@ -12,7 +12,6 @@
 #include <Poco/StringTokenizer.h>
 #include <Poco/String.h>
 
-#include <Windows.h>
 #include <algorithm>
 #include <iostream>
 #include <sstream>

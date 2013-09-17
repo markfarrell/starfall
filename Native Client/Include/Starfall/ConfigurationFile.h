@@ -14,9 +14,9 @@ namespace Starfall {
 			friend class Skybox;
 		public:
 			static ConfigurationFile Client(); //returns the client's main configuration file
-			int getInt(string key, int default=0);
-			bool getBool(string key, bool default=false);
-			string getString(string key, string default="");
+			int getInt(string key, int default = 0);
+			bool getBool(string key, bool default = false);
+			string getString(string key, string default = "");
 			bool initialized();
 		private:
 			ConfigurationFile();

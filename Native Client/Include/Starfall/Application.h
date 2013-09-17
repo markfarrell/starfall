@@ -1,10 +1,10 @@
 //Copyright (c) 2013 Mark Farrell
 #pragma once
-#include "Starfall\Assets.h"
-#include "Starfall\ConfigurationFile.h"
-#include "Starfall\Skybox.h"
 
-#include <Windows.h>
+#include "Starfall/Assets.h"
+#include "Starfall/ConfigurationFile.h"
+#include "Starfall/Skybox.h"
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
