@@ -9,7 +9,7 @@ namespace Starfall {
 	class Transform {
 		public:
 			glm::vec3 position;
-			glm::vec4 orientation;
+			glm::quat orientation;
 	};
 
 }

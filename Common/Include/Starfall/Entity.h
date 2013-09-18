@@ -10,6 +10,7 @@
 
 #include <exception>
 #include <vector>
+#include <queue>
 #include <string>
 #include <map>
 
@@ -21,12 +22,14 @@
 
 using std::map;
 using std::vector;
+using std::queue;
 using std::string; 
 using std::exception;
 
 namespace Starfall {
 
 	class Entity : private Transform {
+
 		friend class CreateEntityStruct;
 		friend class User;
 		friend class Player;
@@ -34,6 +37,8 @@ namespace Starfall {
 		friend class Receive;
 
 		friend class WorldScene;
+		friend class ClientSender;
+		friend class RemoteControlledGameObject;
 
 
 		public:
@@ -54,6 +59,11 @@ namespace Starfall {
 			Poco::Mutex mutex; 
 			void addToPath(TransformStruct transformStruct); //thread-safe 
 			void clearPath();
+			bool isPathEmpty();
+			TransformStruct popPath();
+
+			Transform getTransform();
+			void setTransform(Transform& transform);
 
 			static Ptr Create(Poco::UInt32 sessionid=IDGenerator::Next());
 			/* 
@@ -68,7 +78,7 @@ namespace Starfall {
 
 			v8::Isolate* isolate; //a pointer to the instance of the v8 engine this entity is using.
 			v8::Persistent<v8::Context> persistentContext; //A persistent javascript context holding dynamic data such as the entity's inventory
-			vector<TransformStruct> path;
+			queue<TransformStruct> path;
 
 			Entity(Poco::UInt32 sessionid);
 			

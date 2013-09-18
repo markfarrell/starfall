@@ -52,7 +52,12 @@ void WorldScene::render() {
 	this->parent->skybox.position = this->camera.position;
 	this->parent->skybox.render(this->parent->window);
 
-	//this->model->render(this->technique);
+	this->humanoidModel->render(this->technique);
+
+	for(Poco::HashMap<Poco::UInt32, GameObject::Ptr>::Iterator it = this->objectsMap.begin(); it != this->objectsMap.end(); it++) {
+		GameObject::Ptr& gameObject = (*it).second;
+		gameObject->pModel->render(this->technique);
+	}
 
 	glUseProgram(NULL);
 }
@@ -116,30 +121,49 @@ void WorldScene::update() {
 			destroyEntities.insert(destroyEntities.begin(), pPlayer->destroyEntityQueue.begin(), pPlayer->destroyEntityQueue.end());
 		}
 
-
 		for(vector<CreateEntityStruct>::iterator it = createEntities.begin(); it != createEntities.end(); it++) {
 			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
 				cout << "[WorldScene::update] Warning: Entity " << (*it).sessionid << " has already been created." << endl;
 			} else {
-				this->objectsMap[(*it).sessionid] = GameObject::Ptr(new GameObject(Entity::Create((*it).sessionid), Model::Ptr(new Model(this->humanoidModel))));
+
+				Entity::Ptr pEntity;
+				
+				{
+					Poco::ScopedLock<Poco::Mutex> lock(Client::Get()->pPlayer->mutex());
+					if(Client::Get()->isLoggedIn() &&
+						(*it).sessionid == Client::Get()->pPlayer->pEntity->sessionid) {
+						pEntity = Client::Get()->pPlayer->pEntity;
+					} else {
+						pEntity = Entity::Create((*it).sessionid);
+					}
+				}
+
+
+				this->objectsMap[(*it).sessionid] = GameObject::Ptr(new GameObject(pEntity, Model::Ptr(new Model(this->humanoidModel)))); //TODO: RemoteControlledGameObject for non-player entities
 			}
 		}
 
 		for(vector<TransformEntityStruct>::iterator it = transformEntities.begin(); it != transformEntities.end(); it++) {
 			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
 				for(vector<TransformStruct>::iterator pathIterator = (*it).path.begin(); pathIterator != (*it).path.end(); pathIterator++) {
-					this->objectsMap[(*it).sessionid]->pEntity->addToPath((*pathIterator));
+					//this->objectsMap[(*it).sessionid]->pEntity->addToPath((*pathIterator));
 				}
 			}
 		}
 
 		for(vector<DestroyEntityStruct>::iterator it = destroyEntities.begin(); it != destroyEntities.end(); it++) {
 			if(this->objectsMap.find((*it).sessionid) != this->objectsMap.end()) {
-
+				this->objectsMap.erase((*it).sessionid);
 			}
+		}
+
+		for(Poco::HashMap<Poco::UInt32, GameObject::Ptr>::Iterator it = this->objectsMap.begin(); it != this->objectsMap.end(); it++) {
+			GameObject::Ptr& gameObject = (*it).second;
+			gameObject->update();
 		}
 	
 		this->clock.restart();
 	}
+
 
 }

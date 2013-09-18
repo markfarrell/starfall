@@ -5,6 +5,8 @@
 #include "Starfall/Isolates.h"
 #include "Starfall/Config.h"
 
+#include <Poco/ScopedLock.h>
+
 #include <iostream>
 #include <limits>
 
@@ -34,15 +36,42 @@ Entity::~Entity() {
 }
 
 void Entity::addToPath(TransformStruct transformStruct) {
-	this->mutex.lock();
-	this->path.push_back(transformStruct);
-	this->mutex.unlock();
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	this->path.push(transformStruct);
 }
 
 void Entity::clearPath() {
-	this->mutex.lock();
-	this->path.clear();
-	this->mutex.unlock();
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	while(!this->path.empty()) { this->path.pop(); } //Clear the queue by popping until empty; Note = operator has O(n) complexity as well so it shouldn't be more efficient.
+}
+
+bool Entity::isPathEmpty() { 
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	return this->path.empty();
+}
+
+TransformStruct Entity::popPath() {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	TransformStruct ret;
+	if(!this->path.empty()) { 
+		ret = this->path.front();
+		this->path.pop();
+	}
+	return ret;
+}
+
+Transform Entity::getTransform() {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	Transform transform;
+	transform.position = this->position;
+	transform.orientation = this->orientation;
+	return transform;
+}
+
+void Entity::setTransform(Transform& transform) {
+	Poco::ScopedLock<Poco::Mutex> lock(this->mutex);
+	this->position = transform.position;
+	this->orientation = transform.orientation;
 }
 
 
@@ -59,9 +88,13 @@ CreateEntityStruct Entity::castCreateEntityStruct() {
 TransformEntityStruct Entity::castTransformEntityStruct() {
 	TransformEntityStruct transformEntityStruct; 
 	transformEntityStruct.sessionid = this->sessionid;
-	for(vector<TransformStruct>::iterator it = this->path.begin(); it != this->path.end(); it++) {
-		transformEntityStruct.path.push_back((*it));
+
+	queue<TransformStruct> pathCopy = this->path;
+	while(!pathCopy.empty()) { 
+		transformEntityStruct.path.push_back(pathCopy.front());
+		pathCopy.pop();
 	}
+
 	return transformEntityStruct;
 }
 

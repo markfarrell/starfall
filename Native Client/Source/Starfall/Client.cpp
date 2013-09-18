@@ -190,6 +190,7 @@ void Client::Clear() {
 
 ClientSender::ClientSender() {
 	this->map[&ClientSender::LoginData] = 0x01;
+	this->map[&ClientSender::ObjectsData] = 0x06;
 }
 
 bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer,	Player::Ptr& pPlayer) {
@@ -217,6 +218,15 @@ bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer,	Player::Ptr&
 		Poco::ScopedLock<Poco::Mutex> playerLock(pPlayer->mutex());
 		pPlayer->sendQueue.push(buffer);
 	}
+
+	return true;
+}
+
+bool ClientSender::ObjectsData(Player::Ptr& pPlayer) {
+	ObjectsStruct objectsStruct;
+	objectsStruct.state = pPlayer->updateState; //TODO: Set these parameters in WorldScene
+	objectsStruct.farClipDistance = pPlayer->farClipDistance; 
+	objectsStruct.ids = Entity::Keys(); //list of currently entities spawned
 
 	return true;
 }

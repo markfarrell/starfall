@@ -17,10 +17,14 @@ Player::Ptr Player::Create(string address, Poco::UInt32 sessionid) {
 }
 
 Player::Player(string address, Poco::UInt32 sessionid) : User(address) {
+
+	this->farClipDistance = 0.0;
+	this->updateState = 0;
+
 	this->pEntity = Entity::Create(sessionid);
 	this->pEntity->displayName = "Player";
 	this->pEntity->mode = 2; //Controlled by camera
-	this->farClipDistance = 0.0;
+
 }
 
 Player::~Player() {

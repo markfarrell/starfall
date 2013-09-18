@@ -135,6 +135,7 @@ bool Receive::ObjectsData(Player::Ptr& pPlayer, Buffer& buffer, Packet<Head>& he
 	Packet<ObjectsStruct> objectsPacket;
 	buffer >> objectsPacket;
 
+	pPlayer->updateState = objectsPacket->state;
 	pPlayer->farClipDistance = objectsPacket->farClipDistance;
 
 	vector<Poco::UInt32> keys = Entity::Keys();

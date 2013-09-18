@@ -82,7 +82,7 @@ bool Send::ObjectsReply(Player::Ptr& pPlayer) {
 
 	ObjectsUpdateStruct updateStruct; //allocate the update struct on the heap since the number of entities being created and deleted is uncertain.
 
-	updateStruct.state = 1; //allow another objects data packet to be sent
+	updateStruct.state = pPlayer->updateState; //allow another objects data packet to be sent
 	updateStruct.farClipDistance = pPlayer->farClipDistance;
 	updateStruct.createEntities = pPlayer->createEntityQueue; //Copy operation is acceptable to fit design pattern: Data structures sent over the network should be contained within their own block of memory.
 	updateStruct.destroyEntities = pPlayer->destroyEntityQueue;

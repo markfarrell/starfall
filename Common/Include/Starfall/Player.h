@@ -34,7 +34,10 @@ namespace Starfall {
 			~Player(); 
 		protected:
 
+			Poco::UInt32 updateState; //0=can update, 1=cannot update
+
 			Entity::Ptr pEntity;
+
 			float farClipDistance; //the last clip distance received in a packet
 
 			static Ptr Create(string address, Poco::UInt32 sessionid=IDGenerator::Next()); 

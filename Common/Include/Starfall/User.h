@@ -22,6 +22,7 @@ namespace Starfall {
 			std::vector<DestroyEntityStruct> destroyEntityQueue;
 			std::vector<CreateEntityStruct> createEntityQueue;
 			std::vector<TransformEntityStruct> transformEntityQueue;
+
 			User(string a);
 			void clearAll();
 	};

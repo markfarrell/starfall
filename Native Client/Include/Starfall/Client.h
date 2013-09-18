@@ -73,6 +73,7 @@ namespace Starfall {
 			typedef bool (*SendFunction) (Player::Ptr& pPlayer);
 			Poco::UInt32 at(SendFunction caller); //thread-safe way to get 
 			static bool LoginData(Player::Ptr& pPlayer);
+			static bool ObjectsData(Player::Ptr& pPlayer);
 		private:
 			Poco::Mutex mutex;
 			std::map<SendFunction, Poco::UInt32> map;

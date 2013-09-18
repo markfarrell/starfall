@@ -223,6 +223,22 @@ namespace Starfall {
 	}
 
 	template<>
+	inline void Buffer::operator<< < vector<Poco::UInt32> >(vector<Poco::UInt32>& list) {
+		this->writeUInt32(list.size());
+		for(vector<Poco::UInt32>::iterator it = list.begin(); it != list.end(); it++) {
+			this->writeUInt32((*it));
+		}
+	}
+
+
+	template<>
+	inline void Buffer::operator<< <ObjectsStruct>( ObjectsStruct& objectsStruct) {
+		this->writeUInt32(objectsStruct.state);
+		this->writeFloat(objectsStruct.farClipDistance);
+		(*this) << objectsStruct.ids;
+	}
+
+	template<>
 	inline void Buffer::operator<< <ObjectsUpdateStruct>( ObjectsUpdateStruct& updateStruct) {
 		this->writeUInt32(updateStruct.state); //set state; allow another objectsData packet to be sent.
 		(*this) << updateStruct.createEntities;
