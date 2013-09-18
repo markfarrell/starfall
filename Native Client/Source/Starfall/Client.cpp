@@ -223,10 +223,15 @@ bool ClientSender::enqueue(SendFunction caller, Buffer& bodyBuffer,	Player::Ptr&
 }
 
 bool ClientSender::ObjectsData(Player::Ptr& pPlayer) {
+
+	Buffer buffer; 
+
 	ObjectsStruct objectsStruct;
 	objectsStruct.state = pPlayer->updateState; //TODO: Set these parameters in WorldScene
 	objectsStruct.farClipDistance = pPlayer->farClipDistance; 
 	objectsStruct.ids = Entity::Keys(); //list of currently entities spawned
+
+	buffer << objectsStruct;
 
 	return true;
 }
@@ -295,7 +300,7 @@ bool ClientReceiver::LoginReply(Buffer& buffer, Packet<Head>& head, Player::Ptr&
 
 bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Ptr& pPlayer) {
 
-	/*Packet<ObjectsUpdateStruct> updateStruct;
+	Packet<ObjectsUpdateStruct> updateStruct;
 
 	buffer >> updateStruct;
 
@@ -304,7 +309,7 @@ bool ClientReceiver::ObjectsReply(Buffer& buffer, Packet<Head>& head, Player::Pt
 		Poco::ScopedLock<Poco::Mutex> lock(pPlayer->mutex());
 		pPlayer->createEntityQueue.insert(pPlayer->createEntityQueue.begin(), updateStruct->createEntities.begin(), updateStruct->createEntities.end()); 
 		pPlayer->destroyEntityQueue.insert(pPlayer->destroyEntityQueue.begin(), updateStruct->destroyEntities.begin(), updateStruct->destroyEntities.end()); 
-	}*/
+	}
 
 	return true;
 }

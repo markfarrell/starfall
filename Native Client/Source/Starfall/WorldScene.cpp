@@ -24,7 +24,8 @@ using namespace Starfall;
 
 WorldScene::WorldScene(Application* parent)
 	: Scene(parent),
-	updateInterval(Poco::UInt32(ConfigurationFile::Client().getInt("world.updateInterval"))),
+	pathInterval(ConfigurationFile::Client().getInt("path.interval")),
+	updateInterval(ConfigurationFile::Client().getInt("world.updateInterval")),
 	humanoidModelPath(ConfigurationFile::Client().getString("world.humanoidModelPath"))
 {
 	this->humanoidModel = Model::Create(this->humanoidModelPath);

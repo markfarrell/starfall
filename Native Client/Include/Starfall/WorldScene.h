@@ -6,6 +6,8 @@
 #include "Starfall/GameObject.h"
 #include "Starfall/ToonTechnique.h"
 
+#include <SFML/System.hpp>
+
 #include <Poco/Foundation.h>
 #include <Poco/HashMap.h>
 
@@ -38,7 +40,8 @@ namespace Starfall {
 			GLuint viewMatrixLocation;
 			GLuint eyeLocation;
 
-			Poco::UInt32 updateInterval;
+			sf::Int32 pathInterval;
+			sf::Int32 updateInterval;
 			string humanoidModelPath;
 
 
