@@ -1,4 +1,4 @@
-//Copyright (c) 2013 Mark Farrell
+//Copyright (c) 2013 Mark Farrell -- This source code is released under the MIT license (http://opensource.org/licenses/MIT).
 
 #include "Starfall/LoginServer.h"
 
@@ -169,7 +169,7 @@ LoginServer::LoginServer():
 	_thread.start(_reactor); //Warning: Reactor Locks the socket in the constructor list! Do not call it outside its running thread!
 	_pHTTPServer = new Poco::Net::HTTPServer(new LoginHTTPRequestHandlerFactory, Poco::Net::ServerSocket(Ports::ToLoginServerFromWeb()), new Poco::Net::HTTPServerParams);
 	_pHTTPServer->start();
-	cout << "Copyright (c) 2013 Mark Farrell" << endl << endl;
+	cout << "Copyright (c) 2013 Mark Farrell -- This source code is released under the MIT license (http://opensource.org/licenses/MIT)." << endl << endl;
 	cout << "Login: " << _socket.address().port() << " | Web: " << _pHTTPServer->port() <<  endl;
 }
 

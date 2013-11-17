@@ -1,4 +1,4 @@
-//Copyright (c) 2013 Mark Farrell
+//Copyright (c) 2013 Mark Farrell -- This source code is released under the MIT license (http://opensource.org/licenses/MIT).
 #include "Starfall/LoadScene.h"
 #include "Starfall/Assets.h"
 #include "Starfall/ConfigurationFile.h"
@@ -25,7 +25,7 @@ void LoadScene::load() {
 	}
 	text.setFont(font);
 	text.setColor(sf::Color(50,50,50,255));
-	text.setString("Copyright (c) 2013 Mark Farrell");
+	text.setString("Copyright (c) 2013 Mark Farrell -- This source code is released under the MIT license (http://opensource.org/licenses/MIT).");
 	text.setPosition(
 		(float(this->parent->window.getSize().x)-text.getGlobalBounds().width) / 2.0f,
 		(float(this->parent->window.getSize().y)-text.getGlobalBounds().height) / 2.0f

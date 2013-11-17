@@ -1,4 +1,4 @@
-//Copyright (c) 2013 Mark Farrell
+//Copyright (c) 2013 Mark Farrell -- This source code is released under the MIT license (http://opensource.org/licenses/MIT).
 
 function Main() {
 	return _.chain(["Web/img/logo_small.png",
